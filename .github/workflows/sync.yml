@@ -23,7 +23,7 @@ jobs:
       - name: Validate (informational; CI on the PR is authoritative)
         continue-on-error: true
         run: npm test
-      - uses: peter-evans/create-pull-request@v7
+      - uses: peter-evans/create-pull-request@v8
         with:
           branch: automation/sync-from-portal
           delete-branch: true
