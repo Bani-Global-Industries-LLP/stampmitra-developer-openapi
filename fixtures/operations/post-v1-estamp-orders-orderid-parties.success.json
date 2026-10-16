@@ -1,0 +1,43 @@
+{
+  "name": "POST /v1/estamp/orders/{orderId}/parties - success",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/{orderId}/parties"
+  },
+  "scenario": "success",
+  "source": "illustrative",
+  "description": "Success",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/ord_01HZX3K9Q2/parties",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "parties": [
+        {
+          "role": "first_party",
+          "name": "Rahul Kumar"
+        },
+        {
+          "role": "second_party",
+          "name": "Anita Sharma"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+    },
+    "body": {
+      "orderId": "ord_01HZX3K9Q2",
+      "partiesCount": 2
+    }
+  }
+}

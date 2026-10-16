@@ -1,0 +1,38 @@
+{
+  "name": "POST /v1/verify/passport - error-400",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/verify/passport"
+  },
+  "scenario": "error-400",
+  "source": "spec-example",
+  "description": "Validation error",
+  "request": {
+    "method": "POST",
+    "path": "/v1/verify/passport",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "fileNumber": "PA1079341954215",
+      "dob": "1990-01-01",
+      "name": "Rahul Kumar"
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json",
+      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+    },
+    "body": {
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "fileNumber must match the format PA1079341954215",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

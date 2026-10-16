@@ -1,0 +1,36 @@
+{
+  "name": "POST /v1/verify/pan-to-gstin - error-502",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/verify/pan-to-gstin"
+  },
+  "scenario": "error-502",
+  "source": "spec-example",
+  "description": "Upstream verification service unreachable",
+  "request": {
+    "method": "POST",
+    "path": "/v1/verify/pan-to-gstin",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "pan": "ABCDE1234F"
+    }
+  },
+  "response": {
+    "status": 502,
+    "headers": {
+      "Content-Type": "application/json",
+      "x-request-id": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+    },
+    "body": {
+      "error": {
+        "code": "INTERNAL_ERROR",
+        "message": "Unable to reach the order/customer service right now",
+        "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+      }
+    }
+  }
+}

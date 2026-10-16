@@ -1,0 +1,38 @@
+name: Sync from portal
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Fetch openapi.json and postman.json from https://developer.stampmitra.in
+        run: node scripts/sync-from-portal.mjs
+      - name: Regenerate operation fixtures
+        run: node scripts/build-fixtures.mjs
+      - name: Validate (informational; CI on the PR is authoritative)
+        continue-on-error: true
+        run: npm test
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/sync-from-portal
+          delete-branch: true
+          commit-message: "chore: sync contract from developer portal"
+          title: "chore: sync contract from developer portal"
+          body: |
+            Automated sync of `openapi.json` / `postman.json` from https://developer.stampmitra.in.
+
+            Before merging: review the diff, add a `CHANGELOG.md` entry (additive = minor, breaking = major),
+            and make sure the CI checks pass. Fixtures were regenerated with `npm run build:fixtures`;
+            hand-written bodies in `scripts/build-fixtures.mjs` may need updating if schemas changed.
+          labels: contract-sync

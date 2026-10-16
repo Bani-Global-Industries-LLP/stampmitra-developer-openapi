@@ -1,0 +1,48 @@
+{
+  "name": "GET /v1/usage/summary - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/usage/summary"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/usage/summary",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+    },
+    "body": {
+      "currentPeriod": {
+        "start": "2026-10-01T00:00:00.000Z",
+        "end": "2026-11-01T00:00:00.000Z"
+      },
+      "totalApiRequests": 1240,
+      "callsByService": {
+        "pan.verify": 800,
+        "estamp": 440
+      },
+      "callsByPeriod": [
+        {
+          "period": "2026-10",
+          "count": 1240
+        }
+      ],
+      "callsByDay": [
+        {
+          "day": "2026-10-15",
+          "count": 62
+        }
+      ]
+    }
+  }
+}

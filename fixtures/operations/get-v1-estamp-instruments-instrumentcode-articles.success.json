@@ -1,0 +1,33 @@
+{
+  "name": "GET /v1/estamp/instruments/{instrumentCode}/articles - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/instruments/{instrumentCode}/articles"
+  },
+  "scenario": "success",
+  "source": "illustrative",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/instruments/rent_agreement/articles",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+    },
+    "body": {
+      "articles": [
+        {
+          "code": "ART-36",
+          "name": "Lease"
+        }
+      ]
+    }
+  }
+}

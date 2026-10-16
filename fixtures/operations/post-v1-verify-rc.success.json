@@ -1,0 +1,47 @@
+{
+  "name": "POST /v1/verify/rc - success",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/verify/rc"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "POST",
+    "path": "/v1/verify/rc",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "vehicleNumber": "MH12AB1234"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+    },
+    "body": {
+      "referenceId": "SMV-20260927-3D71Q9",
+      "regNo": "MH12AB1234",
+      "registrationStatus": "VALID",
+      "ownerName": "RAHUL KUMAR",
+      "ownerFatherName": "SURESH KUMAR",
+      "vehicleClass": "LMV",
+      "vehicleManufacturerName": "MARUTI SUZUKI",
+      "model": "SWIFT",
+      "vehicleColor": "WHITE",
+      "chassis": "MA3ERLF1S00123456",
+      "engine": "K12MN1234567",
+      "registrationDate": "2019-05-14",
+      "rcStatus": "ACTIVE",
+      "rcExpiryDate": "2034-05-13",
+      "insuranceUpto": "2025-05-13",
+      "isCommercial": false
+    }
+  }
+}

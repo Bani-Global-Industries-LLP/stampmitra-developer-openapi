@@ -1,0 +1,3097 @@
+{
+  "info": {
+    "name": "StampMitra Developer API",
+    "description": "Postman collection for the StampMitra Developer API (verification, e-Stamp, usage and logs, webhook events). Generated from the same OpenAPI document as https://developer.stampmitra.in/openapi.json. Set {{baseUrl}} and {{apiKey}} (your sk_test_... key) in the collection Variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "b2c7f1a4-3d5e-4a6b-9c8d-1e2f3a4b5c6d"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api-b2b.stampmitra.in",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Verification",
+      "item": [
+        {
+          "name": "Verify PAN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/pan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "pan"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pan\": \"ABCDE1234F\",\n  \"name\": \"Rahul Kumar\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a PAN. Requires the `verification.pan.read` scope on the API key. Metered as `pan.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-8F42K7\",\n  \"pan\": \"ABCDE1234F\",\n  \"type\": \"Individual\",\n  \"valid\": true,\n  \"registeredName\": \"RAHUL KUMAR\",\n  \"fatherName\": \"SURESH KUMAR\",\n  \"panStatus\": \"VALID\",\n  \"panStatusCode\": \"E\",\n  \"panStatusDescription\": \"Existing and valid PAN\",\n  \"nameMatchResult\": \"MATCH\",\n  \"nameMatchScore\": \"100\",\n  \"aadhaarSeedingStatus\": \"y\",\n  \"aadhaarSeedingStatusDescription\": \"Aadhaar linked\",\n  \"lastUpdatedAt\": \"2023-04-01\",\n  \"message\": \"PAN is Valid\"\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"pan must match the format ABCDE1234F\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify GSTIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/gstin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "gstin"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gstin\": \"07AAAAA1111A1Z1\",\n  \"businessName\": \"Jane Doe Enterprises\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a GSTIN. Requires the `verification.gstin.read` scope on the API key. Metered as `gstin.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/gstin`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/gstin"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-9K21P4\",\n  \"GSTIN\": \"07AAAAA1111A1Z1\",\n  \"valid\": true,\n  \"legalName\": \"Jane Doe Enterprises Private Limited\",\n  \"tradeName\": \"Jane Doe Enterprises\",\n  \"registrationStatus\": \"Active\",\n  \"principalPlaceOfBusiness\": \"123, MG Road, Bengaluru, Karnataka, 560001\",\n  \"message\": \"GSTIN Exists\"\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/gstin"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"gstin must match the format 07AAAAA1111A1Z1\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/gstin"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/gstin"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/gstin"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/gstin"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/gstin"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Vehicle RC",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/rc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "rc"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleNumber\": \"MH12AB1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a Vehicle RC. Requires the `verification.rc.read` scope on the API key. Metered as `rc.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/rc`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/rc"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-3D71Q9\",\n  \"regNo\": \"MH12AB1234\",\n  \"registrationStatus\": \"VALID\",\n  \"ownerName\": \"RAHUL KUMAR\",\n  \"ownerFatherName\": \"SURESH KUMAR\",\n  \"vehicleClass\": \"LMV\",\n  \"vehicleManufacturerName\": \"MARUTI SUZUKI\",\n  \"model\": \"SWIFT\",\n  \"vehicleColor\": \"WHITE\",\n  \"chassis\": \"MA3ERLF1S00123456\",\n  \"engine\": \"K12MN1234567\",\n  \"registrationDate\": \"2019-05-14\",\n  \"rcStatus\": \"ACTIVE\",\n  \"rcExpiryDate\": \"2034-05-13\",\n  \"insuranceUpto\": \"2025-05-13\",\n  \"isCommercial\": false\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/rc"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"vehicleNumber must match the format MH12AB1234\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/rc"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/rc"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/rc"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/rc"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/rc"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Voter ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/voter-id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "voter-id"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"voterId\": \"ABC1234567\",\n  \"name\": \"Rahul Kumar\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a Voter ID. Requires the `verification.voter.read` scope on the API key. Metered as `voter.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/voter-id`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/voter-id"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-7H83M1\",\n  \"valid\": true,\n  \"name\": \"RAHUL KUMAR\",\n  \"dob\": \"1990-01-01\",\n  \"gender\": \"M\",\n  \"age\": 35,\n  \"address\": \"123, MG Road, Bengaluru\",\n  \"state\": \"Karnataka\"\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/voter-id"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"voterId must match the format ABC1234567\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/voter-id"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/voter-id"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/voter-id"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/voter-id"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/voter-id"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Driving Licence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/driving-license",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "driving-license"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dlNumber\": \"MH1420110012345\",\n  \"dob\": \"1990-01-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a Driving Licence. Requires the `verification.dl.read` scope on the API key. Metered as `dl.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/driving-license`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/driving-license"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-2Q56T8\",\n  \"valid\": true,\n  \"name\": \"RAHUL KUMAR\",\n  \"fatherOrHusbandName\": \"SURESH KUMAR\",\n  \"dob\": \"1990-01-01\",\n  \"address\": \"123, MG Road, Bengaluru\",\n  \"validUpto\": \"2030-12-31\",\n  \"dlStatus\": \"ACTIVE\"\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/driving-license"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"dlNumber must match the format MH1420110012345\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/driving-license"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/driving-license"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/driving-license"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/driving-license"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/driving-license"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Passport",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/passport",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "passport"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fileNumber\": \"PA1079341954215\",\n  \"dob\": \"1990-01-01\",\n  \"name\": \"Rahul Kumar\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a Passport. Requires the `verification.passport.read` scope on the API key. Metered as `passport.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/passport`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/passport"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-4W19X6\",\n  \"valid\": true,\n  \"name\": \"RAHUL KUMAR\",\n  \"dob\": \"1990-01-01\",\n  \"applicationType\": \"Fresh\"\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/passport"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"fileNumber must match the format PA1079341954215\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/passport"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/passport"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/passport"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/passport"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/passport"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Company CIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/cin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "cin"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cin\": \"U74999DL2015PTC284009\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a Company CIN. Requires the `verification.cin.read` scope on the API key. Metered as `cin.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/cin`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/cin"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-6R38Y3\",\n  \"valid\": true,\n  \"companyName\": \"JANE DOE ENTERPRISES PRIVATE LIMITED\",\n  \"incorporationDate\": \"2015-03-12\",\n  \"cinStatus\": \"ACTIVE\",\n  \"companyStatus\": \"Active\",\n  \"directors\": [\n    {\n      \"din\": \"01234567\",\n      \"name\": \"RAHUL KUMAR\",\n      \"designation\": \"Director\"\n    }\n  ],\n  \"email\": \"contact@example.com\",\n  \"registrationNumber\": \"U74999DL2015PTC284009\",\n  \"incorporationCountry\": \"India\"\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/cin"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"cin must match the format U74999DL2015PTC284009\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/cin"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/cin"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/cin"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/cin"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/cin"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Udyam Registration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/udyam",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "udyam"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"udyamNumber\": \"UDYAM-MH-12-1234567\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a Udyam Registration. Requires the `verification.udyam.read` scope on the API key. Metered as `udyam.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/udyam`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/udyam"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-5U29V7\",\n  \"found\": true,\n  \"udyamStatus\": \"Active\",\n  \"enterpriseName\": \"Jane Doe Enterprises\",\n  \"enterpriseType\": \"Proprietorship\",\n  \"organizationType\": \"Micro\",\n  \"certificateUrl\": \"https://udyamregistration.gov.in/Udyam_Download/UDYAM-MH-12-1234567.pdf\"\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/udyam"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"udyamNumber must match the format UDYAM-MH-12-1234567\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/udyam"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/udyam"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/udyam"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/udyam"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/udyam"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify PAN to GSTIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/pan-to-gstin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "pan-to-gstin"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pan\": \"ABCDE1234F\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a PAN to GSTIN. Requires the `verification.pan_to_gstin.read` scope on the API key. Metered as `pan.to_gstin` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan-to-gstin`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-1L67Z5\",\n  \"found\": true,\n  \"gstins\": [\n    {\n      \"gstin\": \"07AAAAA1111A1Z1\",\n      \"state\": \"Delhi\",\n      \"status\": \"Active\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"pan must match the format ABCDE1234F\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify PAN to Udyam",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/pan-to-udyam",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "pan-to-udyam"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pan\": \"ABCDE1234F\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a PAN to Udyam. Requires the `verification.pan_to_udyam.read` scope on the API key. Metered as `pan.to_udyam` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan-to-udyam`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"referenceId\": \"SMV-20260927-0A44B2\",\n  \"found\": true,\n  \"status\": \"Active\",\n  \"udyamNumber\": \"UDYAM-MH-12-1234567\"\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"pan must match the format ABCDE1234F\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Bank Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/verify/bank-account",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "verify",
+                "bank-account"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountNumber\": \"000123456789\",\n  \"ifsc\": \"ICIC0001234\",\n  \"name\": \"Ravi Kumar\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Validates and verifies a Bank Account. Requires the `verification.bank-account.read` scope on the API key. Metered as `bank-account.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/bank-account`, including its `referenceId` field."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/bank-account"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"accountNumber\": \"000123456789\",\n  \"ifsc\": \"ICIC0001234\",\n  \"bankName\": \"ICICI Bank\",\n  \"branchName\": \"Andheri West\",\n  \"accountExists\": true,\n  \"beneficiaryName\": \"RAVI KUMAR\",\n  \"nameMatch\": true,\n  \"nameMatchScore\": 0.95,\n  \"accountStatus\": \"ACTIVE\"\n}"
+            },
+            {
+              "name": "400 Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/bank-account"
+                }
+              },
+              "status": "Validation error",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"accountNumber must be a 9-18 digit numeric bank account number\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/bank-account"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "402 Insufficient wallet balance",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/bank-account"
+                }
+              },
+              "status": "Insufficient wallet balance",
+              "code": 402,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"PAYMENT_REQUIRED\",\n    \"message\": \"Insufficient fulfilment wallet balance to cover this call.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/bank-account"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/bank-account"
+                }
+              },
+              "status": "Rate limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded: 60 requests per 60 seconds for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/bank-account"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e-Stamp",
+      "item": [
+        {
+          "name": "List entitled services (generic catalog, covers e-Stamp services too)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/services",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "services"
+              ]
+            },
+            "description": "Returns every service (verification AND e-Stamp) this organization is entitled to. There is no e-Stamp-specific catalog endpoint yet; e-Stamp instruments surface here as regular service entries once entitled."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/services"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"services\": [\n    {\n      \"serviceCode\": \"estamp.instrument.rent_agreement\",\n      \"name\": \"Rent Agreement e-Stamp\",\n      \"active\": true\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get one entitled service's detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/services/:serviceCode",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "services",
+                ":serviceCode"
+              ],
+              "variable": [
+                {
+                  "key": "serviceCode",
+                  "value": "<serviceCode>",
+                  "description": "The service's unique code."
+                }
+              ]
+            },
+            "description": "Detail for a single serviceCode, if entitled and active."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/services/{serviceCode}"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get the e-Stamp input field schema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/estamp/schema/:serviceCode",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "estamp",
+                "schema",
+                ":serviceCode"
+              ],
+              "variable": [
+                {
+                  "key": "serviceCode",
+                  "value": "<serviceCode>",
+                  "description": "serviceCode from the URL path."
+                }
+              ]
+            },
+            "description": "Generic form-rendering metadata for the e-Stamp product. `serviceCode` is accepted for forward-compatible route shape parity with other schema lookups; e-Stamp has exactly one schema regardless of its value. Requires the `estamp.read` scope."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/estamp/schema/{serviceCode}"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "List e-Stamp-eligible states",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/estamp/states",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "estamp",
+                "states"
+              ]
+            },
+            "description": "Served from StampMitra's synced master-data catalogue. Requires the `estamp.read` scope."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/estamp/states"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "List instruments (articles) for a state",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/estamp/states/:stateCode/instruments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "estamp",
+                "states",
+                ":stateCode",
+                "instruments"
+              ],
+              "variable": [
+                {
+                  "key": "stateCode",
+                  "value": "<stateCode>",
+                  "description": "stateCode from the URL path."
+                }
+              ]
+            },
+            "description": "There is no separate instrument entity distinct from an article - this returns the same state-scoped article catalogue as the articles endpoint below. Requires the `estamp.read` scope."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/estamp/states/{stateCode}/instruments"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "List articles for an instrument",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/estamp/instruments/:instrumentCode/articles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "estamp",
+                "instruments",
+                ":instrumentCode",
+                "articles"
+              ],
+              "variable": [
+                {
+                  "key": "instrumentCode",
+                  "value": "<instrumentCode>",
+                  "description": "instrumentCode from the URL path."
+                }
+              ]
+            },
+            "description": "`instrumentCode` is treated as a state code here - there is no article sub-breakdown below the state-scoped list. Requires the `estamp.read` scope."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/estamp/instruments/{instrumentCode}/articles"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Calculate authoritative e-Stamp duty + service charges",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/estamp/duty/calculate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "estamp",
+                "duty",
+                "calculate"
+              ]
+            },
+            "description": "Runs the one authoritative pricing calculation; the response amount is never recalculated or overridden client-side. Requires the `estamp.duty.calculate` scope. Metered against your fulfilment wallet."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/estamp/duty/calculate"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Attach/correct e-Stamp order party (customer) details",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/estamp/orders/:orderId/parties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "estamp",
+                "orders",
+                ":orderId",
+                "parties"
+              ],
+              "variable": [
+                {
+                  "key": "orderId",
+                  "value": "<orderId>",
+                  "description": "orderId from the URL path."
+                }
+              ]
+            },
+            "description": "Attaches or corrects the customer/party details on an existing e-Stamp order. Requires the `estamp.parties.write` scope. Metered against your fulfilment wallet."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/estamp/orders/{orderId}/parties"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Create an order (generic - works for any entitled serviceCode, including e-Stamp)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"externalOrderId\": \"ord_ext_123\",\n  \"externalCustomerId\": \"cust_ext_456\",\n  \"serviceCode\": \"estamp.instrument.rent_agreement\",\n  \"details\": {\n    \"state\": \"MH\",\n    \"stampValue\": 500,\n    \"note\": \"Shape not finalized - illustrative only\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Generic order-creation endpoint. For e-Stamp, pass an e-Stamp `serviceCode` (from GET /v1/services) and put instrument/party/value details in the free-form `details` object. There is no e-Stamp-specific request/response contract yet (no first-class `state`, `article`, `parties[]` fields) - the shape of `details` for e-Stamp is not finalized upstream."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/orders"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get an order",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/orders/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "orders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "id from the URL path."
+                }
+              ]
+            },
+            "description": "Fetch an order by its B2B-assigned id."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/orders/{id}"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get order status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/orders/:id/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "orders",
+                ":id",
+                "status"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "id from the URL path."
+                }
+              ]
+            },
+            "description": "Poll the current lifecycle status of an order."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/orders/{id}/status"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Create a payment intent",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/payments/intents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payments",
+                "intents"
+              ]
+            },
+            "description": "Create a payment intent (Razorpay-backed) for an order."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/payments/intents"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get a payment intent",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/payments/intents/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "payments",
+                "intents",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "id from the URL path."
+                }
+              ]
+            },
+            "description": "Fetch the current state of a payment intent."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/payments/intents/{id}"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get an order's payment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/orders/:id/payment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "orders",
+                ":id",
+                "payment"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "id from the URL path."
+                }
+              ]
+            },
+            "description": "Fetch the payment associated with a given order."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/orders/{id}/payment"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "List documents for an order",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/orders/:id/documents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "orders",
+                ":id",
+                "documents"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "id from the URL path."
+                }
+              ]
+            },
+            "description": "List generated documents (e.g. the e-Stamp certificate PDF) for a completed order."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/orders/{id}/documents"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        },
+        {
+          "name": "Get a document download URL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/orders/:id/documents/:documentId/download",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "orders",
+                ":id",
+                "documents",
+                ":documentId",
+                "download"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "id from the URL path."
+                },
+                {
+                  "key": "documentId",
+                  "value": "<documentId>",
+                  "description": "documentId from the URL path."
+                }
+              ]
+            },
+            "description": "Get a (typically short-lived, signed) URL to download a specific document."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/orders/{id}/documents/{documentId}/download"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Usage & Logs",
+      "item": [
+        {
+          "name": "Usage summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/usage/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "usage",
+                "summary"
+              ]
+            },
+            "description": "Current billing period totals, calls by service, calls by day and a 6-month calls-by-period trend for the organization that owns the API key."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/usage/summary"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"currentPeriod\": {\n    \"start\": \"2026-10-01T00:00:00.000Z\",\n    \"end\": \"2026-11-01T00:00:00.000Z\"\n  },\n  \"totalApiRequests\": 1240,\n  \"callsByService\": {\n    \"pan.verify\": 800,\n    \"estamp\": 440\n  },\n  \"callsByPeriod\": [\n    {\n      \"period\": \"2026-10\",\n      \"count\": 1240\n    }\n  ],\n  \"callsByDay\": [\n    {\n      \"day\": \"2026-10-15\",\n      \"count\": 62\n    }\n  ]\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/usage/summary"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/usage/summary"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "List request logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/logs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "logs"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "",
+                  "description": "ISO date/time lower bound (inclusive).",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "description": "ISO date/time upper bound (exclusive).",
+                  "disabled": true
+                },
+                {
+                  "key": "service",
+                  "value": "",
+                  "description": "Filter to one service code, e.g. estamp.",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "success or failure.",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "Page size, default 50, max 200.",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "description": "Opaque cursor from a previous response.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Paginated request-log listing for the organization that owns the API key. Use nextCursor to fetch the next page."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/logs"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"items\": [\n    {\n      \"id\": \"b3f1c2a4-7d5e-4a6b-9c8d-1e2f3a4b5c6d\",\n      \"createdAt\": \"2026-10-15T09:41:07.000Z\",\n      \"actorType\": \"api_key\",\n      \"actorId\": null,\n      \"service\": \"pan.verify\",\n      \"metadata\": null\n    }\n  ],\n  \"nextCursor\": null\n}"
+            },
+            {
+              "name": "400 Invalid filter",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/logs"
+                }
+              },
+              "status": "Invalid filter",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"BAD_REQUEST\",\n    \"message\": \"status must be 'success' or 'failure'\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/logs"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/logs"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "item": [
+        {
+          "name": "List webhook delivery attempts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "description": "Page size.",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "description": "Opaque cursor from a previous response.",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Paginated list of your organization's own webhook delivery attempts."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/webhooks/events"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/webhooks/events"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/webhooks/events"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/webhooks/events"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Replay a webhook delivery",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/events/:id/replay",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                "events",
+                ":id",
+                "replay"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "<id>",
+                  "description": "Webhook delivery attempt id (UUID)."
+                }
+              ]
+            },
+            "description": "Re-fires a specific webhook delivery attempt: the exact same payload through the same delivery path."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/webhooks/events/{id}/replay"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": ""
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/webhooks/events/{id}/replay"
+                }
+              },
+              "status": "Missing or invalid API key",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key, missing required scope",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/webhooks/events/{id}/replay"
+                }
+              },
+              "status": "Valid key, missing required scope",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"API key is valid but lacks the required scope for this endpoint.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "404 Resource not found",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/webhooks/events/{id}/replay"
+                }
+              },
+              "status": "Resource not found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "502 Upstream verification service unreachable",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/webhooks/events/{id}/replay"
+                }
+              },
+              "status": "Upstream verification service unreachable",
+              "code": 502,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Unable to reach the order/customer service right now\",\n    \"requestId\": \"5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

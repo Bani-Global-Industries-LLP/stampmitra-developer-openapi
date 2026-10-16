@@ -1,0 +1,36 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Validate OpenAPI 3.1 document
+        run: npm run validate
+      - name: Fixtures conform to the spec; validator, webhook and retry vectors self-check
+        run: npm run check
+      - name: Postman collection is up to date with openapi.json
+        run: |
+          node scripts/build-postman.mjs --out "$RUNNER_TEMP/postman.json"
+          diff -u postman.json "$RUNNER_TEMP/postman.json"
+      - name: Operation fixtures are up to date with openapi.json
+        run: |
+          node scripts/build-fixtures.mjs
+          git diff --exit-code -- fixtures/operations
+      - name: Mock server smoke test
+        run: npm run test:mock
+      - name: Dependency audit
+        run: npm audit --audit-level=high

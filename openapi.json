@@ -1,0 +1,3689 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "StampMitra Developer API",
+    "version": "1",
+    "summary": "Indian identity verification and e-Stamp Paper APIs for the StampMitra developer portal.",
+    "description": "The API-key Developer Suite: verification (PAN, GSTIN, vehicle RC, Voter ID, Driving Licence, Passport, CIN, Udyam, bank account), e-Stamp Paper, usage and request logs, and webhook events. Generated from the same data as the docs at https://developer.stampmitra.in. Sandbox keys (sk_test_) are free; production calls are metered per successful call.",
+    "termsOfService": "https://developer.stampmitra.in/legal/developer-terms",
+    "contact": {
+      "name": "StampMitra Developer Support",
+      "url": "https://developer.stampmitra.in/support"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-b2b.stampmitra.in",
+      "description": "StampMitra Developer API (sandbox keys use the same host with sk_test_ keys)"
+    }
+  ],
+  "externalDocs": {
+    "description": "Developer documentation",
+    "url": "https://developer.stampmitra.in/docs/auth"
+  },
+  "tags": [
+    {
+      "name": "Verification"
+    },
+    {
+      "name": "e-Stamp"
+    },
+    {
+      "name": "Usage & Logs"
+    },
+    {
+      "name": "Webhooks"
+    }
+  ],
+  "paths": {
+    "/v1/verify/pan": {
+      "post": {
+        "operationId": "pan-verify",
+        "summary": "Verify PAN",
+        "description": "Validates and verifies a PAN. Requires the `verification.pan.read` scope on the API key. Metered as `pan.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "pan": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "valid": {
+                      "type": "boolean"
+                    },
+                    "registeredName": {
+                      "type": "string"
+                    },
+                    "fatherName": {
+                      "type": "string"
+                    },
+                    "panStatus": {
+                      "type": "string"
+                    },
+                    "panStatusCode": {
+                      "type": "string"
+                    },
+                    "panStatusDescription": {
+                      "type": "string"
+                    },
+                    "nameMatchResult": {
+                      "type": "string"
+                    },
+                    "nameMatchScore": {
+                      "type": "string"
+                    },
+                    "aadhaarSeedingStatus": {
+                      "type": "string"
+                    },
+                    "aadhaarSeedingStatusDescription": {
+                      "type": "string"
+                    },
+                    "lastUpdatedAt": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-8F42K7",
+                  "pan": "ABCDE1234F",
+                  "type": "Individual",
+                  "valid": true,
+                  "registeredName": "RAHUL KUMAR",
+                  "fatherName": "SURESH KUMAR",
+                  "panStatus": "VALID",
+                  "panStatusCode": "E",
+                  "panStatusDescription": "Existing and valid PAN",
+                  "nameMatchResult": "MATCH",
+                  "nameMatchScore": "100",
+                  "aadhaarSeedingStatus": "y",
+                  "aadhaarSeedingStatusDescription": "Aadhaar linked",
+                  "lastUpdatedAt": "2023-04-01",
+                  "message": "PAN is Valid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "pan must match the format ABCDE1234F",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.pan.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "PAN documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/pan"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pan": {
+                    "type": "string",
+                    "description": "PAN, format ABCDE1234F."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name to match against records (max 256 chars)."
+                  }
+                },
+                "required": [
+                  "pan"
+                ]
+              },
+              "example": {
+                "pan": "ABCDE1234F",
+                "name": "Rahul Kumar"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/gstin": {
+      "post": {
+        "operationId": "gstin-verify",
+        "summary": "Verify GSTIN",
+        "description": "Validates and verifies a GSTIN. Requires the `verification.gstin.read` scope on the API key. Metered as `gstin.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/gstin`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "GSTIN": {
+                      "type": "string"
+                    },
+                    "valid": {
+                      "type": "boolean"
+                    },
+                    "legalName": {
+                      "type": "string"
+                    },
+                    "tradeName": {
+                      "type": "string"
+                    },
+                    "registrationStatus": {
+                      "type": "string"
+                    },
+                    "principalPlaceOfBusiness": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-9K21P4",
+                  "GSTIN": "07AAAAA1111A1Z1",
+                  "valid": true,
+                  "legalName": "Jane Doe Enterprises Private Limited",
+                  "tradeName": "Jane Doe Enterprises",
+                  "registrationStatus": "Active",
+                  "principalPlaceOfBusiness": "123, MG Road, Bengaluru, Karnataka, 560001",
+                  "message": "GSTIN Exists"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "gstin must match the format 07AAAAA1111A1Z1",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.gstin.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "GSTIN documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/gstin"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gstin": {
+                    "type": "string",
+                    "description": "15-character GSTIN."
+                  },
+                  "businessName": {
+                    "type": "string",
+                    "description": "Business name to match."
+                  }
+                },
+                "required": [
+                  "gstin"
+                ]
+              },
+              "example": {
+                "gstin": "07AAAAA1111A1Z1",
+                "businessName": "Jane Doe Enterprises"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/rc": {
+      "post": {
+        "operationId": "rc-verify",
+        "summary": "Verify Vehicle RC",
+        "description": "Validates and verifies a Vehicle RC. Requires the `verification.rc.read` scope on the API key. Metered as `rc.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/rc`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "regNo": {
+                      "type": "string"
+                    },
+                    "registrationStatus": {
+                      "type": "string"
+                    },
+                    "ownerName": {
+                      "type": "string"
+                    },
+                    "ownerFatherName": {
+                      "type": "string"
+                    },
+                    "vehicleClass": {
+                      "type": "string"
+                    },
+                    "vehicleManufacturerName": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "vehicleColor": {
+                      "type": "string"
+                    },
+                    "chassis": {
+                      "type": "string"
+                    },
+                    "engine": {
+                      "type": "string"
+                    },
+                    "registrationDate": {
+                      "type": "string"
+                    },
+                    "rcStatus": {
+                      "type": "string"
+                    },
+                    "rcExpiryDate": {
+                      "type": "string"
+                    },
+                    "insuranceUpto": {
+                      "type": "string"
+                    },
+                    "isCommercial": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-3D71Q9",
+                  "regNo": "MH12AB1234",
+                  "registrationStatus": "VALID",
+                  "ownerName": "RAHUL KUMAR",
+                  "ownerFatherName": "SURESH KUMAR",
+                  "vehicleClass": "LMV",
+                  "vehicleManufacturerName": "MARUTI SUZUKI",
+                  "model": "SWIFT",
+                  "vehicleColor": "WHITE",
+                  "chassis": "MA3ERLF1S00123456",
+                  "engine": "K12MN1234567",
+                  "registrationDate": "2019-05-14",
+                  "rcStatus": "ACTIVE",
+                  "rcExpiryDate": "2034-05-13",
+                  "insuranceUpto": "2025-05-13",
+                  "isCommercial": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "vehicleNumber must match the format MH12AB1234",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.rc.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "Vehicle RC documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/rc"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vehicleNumber": {
+                    "type": "string",
+                    "description": "Vehicle registration number."
+                  }
+                },
+                "required": [
+                  "vehicleNumber"
+                ]
+              },
+              "example": {
+                "vehicleNumber": "MH12AB1234"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/voter-id": {
+      "post": {
+        "operationId": "voter-id-verify",
+        "summary": "Verify Voter ID",
+        "description": "Validates and verifies a Voter ID. Requires the `verification.voter.read` scope on the API key. Metered as `voter.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/voter-id`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "valid": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "dob": {
+                      "type": "string"
+                    },
+                    "gender": {
+                      "type": "string"
+                    },
+                    "age": {
+                      "type": "integer"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-7H83M1",
+                  "valid": true,
+                  "name": "RAHUL KUMAR",
+                  "dob": "1990-01-01",
+                  "gender": "M",
+                  "age": 35,
+                  "address": "123, MG Road, Bengaluru",
+                  "state": "Karnataka"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "voterId must match the format ABC1234567",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.voter.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "Voter ID documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/voter-id"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "voterId": {
+                    "type": "string",
+                    "description": "EPIC / Voter ID number."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name to match against records."
+                  }
+                },
+                "required": [
+                  "voterId"
+                ]
+              },
+              "example": {
+                "voterId": "ABC1234567",
+                "name": "Rahul Kumar"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/driving-license": {
+      "post": {
+        "operationId": "driving-license-verify",
+        "summary": "Verify Driving Licence",
+        "description": "Validates and verifies a Driving Licence. Requires the `verification.dl.read` scope on the API key. Metered as `dl.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/driving-license`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "valid": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "fatherOrHusbandName": {
+                      "type": "string"
+                    },
+                    "dob": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "validUpto": {
+                      "type": "string"
+                    },
+                    "dlStatus": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-2Q56T8",
+                  "valid": true,
+                  "name": "RAHUL KUMAR",
+                  "fatherOrHusbandName": "SURESH KUMAR",
+                  "dob": "1990-01-01",
+                  "address": "123, MG Road, Bengaluru",
+                  "validUpto": "2030-12-31",
+                  "dlStatus": "ACTIVE"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "dlNumber must match the format MH1420110012345",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.dl.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "Driving Licence documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/driving-license"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dlNumber": {
+                    "type": "string",
+                    "description": "Driving licence number."
+                  },
+                  "dob": {
+                    "type": "string",
+                    "description": "Date of birth (YYYY-MM-DD)."
+                  }
+                },
+                "required": [
+                  "dlNumber",
+                  "dob"
+                ]
+              },
+              "example": {
+                "dlNumber": "MH1420110012345",
+                "dob": "1990-01-01"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/passport": {
+      "post": {
+        "operationId": "passport-verify",
+        "summary": "Verify Passport",
+        "description": "Validates and verifies a Passport. Requires the `verification.passport.read` scope on the API key. Metered as `passport.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/passport`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "valid": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "dob": {
+                      "type": "string"
+                    },
+                    "applicationType": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-4W19X6",
+                  "valid": true,
+                  "name": "RAHUL KUMAR",
+                  "dob": "1990-01-01",
+                  "applicationType": "Fresh"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "fileNumber must match the format PA1079341954215",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.passport.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "Passport documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/passport"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fileNumber": {
+                    "type": "string",
+                    "description": "Passport application file number."
+                  },
+                  "dob": {
+                    "type": "string",
+                    "description": "Date of birth (YYYY-MM-DD)."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name to match against records."
+                  }
+                },
+                "required": [
+                  "fileNumber",
+                  "dob"
+                ]
+              },
+              "example": {
+                "fileNumber": "PA1079341954215",
+                "dob": "1990-01-01",
+                "name": "Rahul Kumar"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/cin": {
+      "post": {
+        "operationId": "cin-verify",
+        "summary": "Verify Company CIN",
+        "description": "Validates and verifies a Company CIN. Requires the `verification.cin.read` scope on the API key. Metered as `cin.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/cin`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "valid": {
+                      "type": "boolean"
+                    },
+                    "companyName": {
+                      "type": "string"
+                    },
+                    "incorporationDate": {
+                      "type": "string"
+                    },
+                    "cinStatus": {
+                      "type": "string"
+                    },
+                    "companyStatus": {
+                      "type": "string"
+                    },
+                    "directors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "din": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "designation": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "registrationNumber": {
+                      "type": "string"
+                    },
+                    "incorporationCountry": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-6R38Y3",
+                  "valid": true,
+                  "companyName": "JANE DOE ENTERPRISES PRIVATE LIMITED",
+                  "incorporationDate": "2015-03-12",
+                  "cinStatus": "ACTIVE",
+                  "companyStatus": "Active",
+                  "directors": [
+                    {
+                      "din": "01234567",
+                      "name": "RAHUL KUMAR",
+                      "designation": "Director"
+                    }
+                  ],
+                  "email": "contact@example.com",
+                  "registrationNumber": "U74999DL2015PTC284009",
+                  "incorporationCountry": "India"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "cin must match the format U74999DL2015PTC284009",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.cin.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "Company CIN documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/cin"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cin": {
+                    "type": "string",
+                    "description": "Corporate Identification Number."
+                  }
+                },
+                "required": [
+                  "cin"
+                ]
+              },
+              "example": {
+                "cin": "U74999DL2015PTC284009"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/udyam": {
+      "post": {
+        "operationId": "udyam-verify",
+        "summary": "Verify Udyam Registration",
+        "description": "Validates and verifies a Udyam Registration. Requires the `verification.udyam.read` scope on the API key. Metered as `udyam.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/udyam`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "found": {
+                      "type": "boolean"
+                    },
+                    "udyamStatus": {
+                      "type": "string"
+                    },
+                    "enterpriseName": {
+                      "type": "string"
+                    },
+                    "enterpriseType": {
+                      "type": "string"
+                    },
+                    "organizationType": {
+                      "type": "string"
+                    },
+                    "certificateUrl": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-5U29V7",
+                  "found": true,
+                  "udyamStatus": "Active",
+                  "enterpriseName": "Jane Doe Enterprises",
+                  "enterpriseType": "Proprietorship",
+                  "organizationType": "Micro",
+                  "certificateUrl": "https://udyamregistration.gov.in/Udyam_Download/UDYAM-MH-12-1234567.pdf"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "udyamNumber must match the format UDYAM-MH-12-1234567",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.udyam.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "Udyam Registration documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/udyam"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "udyamNumber": {
+                    "type": "string",
+                    "description": "Udyam Registration Number (URN)."
+                  }
+                },
+                "required": [
+                  "udyamNumber"
+                ]
+              },
+              "example": {
+                "udyamNumber": "UDYAM-MH-12-1234567"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/pan-to-gstin": {
+      "post": {
+        "operationId": "pan-to-gstin-verify",
+        "summary": "Verify PAN to GSTIN",
+        "description": "Validates and verifies a PAN to GSTIN. Requires the `verification.pan_to_gstin.read` scope on the API key. Metered as `pan.to_gstin` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan-to-gstin`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "found": {
+                      "type": "boolean"
+                    },
+                    "gstins": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "gstin": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-1L67Z5",
+                  "found": true,
+                  "gstins": [
+                    {
+                      "gstin": "07AAAAA1111A1Z1",
+                      "state": "Delhi",
+                      "status": "Active"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "pan must match the format ABCDE1234F",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.pan_to_gstin.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "PAN to GSTIN documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/pan-to-gstin"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pan": {
+                    "type": "string",
+                    "description": "PAN to resolve to associated GSTIN(s)."
+                  }
+                },
+                "required": [
+                  "pan"
+                ]
+              },
+              "example": {
+                "pan": "ABCDE1234F"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/pan-to-udyam": {
+      "post": {
+        "operationId": "pan-to-udyam-verify",
+        "summary": "Verify PAN to Udyam",
+        "description": "Validates and verifies a PAN to Udyam. Requires the `verification.pan_to_udyam.read` scope on the API key. Metered as `pan.to_udyam` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan-to-udyam`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referenceId": {
+                      "type": "string"
+                    },
+                    "found": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "udyamNumber": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "referenceId": "SMV-20260927-0A44B2",
+                  "found": true,
+                  "status": "Active",
+                  "udyamNumber": "UDYAM-MH-12-1234567"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "pan must match the format ABCDE1234F",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.pan_to_udyam.read",
+        "x-price-inr-per-successful-call": 2,
+        "externalDocs": {
+          "description": "PAN to Udyam documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/pan-to-udyam"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pan": {
+                    "type": "string",
+                    "description": "PAN to resolve to associated Udyam registration(s)."
+                  }
+                },
+                "required": [
+                  "pan"
+                ]
+              },
+              "example": {
+                "pan": "ABCDE1234F"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/verify/bank-account": {
+      "post": {
+        "operationId": "bank-account-verify",
+        "summary": "Verify Bank Account",
+        "description": "Validates and verifies a Bank Account. Requires the `verification.bank-account.read` scope on the API key. Metered as `bank-account.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/bank-account`, including its `referenceId` field.",
+        "tags": [
+          "Verification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accountNumber": {
+                      "type": "string"
+                    },
+                    "ifsc": {
+                      "type": "string"
+                    },
+                    "bankName": {
+                      "type": "string"
+                    },
+                    "branchName": {
+                      "type": "string"
+                    },
+                    "accountExists": {
+                      "type": "boolean"
+                    },
+                    "beneficiaryName": {
+                      "type": "string"
+                    },
+                    "nameMatch": {
+                      "type": "boolean"
+                    },
+                    "nameMatchScore": {
+                      "type": "number"
+                    },
+                    "accountStatus": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "accountNumber": "000123456789",
+                  "ifsc": "ICIC0001234",
+                  "bankName": "ICICI Bank",
+                  "branchName": "Andheri West",
+                  "accountExists": true,
+                  "beneficiaryName": "RAVI KUMAR",
+                  "nameMatch": true,
+                  "nameMatchScore": 0.95,
+                  "accountStatus": "ACTIVE"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "accountNumber must be a 9-18 digit numeric bank account number",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Insufficient wallet balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "PAYMENT_REQUIRED",
+                    "message": "Insufficient fulfilment wallet balance to cover this call.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TOO_MANY_REQUESTS",
+                    "message": "Rate limit exceeded: 60 requests per 60 seconds for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "verification.bank-account.read",
+        "x-price-inr-per-successful-call": 4,
+        "externalDocs": {
+          "description": "Bank Account documentation",
+          "url": "https://developer.stampmitra.in/docs/verification/bank-account"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accountNumber": {
+                    "type": "string",
+                    "description": "9-18 digit numeric bank account number."
+                  },
+                  "ifsc": {
+                    "type": "string",
+                    "description": "11-character IFSC code, e.g. ICIC0001234."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Beneficiary name to match."
+                  }
+                },
+                "required": [
+                  "accountNumber",
+                  "ifsc"
+                ]
+              },
+              "example": {
+                "accountNumber": "000123456789",
+                "ifsc": "ICIC0001234",
+                "name": "Ravi Kumar"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/services": {
+      "get": {
+        "operationId": "estamp-services-list",
+        "summary": "List entitled services (generic catalog, covers e-Stamp services too)",
+        "description": "Returns every service (verification AND e-Stamp) this organization is entitled to. There is no e-Stamp-specific catalog endpoint yet; e-Stamp instruments surface here as regular service entries once entitled.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "services": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "serviceCode": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "active": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "services": [
+                    {
+                      "serviceCode": "estamp.instrument.rent_agreement",
+                      "name": "Rent Agreement e-Stamp",
+                      "active": true
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "services.read",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "e-Stamp Catalog Discovery documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-catalog"
+        }
+      }
+    },
+    "/v1/services/{serviceCode}": {
+      "get": {
+        "operationId": "estamp-services-get",
+        "summary": "Get one entitled service's detail",
+        "description": "Detail for a single serviceCode, if entitled and active.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "serviceCode",
+            "in": "path",
+            "required": true,
+            "description": "The service's unique code.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "services.read",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "e-Stamp Catalog Discovery documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-catalog"
+        }
+      }
+    },
+    "/v1/estamp/schema/{serviceCode}": {
+      "get": {
+        "operationId": "estamp-schema",
+        "summary": "Get the e-Stamp input field schema",
+        "description": "Generic form-rendering metadata for the e-Stamp product. `serviceCode` is accepted for forward-compatible route shape parity with other schema lookups; e-Stamp has exactly one schema regardless of its value. Requires the `estamp.read` scope.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "serviceCode",
+            "in": "path",
+            "required": true,
+            "description": "serviceCode from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "e-Stamp Schema / Options documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-schema-options"
+        }
+      }
+    },
+    "/v1/estamp/states": {
+      "get": {
+        "operationId": "estamp-states",
+        "summary": "List e-Stamp-eligible states",
+        "description": "Served from StampMitra's synced master-data catalogue. Requires the `estamp.read` scope.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "State / Instrument / Article Lookup documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-state-instrument-article"
+        }
+      }
+    },
+    "/v1/estamp/states/{stateCode}/instruments": {
+      "get": {
+        "operationId": "estamp-instruments",
+        "summary": "List instruments (articles) for a state",
+        "description": "There is no separate instrument entity distinct from an article - this returns the same state-scoped article catalogue as the articles endpoint below. Requires the `estamp.read` scope.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "stateCode",
+            "in": "path",
+            "required": true,
+            "description": "stateCode from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "State / Instrument / Article Lookup documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-state-instrument-article"
+        }
+      }
+    },
+    "/v1/estamp/instruments/{instrumentCode}/articles": {
+      "get": {
+        "operationId": "estamp-articles",
+        "summary": "List articles for an instrument",
+        "description": "`instrumentCode` is treated as a state code here - there is no article sub-breakdown below the state-scoped list. Requires the `estamp.read` scope.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "instrumentCode",
+            "in": "path",
+            "required": true,
+            "description": "instrumentCode from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "State / Instrument / Article Lookup documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-state-instrument-article"
+        }
+      }
+    },
+    "/v1/estamp/duty/calculate": {
+      "post": {
+        "operationId": "estamp-duty-calc",
+        "summary": "Calculate authoritative e-Stamp duty + service charges",
+        "description": "Runs the one authoritative pricing calculation; the response amount is never recalculated or overridden client-side. Requires the `estamp.duty.calculate` scope. Metered against your fulfilment wallet.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "Duty / Value Calculation documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-duty-value"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/estamp/orders/{orderId}/parties": {
+      "post": {
+        "operationId": "estamp-parties-add",
+        "summary": "Attach/correct e-Stamp order party (customer) details",
+        "description": "Attaches or corrects the customer/party details on an existing e-Stamp order. Requires the `estamp.parties.write` scope. Metered against your fulfilment wallet.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "description": "orderId from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "Parties documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-parties"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orders": {
+      "post": {
+        "operationId": "estamp-order-create",
+        "summary": "Create an order (generic - works for any entitled serviceCode, including e-Stamp)",
+        "description": "Generic order-creation endpoint. For e-Stamp, pass an e-Stamp `serviceCode` (from GET /v1/services) and put instrument/party/value details in the free-form `details` object. There is no e-Stamp-specific request/response contract yet (no first-class `state`, `article`, `parties[]` fields) - the shape of `details` for e-Stamp is not finalized upstream.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "orders.create",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "e-Stamp Order Creation documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-orders"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "externalOrderId": {
+                    "type": "string",
+                    "description": "Your own reference for this order."
+                  },
+                  "externalCustomerId": {
+                    "type": "string",
+                    "description": "Your own reference for the customer."
+                  },
+                  "serviceCode": {
+                    "type": "string",
+                    "description": "The entitled service to order (e.g. an estamp.* code)."
+                  },
+                  "details": {
+                    "type": "object",
+                    "description": "Free-form service-specific payload (e-Stamp field shape is not finalized)."
+                  }
+                },
+                "required": [
+                  "externalOrderId",
+                  "externalCustomerId",
+                  "serviceCode"
+                ]
+              },
+              "example": {
+                "externalOrderId": "ord_ext_123",
+                "externalCustomerId": "cust_ext_456",
+                "serviceCode": "estamp.instrument.rent_agreement",
+                "details": {
+                  "state": "MH",
+                  "stampValue": 500,
+                  "note": "Shape not finalized - illustrative only"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orders/{id}": {
+      "get": {
+        "operationId": "estamp-order-get",
+        "summary": "Get an order",
+        "description": "Fetch an order by its B2B-assigned id.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "orders.read",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "e-Stamp Order Creation documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-orders"
+        }
+      }
+    },
+    "/v1/orders/{id}/status": {
+      "get": {
+        "operationId": "estamp-order-status",
+        "summary": "Get order status",
+        "description": "Poll the current lifecycle status of an order.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "orders.read",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "e-Stamp Order Creation documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-orders"
+        }
+      }
+    },
+    "/v1/payments/intents": {
+      "post": {
+        "operationId": "estamp-payment-intent-create",
+        "summary": "Create a payment intent",
+        "description": "Create a payment intent (Razorpay-backed) for an order.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "payments.write",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "Payment documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-payment"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/payments/intents/{id}": {
+      "get": {
+        "operationId": "estamp-payment-intent-get",
+        "summary": "Get a payment intent",
+        "description": "Fetch the current state of a payment intent.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "payments.read",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "Payment documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-payment"
+        }
+      }
+    },
+    "/v1/orders/{id}/payment": {
+      "get": {
+        "operationId": "estamp-order-payment",
+        "summary": "Get an order's payment",
+        "description": "Fetch the payment associated with a given order.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "orders.read",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "Payment documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-payment"
+        }
+      }
+    },
+    "/v1/orders/{id}/documents": {
+      "get": {
+        "operationId": "estamp-order-documents",
+        "summary": "List documents for an order",
+        "description": "List generated documents (e.g. the e-Stamp certificate PDF) for a completed order.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "documents.read",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "Order Status & Document Access documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-documents"
+        }
+      }
+    },
+    "/v1/orders/{id}/documents/{documentId}/download": {
+      "get": {
+        "operationId": "estamp-order-document-download",
+        "summary": "Get a document download URL",
+        "description": "Get a (typically short-lived, signed) URL to download a specific document.",
+        "tags": [
+          "e-Stamp"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "description": "documentId from the URL path.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "documents.read",
+        "x-price-inr-per-successful-call": 5,
+        "externalDocs": {
+          "description": "Order Status & Document Access documentation",
+          "url": "https://developer.stampmitra.in/docs/estamp/estamp-documents"
+        }
+      }
+    },
+    "/v1/usage/summary": {
+      "get": {
+        "operationId": "usage-summary",
+        "summary": "Usage summary",
+        "description": "Current billing period totals, calls by service, calls by day and a 6-month calls-by-period trend for the organization that owns the API key.",
+        "tags": [
+          "Usage & Logs"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "currentPeriod": {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": "string"
+                        },
+                        "end": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "totalApiRequests": {
+                      "type": "integer"
+                    },
+                    "callsByService": {
+                      "type": "object",
+                      "properties": {
+                        "pan.verify": {
+                          "type": "integer"
+                        },
+                        "estamp": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "callsByPeriod": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "period": {
+                            "type": "string"
+                          },
+                          "count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "callsByDay": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "day": {
+                            "type": "string"
+                          },
+                          "count": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "currentPeriod": {
+                    "start": "2026-10-01T00:00:00.000Z",
+                    "end": "2026-11-01T00:00:00.000Z"
+                  },
+                  "totalApiRequests": 1240,
+                  "callsByService": {
+                    "pan.verify": 800,
+                    "estamp": 440
+                  },
+                  "callsByPeriod": [
+                    {
+                      "period": "2026-10",
+                      "count": 1240
+                    }
+                  ],
+                  "callsByDay": [
+                    {
+                      "day": "2026-10-15",
+                      "count": 62
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/logs": {
+      "get": {
+        "operationId": "api-logs-list",
+        "summary": "List request logs",
+        "description": "Paginated request-log listing for the organization that owns the API key. Use nextCursor to fetch the next page.",
+        "tags": [
+          "Usage & Logs"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "ISO date/time lower bound (inclusive).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "ISO date/time upper bound (exclusive).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "service",
+            "in": "query",
+            "required": false,
+            "description": "Filter to one service code, e.g. estamp.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "success or failure.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Page size, default 50, max 200.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "description": "Opaque cursor from a previous response.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "actorType": {
+                            "type": "string"
+                          },
+                          "actorId": {
+                            "type": "null"
+                          },
+                          "service": {
+                            "type": "string"
+                          },
+                          "metadata": {
+                            "type": "null"
+                          }
+                        }
+                      }
+                    },
+                    "nextCursor": {
+                      "type": "null"
+                    }
+                  }
+                },
+                "example": {
+                  "items": [
+                    {
+                      "id": "b3f1c2a4-7d5e-4a6b-9c8d-1e2f3a4b5c6d",
+                      "createdAt": "2026-10-15T09:41:07.000Z",
+                      "actorType": "api_key",
+                      "actorId": null,
+                      "service": "pan.verify",
+                      "metadata": null
+                    }
+                  ],
+                  "nextCursor": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid filter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "status must be 'success' or 'failure'",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/webhooks/events": {
+      "get": {
+        "operationId": "webhook-events-list",
+        "summary": "List webhook delivery attempts",
+        "description": "Paginated list of your organization's own webhook delivery attempts.",
+        "tags": [
+          "Webhooks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Page size.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "description": "Opaque cursor from a previous response.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "webhooks.events.read"
+      }
+    },
+    "/v1/webhooks/events/{id}/replay": {
+      "post": {
+        "operationId": "webhook-events-replay",
+        "summary": "Replay a webhook delivery",
+        "description": "Re-fires a specific webhook delivery attempt: the exact same payload through the same delivery path.",
+        "tags": [
+          "Webhooks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Webhook delivery attempt id (UUID).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Missing or invalid API key.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Valid key, missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key is valid but lacks the required scope for this endpoint.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "NOT_FOUND",
+                    "message": "The requested resource was not found.",
+                    "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream verification service unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Unable to reach the order/customer service right now",
+                    "requestId": "5c1c1e9e-2f7b-4b7a-9b0e-0f1a2b3c4d5e"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-required-scope": "webhooks.events.replay",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "API key as `Authorization: Bearer sk_test_...` or `sk_live_...`."
+      },
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "Alternative to the Authorization header."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message",
+              "requestId"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "requestId": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "POST /v1/verify/driving-license - error-401",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/verify/driving-license"
+  },
+  "scenario": "error-401",
+  "source": "spec-example",
+  "description": "Missing or invalid API key",
+  "request": {
+    "method": "POST",
+    "path": "/v1/verify/driving-license",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "dlNumber": "MH1420110012345",
+      "dob": "1990-01-01"
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "Content-Type": "application/json",
+      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+    },
+    "body": {
+      "error": {
+        "code": "UNAUTHORIZED",
+        "message": "Missing or invalid API key.",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}
