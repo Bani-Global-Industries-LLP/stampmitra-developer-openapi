@@ -26,6 +26,7 @@ The public **contract mirror** for the [StampMitra Developer API](https://develo
 | `fixtures/retry-scenarios.json` | Status sequences (`[503,503,200]`) with expected attempts per method / idempotency / billed-POST rule |
 | `scripts/` | `validate-spec`, `check-fixtures`, `build-fixtures`, `build-postman`, `build-webhook-vectors`, `sync-from-portal`, `mock-server`, and their tests |
 | `docs/reserving-package-names.md` | Checklist for claiming the SDK package names in all 7 registries |
+| `docs/registry-submission.md` | Ordered owner checklist for submitting v0.1.0 to each registry |
 
 Operations are identified by **METHOD + path template** (`POST /v1/verify/pan`). `operationId` values exist but SDKs must not depend on them.
 

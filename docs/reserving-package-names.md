@@ -1,5 +1,7 @@
 # Reserving the SDK package names
 
+> Ordered owner checklist with exact form values: see [registry-submission.md](registry-submission.md). Where the two differ, that file wins (it was checked against the actual repos on 2026-10-16: Maven artifact `stampmitra-java`, NuGet packages `StampMitra` / `StampMitra.Extensions.DependencyInjection`, Go variable `RELEASE_ENABLED`).
+
 Step-by-step for claiming the StampMitra names in all seven registries **before** anyone else does, and for wiring GitHub release workflows to publish without long-lived tokens where the registry supports it.
 
 Conventions used below:
@@ -14,10 +16,10 @@ Conventions used below:
 | npm | scope `@stampmitra`, package `@stampmitra/sdk` | `stampmitra-developer-node` | `NPM_PUBLISH=true` | yes (trusted publisher) |
 | PyPI | project `stampmitra` | `stampmitra-developer-python` | `PYPI_PUBLISH=true` | yes (trusted publisher, env `pypi`) |
 | Packagist | vendor `stampmitra`, package `stampmitra/stampmitra-php` | `stampmitra-developer-php` | none (Packagist pulls tags via webhook/app) | n/a |
-| Maven Central | namespace `in.stampmitra` | `stampmitra-developer-java` | `MAVEN_PUBLISH=true` (proposed) | no: token + GPG key as secrets (verify) |
-| Go | module `github.com/Bani-Global-Industries-LLP/stampmitra-developer-go` | `stampmitra-developer-go` | none (a tag is the release) | n/a |
-| NuGet | ID prefix `StampMitra.`, package `StampMitra.Sdk` | `stampmitra-developer-dotnet` | `NUGET_PUBLISH=true` (proposed) | yes (verify) |
-| RubyGems | gem `stampmitra` | `stampmitra-developer-ruby` | `RUBYGEMS_PUBLISH=true` (proposed) | yes (trusted publisher, verify) |
+| Maven Central | namespace `in.stampmitra` | `stampmitra-developer-java` | `MAVEN_PUBLISH=true` | no: token + GPG key as secrets (verify) |
+| Go | module `github.com/Bani-Global-Industries-LLP/stampmitra-developer-go` | `stampmitra-developer-go` | `RELEASE_ENABLED=true` (optional; a tag is the release) | n/a |
+| NuGet | ID prefix `StampMitra`, packages `StampMitra`, `StampMitra.Extensions.DependencyInjection` | `stampmitra-developer-dotnet` | `NUGET_PUBLISH=true` (+ `NUGET_USER`) | yes (verify) |
+| RubyGems | gem `stampmitra` | `stampmitra-developer-ruby` | `RUBYGEMS_PUBLISH=true` | yes (trusted publisher, verify) |
 
 The variable names for Java, .NET and Ruby are a proposal for consistency; match whatever the `release.yml` in those repos actually reads.
 
@@ -59,7 +61,7 @@ The variable names for Java, .NET and Ruby are a proposal for consistency; match
 Composer vendors are not a separate registration: the vendor `stampmitra` is owned by whoever submits the first package under it, so submit promptly.
 
 1. Sign in at https://packagist.org (the GitHub login is simplest) with the organisation account and enable 2FA.
-2. https://packagist.org/packages/submit > Repository URL `https://github.com/Bani-Global-Industries-LLP/stampmitra-developer-php` > Check > Submit. The name `stampmitra/stampmitra-php` comes from `composer.json`. Packagist needs the repo's default branch and tags to exist (the repos currently have no `main`; create it first, **verify in the registry UI**).
+2. https://packagist.org/packages/submit > Repository URL `https://github.com/Bani-Global-Industries-LLP/stampmitra-developer-php` > Check > Submit. The name `stampmitra/stampmitra-php` comes from `composer.json`. Packagist needs the repo's default branch and tags to exist (`main` exists in all repos).
 3. Auto-update, one of:
    - **Packagist GitHub app** (recommended): install it on the repo/org from the package page's "Enable auto-update" prompt.
    - **Webhook**: GitHub repo > Settings > Webhooks > Add webhook: Payload URL `https://packagist.org/api/github?username=<packagist-username>`, content type `application/json`, secret = the API token from your Packagist profile (Profile > Show API Token), event "Just the push event".
@@ -73,7 +75,7 @@ Maven Central publishing goes through the **Sonatype Central Portal** (https://c
 2. **Account** > **View Namespaces** > **Add Namespace**, enter `in.stampmitra` (reverse of the domain `stampmitra.in`, which the company owns).
 3. Central shows a verification key. Verify domain ownership with a **DNS TXT record**: at the DNS host for `stampmitra.in`, create a TXT record on the apex host (`@`, i.e. `stampmitra.in`) whose value is exactly the key shown (**verify the exact host and value format in the registry UI**; it is the key string Central generates for that namespace). Wait for propagation (`dig +short TXT stampmitra.in`), then click **Verify Namespace**. Status becomes "Verified" and the namespace is yours; groupId `in.stampmitra` (and sub-groups like `in.stampmitra.sdk`) can now be published.
 4. Publishing credentials (Central does not offer GitHub OIDC trusted publishing as far as we know; **verify in the registry UI**): Account > **Generate User Token** (a username/password pair for the publishing plugin), and a GPG key pair for signing (`gpg --full-generate-key`, publish the public key to `keyserver.ubuntu.com` and `keys.openpgp.org`). Store the token pair and the armored private key + passphrase as GitHub **secrets** in `stampmitra-developer-java`, ideally scoped to an environment `maven-central` with required reviewers.
-5. Build with the `central-publishing-maven-plugin` (`org.sonatype.central`) or Gradle equivalent; Central requires sources jar, javadoc jar, signatures and a complete POM (name, description, url, licenses, developers, scm). Suggested coordinates: `in.stampmitra:stampmitra-sdk`.
+5. Build with the `central-publishing-maven-plugin` (`org.sonatype.central`) or Gradle equivalent; Central requires sources jar, javadoc jar, signatures and a complete POM (name, description, url, licenses, developers, scm). Coordinates: `in.stampmitra:stampmitra-java`.
 6. Flip `MAVEN_PUBLISH` to `true` (proposed variable) when the Java `release.yml` is ready. Published versions are immutable.
 
 ## 5. Go (`github.com/Bani-Global-Industries-LLP/stampmitra-developer-go`)
@@ -89,7 +91,7 @@ Go has no registry to reserve a name in: the module path is the repo path, and t
 
 1. Sign in at https://www.nuget.org with a Microsoft account for the company, enable 2FA, and (recommended) create an **organization** under Account to own the packages (**verify in the registry UI**).
 2. **ID prefix reservation** (so only you can publish `StampMitra.*`): request it from the nuget.org site, Account menu > "Request ID prefix reservation" or the form described at https://learn.microsoft.com/nuget/nuget-org/id-prefix-reservation (**verify in the registry UI** which entry point is current; historically it was an email/form reviewed manually, taking a few days). Request prefix `StampMitra.` and be ready to show that you own `stampmitra.in` / the brand. Reserved packages get a padlock badge.
-3. First package: `StampMitra.Sdk`. Until the prefix is approved, push `0.1.0` early to hold the exact ID: create an API key (Account > API Keys, scope Push, glob `StampMitra.*`, short expiry) and `dotnet nuget push StampMitra.Sdk.0.1.0.nupkg -k <key> -s https://api.nuget.org/v3/index.json`.
+3. First package: `StampMitra`. Until the prefix is approved, push `0.1.0` early to hold the exact ID: create an API key (Account > API Keys, scope Push, glob `StampMitra.*`, short expiry) and `dotnet nuget push StampMitra.Sdk.0.1.0.nupkg -k <key> -s https://api.nuget.org/v3/index.json`.
 4. Trusted publishing from GitHub Actions (OIDC via the `NuGet/login` action) exists on nuget.org (**verify in the registry UI**: Account > Trusted Publishing, with owner `Bani-Global-Industries-LLP`, repo `stampmitra-developer-dotnet`, workflow `release.yml`, optional environment `nuget`). Otherwise store the API key as a secret in an environment.
 5. Flip `NUGET_PUBLISH` to `true` (proposed variable).
 
