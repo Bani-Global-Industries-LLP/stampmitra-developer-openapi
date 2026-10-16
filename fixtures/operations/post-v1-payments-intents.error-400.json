@@ -1,0 +1,39 @@
+{
+  "name": "POST /v1/payments/intents - error-400",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/payments/intents"
+  },
+  "scenario": "error-400",
+  "source": "spec-example",
+  "description": "Request failed validation, or the organization is not entitled to the service.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/payments/intents",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "externalOrderId": "ord_ext_123",
+      "amountMinor": 50000,
+      "currency": "INR",
+      "paymentConnectionId": "pc_8d1f3a2b"
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "pan must match the format ABCDE1234F",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

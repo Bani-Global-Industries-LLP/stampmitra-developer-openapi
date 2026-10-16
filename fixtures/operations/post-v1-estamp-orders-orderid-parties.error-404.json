@@ -1,0 +1,38 @@
+{
+  "name": "POST /v1/estamp/orders/{orderId}/parties - error-404",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/{orderId}/parties"
+  },
+  "scenario": "error-404",
+  "source": "spec-example",
+  "description": "The requested resource does not exist for your organization.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/ord_ext_123/parties",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "customerName": "Rahul Kumar",
+      "customerMobile": "+919876543210",
+      "customerEmail": "rahul@example.com"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "The requested resource was not found.",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

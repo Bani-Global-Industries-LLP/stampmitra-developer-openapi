@@ -5,7 +5,7 @@
     "path": "/v1/services/{serviceCode}"
   },
   "scenario": "success",
-  "source": "illustrative",
+  "source": "spec-example",
   "description": "Success",
   "request": {
     "method": "GET",
@@ -18,13 +18,23 @@
   "response": {
     "status": 200,
     "headers": {
-      "Content-Type": "application/json",
-      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      "Content-Type": "application/json"
     },
     "body": {
       "serviceCode": "estamp.instrument.rent_agreement",
       "name": "Rent Agreement e-Stamp",
-      "active": true
+      "category": "estamp",
+      "basePrice": "500.00",
+      "currency": "INR",
+      "isActive": true,
+      "gstRatePercent": "18.00",
+      "defaultGovernmentFee": null,
+      "processingTimeHours": 24,
+      "guestCheckoutEnabled": false,
+      "requiresDocuments": true,
+      "uiSchema": null,
+      "entitled": true,
+      "entitlementUpdatedAt": "2026-09-01T10:00:00.000Z"
     }
   }
 }

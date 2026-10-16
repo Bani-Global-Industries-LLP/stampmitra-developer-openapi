@@ -1,0 +1,31 @@
+{
+  "name": "GET /v1/estamp/states/{stateCode}/instruments - error-404",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/states/{stateCode}/instruments"
+  },
+  "scenario": "error-404",
+  "source": "spec-example",
+  "description": "The requested resource does not exist for your organization.",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/states/MH/instruments",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "The requested resource was not found.",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

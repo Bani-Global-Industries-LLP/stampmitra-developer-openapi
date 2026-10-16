@@ -29,8 +29,16 @@ jobs:
       - name: Operation fixtures are up to date with openapi.json
         run: |
           node scripts/build-fixtures.mjs
-          git diff --exit-code -- fixtures/operations
+          git diff --exit-code -- fixtures/operations fixtures/webhooks
       - name: Mock server smoke test
         run: npm run test:mock
+      - name: Mock server conformance (every fixture replayed, byte-equal)
+        run: npm run test:conformance
+      - name: Sync guard (never overwrite a newer spec with an older one)
+        run: npm run test:sync
+      - name: Webhook vectors are up to date
+        run: |
+          node scripts/build-webhook-vectors.mjs
+          git diff --exit-code -- fixtures/webhook-signatures.json
       - name: Dependency audit
         run: npm audit --audit-level=high

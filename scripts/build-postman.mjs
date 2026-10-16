@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Generates postman.json (Postman Collection v2.1) from openapi.json.
 // Mirrors src/lib/postman.ts of the StampMitra developer portal so the output matches
-// https://developer.stampmitra.in/postman.json byte-for-byte (modulo the base URL taken from `servers[0]`).
+// https://developer.stampmitra.in/postman.json byte-for-byte (the check is `npm run check` -> postman parity).
 // Usage: node scripts/build-postman.mjs [--spec openapi.json] [--out postman.json]
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -12,18 +12,31 @@ const METHODS = ["get", "post", "put", "patch", "delete"];
 
 const pickExample = (content) => content?.["application/json"]?.example;
 
-function requestItem(path, method, op) {
-  const params = op.parameters ?? [];
+/** Resolves a `#/components/<kind>/<name>` reference (shared responses/parameters). */
+function deref(doc, value) {
+  const target = typeof value?.$ref === "string" ? value.$ref : undefined;
+  if (!target) return value;
+  const found = target.replace(/^#\//, "").split("/").reduce((node, key) => node?.[key], doc);
+  return found ?? value;
+}
+
+function requestItem(doc, path, method, op) {
+  const params = (op.parameters ?? []).map((p) => deref(doc, p));
   const pathVars = params.filter((p) => p.in === "path").map((p) => ({ key: p.name, value: `<${p.name}>`, description: p.description }));
   const query = params
     .filter((p) => p.in === "query")
     .map((p) => ({ key: p.name, value: "", description: p.description, disabled: !p.required }));
   const bodyExample = pickExample(op.requestBody?.content);
+  // Optional header parameters (Idempotency-Key) are listed but disabled so they are one click away.
+  const headerParams = params
+    .filter((p) => p.in === "header")
+    .map((p) => ({ key: p.name, value: "", description: p.description, disabled: !p.required }));
 
-  const responses = Object.entries(op.responses ?? {}).map(([status, res]) => {
+  const responses = Object.entries(op.responses ?? {}).map(([status, r]) => {
+    const res = deref(doc, r);
     const example = pickExample(res.content);
     return {
-      name: `${status} ${res.description ?? ""}`.trim(),
+      name: `${status} ${String(res.description ?? "").split(/[.,:(]/)[0]}`.trim(),
       originalRequest: { method: method.toUpperCase(), url: { raw: `{{baseUrl}}${path}` } },
       status: res.description ?? status,
       code: Number(status),
@@ -38,7 +51,10 @@ function requestItem(path, method, op) {
     name: op.summary ?? `${method.toUpperCase()} ${path}`,
     request: {
       method: method.toUpperCase(),
-      header: bodyExample === undefined ? [] : [{ key: "Content-Type", value: "application/json" }],
+      header: [
+        ...(bodyExample === undefined ? [] : [{ key: "Content-Type", value: "application/json" }]),
+        ...headerParams,
+      ],
       url: {
         raw: `{{baseUrl}}/${segments.join("/")}`,
         host: ["{{baseUrl}}"],
@@ -63,7 +79,7 @@ export function buildPostman(doc) {
       if (!op) continue;
       const tag = op.tags?.[0] ?? "Other";
       if (!folders.has(tag)) folders.set(tag, []);
-      folders.get(tag).push(requestItem(path, method, op));
+      folders.get(tag).push(requestItem(doc, path, method, op));
     }
   }
   const order = doc.tags.map((t) => t.name);

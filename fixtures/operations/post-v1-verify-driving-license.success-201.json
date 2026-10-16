@@ -1,0 +1,40 @@
+{
+  "name": "POST /v1/verify/driving-license - success-201",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/verify/driving-license"
+  },
+  "scenario": "success-201",
+  "source": "spec-example",
+  "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/verify/driving-license",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "dlNumber": "MH1420110012345",
+      "dob": "1990-01-01"
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "referenceId": "SMV-20260927-2Q56T8",
+      "valid": true,
+      "name": "RAHUL KUMAR",
+      "fatherOrHusbandName": "SURESH KUMAR",
+      "dob": "1990-01-01",
+      "address": "123, MG Road, Bengaluru",
+      "validUpto": "2030-12-31",
+      "dlStatus": "ACTIVE"
+    }
+  }
+}

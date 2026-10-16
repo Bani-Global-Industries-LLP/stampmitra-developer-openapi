@@ -1,0 +1,31 @@
+{
+  "name": "GET /v1/estamp/states/{stateCode}/instruments - error-403",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/states/{stateCode}/instruments"
+  },
+  "scenario": "error-403",
+  "source": "spec-example",
+  "description": "Valid key, but the request is not allowed: the caller's IP is not on the key's allowlist, or the plan/entitlement is not enabled or its limit is reached.",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/states/MH/instruments",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 403,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "IP not authorized for this API key",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

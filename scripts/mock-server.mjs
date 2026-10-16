@@ -5,8 +5,11 @@
 //
 // Routing: METHOD + path template from each fixture. Scenario selected by request header `x-mock-scenario`:
 //   (absent)|success     the operation's success fixture
-//   error-<status>       the operation's fixture for that status; if not documented for the operation, a generic
-//                        error body (429 adds Retry-After: 1)
+//   success-<status>     an additional documented 2xx fixture, e.g. success-201 on POSTs that document 200 + 201
+//   error-<status>       the operation's fixture for that status, served exactly as documented (the spec says the API
+//                        sends NO Retry-After on 429); if not documented for the operation, a generic error body
+//                        (a generic 429 adds Retry-After: 1 so SDKs can test header parsing)
+//   retry-after:<secs>   429 with `Retry-After: <secs>` (documented 429 body when the operation has one) - for rate-limit tests
 //   seq:<key>:<s1>,<s2>  stateful sequence per <key>, e.g. seq:a:503,503,200 -> 503, 503, then 200 (success fixture);
 //                        the last item repeats. A 'conn' item destroys the socket without responding.
 //   delay:<ms>           success fixture after <ms> (timeout tests)
@@ -80,6 +83,10 @@ export function createMockServer({ routes = loadFixtures() } = {}) {
       } else if (scenario.startsWith("delay:")) {
         await new Promise((r) => setTimeout(r, Number(scenario.slice(6)) || 0));
         out = route.scenarios.get("success");
+      } else if (scenario.startsWith("retry-after:")) {
+        const base = route.scenarios.get("error-429") ?? genericError(429);
+        const r0 = base.response ?? base;
+        out = { response: { ...r0, headers: { ...r0.headers, "Retry-After": String(Number(scenario.slice(12)) || 1) } } };
       } else if (/^error-\d{3}$/.test(scenario)) {
         const st = Number(scenario.slice(6));
         out = route.scenarios.get(scenario) ?? genericError(st);

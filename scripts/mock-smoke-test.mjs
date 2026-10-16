@@ -26,12 +26,18 @@ await ok("error-400 documented fixture", async () => {
   const r = await call("POST", "/v1/verify/pan", { "x-mock-scenario": "error-400" }, { pan: "bad" });
   assert.equal(r.status, 400); assert.equal(r.json.error.code, "BAD_REQUEST");
 });
-await ok("429 carries Retry-After", async () => {
+await ok("documented 429 has no Retry-After (spec); retry-after:<n> scenario adds it", async () => {
   const r = await call("POST", "/v1/verify/gstin", { "x-mock-scenario": "error-429" }, { gstin: "x" });
-  assert.equal(r.status, 429); assert.equal(r.headers.get("retry-after"), "30");
+  assert.equal(r.status, 429); assert.equal(r.headers.get("retry-after"), null);
+  const r2 = await call("POST", "/v1/verify/gstin", { "x-mock-scenario": "retry-after:7" }, { gstin: "x" });
+  assert.equal(r2.status, 429); assert.equal(r2.headers.get("retry-after"), "7"); assert.equal(r2.json.error.code, "TOO_MANY_REQUESTS");
+});
+await ok("success-201 additional documented 2xx", async () => {
+  const r = await call("POST", "/v1/verify/pan", { "x-mock-scenario": "success-201" }, { pan: "ABCDE1234F" });
+  assert.equal(r.status, 201);
 });
 await ok("generic error for undocumented status", async () => {
-  const r = await call("GET", "/v1/services", { "x-mock-scenario": "error-503" });
+  const r = await call("GET", "/v1/usage/summary", { "x-mock-scenario": "error-503" });
   assert.equal(r.status, 503); assert.equal(r.json.error.code, "SERVICE_UNAVAILABLE");
 });
 await ok("seq:503,503,200 is stateful", async () => {

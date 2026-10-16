@@ -13,7 +13,8 @@
     "headers": {
       "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
       "Accept": "application/json",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
     },
     "body": {
       "accountNumber": "000123456789",
@@ -24,19 +25,30 @@
   "response": {
     "status": 200,
     "headers": {
-      "Content-Type": "application/json",
-      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      "Content-Type": "application/json"
     },
     "body": {
-      "accountNumber": "000123456789",
-      "ifsc": "ICIC0001234",
+      "referenceId": "SMV-20260927-3B71A0",
+      "valid": true,
+      "nameAtBank": "RAVI KUMAR",
       "bankName": "ICICI Bank",
-      "branchName": "Andheri West",
-      "accountExists": true,
-      "beneficiaryName": "RAVI KUMAR",
-      "nameMatch": true,
-      "nameMatchScore": 0.95,
-      "accountStatus": "ACTIVE"
+      "utr": "017952100012345",
+      "city": "Mumbai",
+      "branch": "Andheri West",
+      "micr": "400229002",
+      "nameMatchScore": "100",
+      "nameMatchResult": "GOOD_MATCH",
+      "accountStatus": "ACCOUNT_IS_VALID",
+      "accountStatusCode": "1",
+      "ifscDetails": {
+        "bank": "ICICI Bank",
+        "ifsc": "ICIC0001234",
+        "micr": "400229002",
+        "address": "Andheri West, Mumbai",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "branch": "Andheri West"
+      }
     }
   }
 }

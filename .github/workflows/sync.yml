@@ -1,30 +1,71 @@
 name: Sync from portal
+
+# Daily: pull the published contract from https://developer.stampmitra.in and open a PR if it changed.
+#
+# IMPORTANT - pull requests created with the default GITHUB_TOKEN do NOT trigger other workflows
+# (GitHub blocks this to avoid recursive runs), so `ci.yml` would never run on the sync PR.
+# Provide a token that is allowed to trigger workflows instead. Either:
+#   1. GitHub App (recommended): create an app with Contents + Pull requests (read/write) on this repo, install it,
+#      store APP_ID (repo variable) and APP_PRIVATE_KEY (secret), then uncomment the `app-token` step below.
+#   2. Fine-grained PAT fallback: a PAT (or machine-user token) limited to this repo with Contents + Pull requests
+#      read/write, stored as the repository secret SYNC_TOKEN. No other change is needed: this workflow uses
+#      SYNC_TOKEN automatically when it exists.
+# With neither, the PR is still created with GITHUB_TOKEN; close and re-open it (or push an empty commit)
+# to start CI, and CI is required to pass before merging.
 on:
   schedule:
     - cron: "17 3 * * *"
   workflow_dispatch:
+    inputs:
+      force:
+        description: "Overwrite even if the portal spec is older than the mirror (rollback only)"
+        type: boolean
+        default: false
 permissions:
   contents: write
   pull-requests: write
+concurrency:
+  group: sync-from-portal
+  cancel-in-progress: false
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
-      - name: Fetch openapi.json and postman.json from https://developer.stampmitra.in
-        run: node scripts/sync-from-portal.mjs
-      - name: Regenerate operation fixtures
-        run: node scripts/build-fixtures.mjs
+
+      # Option 1 (GitHub App). Uncomment, and use `steps.app-token.outputs.token` as `token:` below.
+      # - id: app-token
+      #   uses: actions/create-github-app-token@v1
+      #   with:
+      #     app-id: ${{ vars.APP_ID }}
+      #     private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Fetch openapi.json from https://developer.stampmitra.in (refuses to downgrade)
+        id: sync
+        env:
+          FORCE: ${{ inputs.force && '--force' || '' }}
+        run: |
+          # exit 3 = the portal still serves an OLDER spec than the mirror: not an error, just nothing to do.
+          node scripts/sync-from-portal.mjs $FORCE || { code=$?; [ "$code" -eq 3 ] || exit "$code"; echo "::notice::portal spec is older than the mirror; nothing to sync"; }
+      - name: Regenerate fixtures and webhook vectors
+        if: steps.sync.outputs.synced == 'true'
+        run: |
+          node scripts/build-fixtures.mjs
+          node scripts/build-webhook-vectors.mjs
       - name: Validate (informational; CI on the PR is authoritative)
+        if: steps.sync.outputs.synced == 'true'
         continue-on-error: true
         run: npm test
-      - uses: peter-evans/create-pull-request@v8
+      - uses: peter-evans/create-pull-request@v7
+        if: steps.sync.outputs.synced == 'true'
         with:
+          # SYNC_TOKEN (PAT / app token) makes the PR trigger CI; falls back to GITHUB_TOKEN (CI will not auto-run).
+          token: ${{ secrets.SYNC_TOKEN || secrets.GITHUB_TOKEN }}
           branch: automation/sync-from-portal
           delete-branch: true
           commit-message: "chore: sync contract from developer portal"
@@ -33,6 +74,8 @@ jobs:
             Automated sync of `openapi.json` / `postman.json` from https://developer.stampmitra.in.
 
             Before merging: review the diff, add a `CHANGELOG.md` entry (additive = minor, breaking = major),
-            and make sure the CI checks pass. Fixtures were regenerated with `npm run build:fixtures`;
-            hand-written bodies in `scripts/build-fixtures.mjs` may need updating if schemas changed.
+            and make sure the CI checks pass. Fixtures and webhook vectors were regenerated
+            (`npm run build:fixtures`, `npm run build:webhook-vectors`); hand-written bodies in
+            `scripts/build-fixtures.mjs` (`illustrative`) may need updating if schemas changed.
+            If CI did not start, this PR was opened with GITHUB_TOKEN: close and re-open it, or configure SYNC_TOKEN.
           labels: contract-sync

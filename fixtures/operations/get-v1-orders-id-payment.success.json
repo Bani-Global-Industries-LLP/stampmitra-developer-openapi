@@ -9,7 +9,7 @@
   "description": "Success",
   "request": {
     "method": "GET",
-    "path": "/v1/orders/ord_01HZX3K9Q2/payment",
+    "path": "/v1/orders/ord_ext_123/payment",
     "headers": {
       "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
       "Accept": "application/json"
@@ -18,12 +18,13 @@
   "response": {
     "status": 200,
     "headers": {
-      "Content-Type": "application/json",
-      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      "Content-Type": "application/json"
     },
     "body": {
-      "orderId": "ord_01HZX3K9Q2",
-      "status": "pending"
+      "externalOrderId": "ord_ext_123",
+      "payment": {
+        "status": "PENDING"
+      }
     }
   }
 }

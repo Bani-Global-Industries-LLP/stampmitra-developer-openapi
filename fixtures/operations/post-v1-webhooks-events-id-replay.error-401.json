@@ -5,23 +5,20 @@
     "path": "/v1/webhooks/events/{id}/replay"
   },
   "scenario": "error-401",
-  "source": "illustrative",
-  "description": "Missing or invalid API key",
+  "source": "spec-example",
+  "description": "Missing or invalid API key, or the key lacks the scope this endpoint requires (x-required-scope).",
   "request": {
     "method": "POST",
     "path": "/v1/webhooks/events/evt_01HZX3P0C4/replay",
     "headers": {
       "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
-      "Accept": "application/json",
-      "Content-Type": "application/json"
-    },
-    "body": {}
+      "Accept": "application/json"
+    }
   },
   "response": {
     "status": 401,
     "headers": {
-      "Content-Type": "application/json",
-      "x-request-id": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      "Content-Type": "application/json"
     },
     "body": {
       "error": {

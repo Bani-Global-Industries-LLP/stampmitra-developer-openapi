@@ -1,0 +1,28 @@
+{
+  "name": "POST /v1/webhooks/events/{id}/replay - success-201",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/webhooks/events/{id}/replay"
+  },
+  "scenario": "success-201",
+  "source": "illustrative",
+  "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/webhooks/events/evt_01HZX3P0C4/replay",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "id": "evt_01HZX3P0C4",
+      "status": "QUEUED"
+    }
+  }
+}

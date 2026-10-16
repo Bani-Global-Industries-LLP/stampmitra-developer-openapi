@@ -1,0 +1,47 @@
+{
+  "name": "POST /v1/verify/rc - success-201",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/verify/rc"
+  },
+  "scenario": "success-201",
+  "source": "spec-example",
+  "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/verify/rc",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "vehicleNumber": "MH12AB1234"
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "referenceId": "SMV-20260927-3D71Q9",
+      "regNo": "MH12AB1234",
+      "registrationStatus": "VALID",
+      "ownerName": "RAHUL KUMAR",
+      "ownerFatherName": "SURESH KUMAR",
+      "vehicleClass": "LMV",
+      "vehicleManufacturerName": "MARUTI SUZUKI",
+      "model": "SWIFT",
+      "vehicleColor": "WHITE",
+      "chassis": "MA3ERLF1S00123456",
+      "engine": "K12MN1234567",
+      "registrationDate": "2019-05-14",
+      "rcStatus": "ACTIVE",
+      "rcExpiryDate": "2034-05-13",
+      "insuranceUpto": "2025-05-13",
+      "isCommercial": false
+    }
+  }
+}

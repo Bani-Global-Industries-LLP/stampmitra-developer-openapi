@@ -199,6 +199,94 @@
         "valid": false,
         "reason": "signature_mismatch"
       }
+    },
+    {
+      "name": "valid-spec-order-created",
+      "description": "Spec example payload for order.created (raw bytes = JSON.stringify(example)), fresh timestamp.",
+      "secret": "whsec_test_0123456789abcdef",
+      "timestamp": "1760605190",
+      "payload": "{\"coreOrderId\":\"core_order_9f3a1c2b8e4d4a5f\",\"coreEventType\":\"ORDER_CREATED\",\"occurredAt\":\"2026-09-25T09:05:00.000Z\"}",
+      "signature": "d4e4ae42d6e7f03cd1994c1f15888f8410ab9135daf587ad08cca3d39147d659",
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "name": "valid-spec-order-payment-confirmed",
+      "description": "Spec example payload for order.payment_confirmed (raw bytes = JSON.stringify(example)), fresh timestamp.",
+      "secret": "whsec_test_0123456789abcdef",
+      "timestamp": "1760605190",
+      "payload": "{\"coreOrderId\":\"core_order_9f3a1c2b8e4d4a5f\",\"coreEventType\":\"PAYMENT_CONFIRMED\",\"occurredAt\":\"2026-09-25T09:05:00.000Z\"}",
+      "signature": "52134e4958f9b0aeaf35912d282bf76fe92b965709b808b5e74c38dbe5d72cdd",
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "name": "valid-spec-order-fulfilment-started",
+      "description": "Spec example payload for order.fulfilment_started (raw bytes = JSON.stringify(example)), fresh timestamp.",
+      "secret": "whsec_test_0123456789abcdef",
+      "timestamp": "1760605190",
+      "payload": "{\"coreOrderId\":\"core_order_9f3a1c2b8e4d4a5f\",\"coreEventType\":\"FULFILMENT_STARTED\",\"occurredAt\":\"2026-09-25T09:05:00.000Z\"}",
+      "signature": "005864c1512df160f71c221c67e9fd1039f605e628cce2f3ffa60ec892cd1d70",
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "name": "valid-spec-order-fulfilment-completed",
+      "description": "Spec example payload for order.fulfilment_completed (raw bytes = JSON.stringify(example)), fresh timestamp.",
+      "secret": "whsec_test_0123456789abcdef",
+      "timestamp": "1760605190",
+      "payload": "{\"coreOrderId\":\"core_order_9f3a1c2b8e4d4a5f\",\"coreEventType\":\"FULFILMENT_COMPLETED\",\"occurredAt\":\"2026-09-25T09:05:00.000Z\"}",
+      "signature": "9a03f3e4e1d2f4c4743f9fcc97b65d805b6fea9714b268ef4c8360ff4000af4a",
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "name": "valid-spec-order-failed",
+      "description": "Spec example payload for order.failed (raw bytes = JSON.stringify(example)), fresh timestamp.",
+      "secret": "whsec_test_0123456789abcdef",
+      "timestamp": "1760605190",
+      "payload": "{\"coreOrderId\":\"core_order_9f3a1c2b8e4d4a5f\",\"coreEventType\":\"ORDER_FAILED\",\"occurredAt\":\"2026-09-25T09:05:00.000Z\"}",
+      "signature": "f1b6f8a30c6e841a2d2f7dc04697d35f2d38e4e009f1260ce27bb0506ced408a",
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "name": "valid-spec-order-cancelled",
+      "description": "Spec example payload for order.cancelled (raw bytes = JSON.stringify(example)), fresh timestamp.",
+      "secret": "whsec_test_0123456789abcdef",
+      "timestamp": "1760605190",
+      "payload": "{\"coreOrderId\":\"core_order_9f3a1c2b8e4d4a5f\",\"coreEventType\":\"ORDER_CANCELLED\",\"occurredAt\":\"2026-09-25T09:05:00.000Z\"}",
+      "signature": "17bd31da1fbdab1964630aa98dfc7539f5310687ef76c1f61b0d51e1982f4d61",
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "name": "valid-spec-order-refund-completed",
+      "description": "Spec example payload for order.refund_completed (raw bytes = JSON.stringify(example)), fresh timestamp.",
+      "secret": "whsec_test_0123456789abcdef",
+      "timestamp": "1760605190",
+      "payload": "{\"coreOrderId\":\"core_order_9f3a1c2b8e4d4a5f\",\"coreEventType\":\"REFUND_COMPLETED\",\"occurredAt\":\"2026-09-25T09:05:00.000Z\"}",
+      "signature": "8585ceeda7c733f681badc7e5f19b5bb2910b5ed42113db5e0717868801575e2",
+      "expected": {
+        "valid": true
+      }
+    },
+    {
+      "name": "valid-spec-order-document-ready",
+      "description": "Spec example payload for order.document_ready (raw bytes = JSON.stringify(example)), fresh timestamp.",
+      "secret": "whsec_test_0123456789abcdef",
+      "timestamp": "1760605190",
+      "payload": "{\"coreOrderId\":\"core_order_9f3a1c2b8e4d4a5f\",\"coreEventType\":\"DOCUMENT_READY\",\"occurredAt\":\"2026-09-25T09:05:00.000Z\"}",
+      "signature": "7b940a3d5ffa4be6ef98c0ab4db1478a02abfe642d6be0b76c9c2bfad58cde06",
+      "expected": {
+        "valid": true
+      }
     }
   ]
 }

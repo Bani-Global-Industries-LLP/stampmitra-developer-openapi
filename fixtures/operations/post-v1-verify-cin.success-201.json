@@ -1,0 +1,47 @@
+{
+  "name": "POST /v1/verify/cin - success-201",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/verify/cin"
+  },
+  "scenario": "success-201",
+  "source": "spec-example",
+  "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/verify/cin",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "cin": "U74999DL2015PTC284009"
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "referenceId": "SMV-20260927-6R38Y3",
+      "valid": true,
+      "companyName": "JANE DOE ENTERPRISES PRIVATE LIMITED",
+      "incorporationDate": "2015-03-12",
+      "cinStatus": "ACTIVE",
+      "companyStatus": "Active",
+      "directors": [
+        {
+          "din": "01234567",
+          "name": "RAHUL KUMAR",
+          "designation": "Director"
+        }
+      ],
+      "email": "contact@example.com",
+      "registrationNumber": "U74999DL2015PTC284009",
+      "incorporationCountry": "India"
+    }
+  }
+}
