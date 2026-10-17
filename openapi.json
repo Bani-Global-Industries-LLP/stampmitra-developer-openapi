@@ -210,7 +210,7 @@
           }
         },
         "x-required-scope": "verification.pan.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -323,7 +323,7 @@
           }
         },
         "x-required-scope": "verification.gstin.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -443,7 +443,7 @@
           }
         },
         "x-required-scope": "verification.rc.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 9,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -556,7 +556,7 @@
           }
         },
         "x-required-scope": "verification.voter.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -669,7 +669,7 @@
           }
         },
         "x-required-scope": "verification.dl.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -780,7 +780,7 @@
           }
         },
         "x-required-scope": "verification.passport.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 9,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -900,7 +900,7 @@
           }
         },
         "x-required-scope": "verification.cin.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -1011,7 +1011,7 @@
           }
         },
         "x-required-scope": "verification.udyam.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -1124,7 +1124,7 @@
           }
         },
         "x-required-scope": "verification.pan_to_gstin.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -1232,7 +1232,7 @@
           }
         },
         "x-required-scope": "verification.pan_to_udyam.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -1560,6 +1560,7 @@
             "$ref": "#/components/responses/BadGateway"
           }
         },
+        "x-required-scope": "estamp.read",
         "x-idempotent": true,
         "x-retry-safe": true,
         "externalDocs": {
@@ -1608,6 +1609,7 @@
             "$ref": "#/components/responses/BadGateway"
           }
         },
+        "x-required-scope": "estamp.read",
         "x-idempotent": true,
         "x-retry-safe": true,
         "externalDocs": {
@@ -1670,6 +1672,7 @@
             "$ref": "#/components/responses/BadGateway"
           }
         },
+        "x-required-scope": "estamp.read",
         "x-idempotent": true,
         "x-retry-safe": true,
         "externalDocs": {
@@ -1732,6 +1735,7 @@
             "$ref": "#/components/responses/BadGateway"
           }
         },
+        "x-required-scope": "estamp.read",
         "x-idempotent": true,
         "x-retry-safe": true,
         "externalDocs": {
