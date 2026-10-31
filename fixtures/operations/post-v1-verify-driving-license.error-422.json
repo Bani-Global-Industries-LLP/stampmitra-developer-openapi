@@ -1,12 +1,12 @@
 {
-  "name": "POST /v1/verify/driving-license - success-201",
+  "name": "POST /v1/verify/driving-license - error-422",
   "operation": {
     "method": "POST",
     "path": "/v1/verify/driving-license"
   },
-  "scenario": "success-201",
+  "scenario": "error-422",
   "source": "spec-example",
-  "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
+  "description": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
   "request": {
     "method": "POST",
     "path": "/v1/verify/driving-license",
@@ -22,19 +22,16 @@
     }
   },
   "response": {
-    "status": 201,
+    "status": 422,
     "headers": {
       "Content-Type": "application/json"
     },
     "body": {
-      "referenceId": "SMV-20260927-2Q56T8",
-      "valid": true,
-      "name": "RAHUL KUMAR",
-      "fatherOrHusbandName": "SURESH KUMAR",
-      "dob": "1990-01-01",
-      "address": "123, MG Road, Bengaluru",
-      "validUpto": "2030-12-31",
-      "dlStatus": "ACTIVE"
+      "error": {
+        "code": "IDEMPOTENCY_KEY_REUSED",
+        "message": "This Idempotency-Key was already used with a different request",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
     }
   }
 }

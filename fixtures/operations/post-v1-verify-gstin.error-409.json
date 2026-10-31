@@ -6,7 +6,7 @@
   },
   "scenario": "error-409",
   "source": "spec-example",
-  "description": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+  "description": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
   "request": {
     "method": "POST",
     "path": "/v1/verify/gstin",
@@ -17,8 +17,8 @@
       "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
     },
     "body": {
-      "gstin": "07AAAAA1111A1Z1",
-      "businessName": "Jane Doe Enterprises"
+      "gstin": "29AAICP2912R1ZR",
+      "businessName": "UJJIVAN SMALL FINANCE BANK LIMITED"
     }
   },
   "response": {
@@ -28,8 +28,8 @@
     },
     "body": {
       "error": {
-        "code": "CONFLICT",
-        "message": "This Idempotency-Key was already used with a different request payload",
+        "code": "IDEMPOTENCY_IN_PROGRESS",
+        "message": "A request with this Idempotency-Key is being processed; retry shortly with the same key",
         "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
       }
     }

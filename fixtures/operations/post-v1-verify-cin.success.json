@@ -17,7 +17,7 @@
       "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
     },
     "body": {
-      "cin": "U74999DL2015PTC284009"
+      "cin": "U72900KA2015PTC082988"
     }
   },
   "response": {
@@ -27,21 +27,45 @@
     },
     "body": {
       "referenceId": "SMV-20260927-6R38Y3",
+      "verificationId": "VRF-6C2N9V4HQ7ZE",
       "valid": true,
-      "companyName": "JANE DOE ENTERPRISES PRIVATE LIMITED",
-      "incorporationDate": "2015-03-12",
+      "status": "VALID",
+      "cin": "U72900KA2015PTC082988",
+      "companyName": "COMPANY NAME",
+      "registrationNumber": 82987,
+      "incorporationDate": "2015-09-23",
       "cinStatus": "ACTIVE",
-      "companyStatus": "Active",
-      "directors": [
+      "email": "abc@xyz.com",
+      "incorporationCountry": "INDIA",
+      "directorDetails": [
         {
-          "din": "01234567",
-          "name": "RAHUL KUMAR",
-          "designation": "Director"
+          "din": "07168822",
+          "name": "Frank Kelvin",
+          "dob": "1997-07-21",
+          "designation": "DIRECTOR",
+          "address": "ST BED KORAMANGALA, BANGALORE, KARNATAKA, INDIA, 566634"
+        },
+        {
+          "din": "07168826",
+          "name": "John Doe",
+          "dob": "1997-02-07",
+          "designation": "DIRECTOR",
+          "address": "GAUTAM NAGAR, NOIDA, UTTAR PRADESH, INDIA, 211361"
         }
       ],
-      "email": "contact@example.com",
-      "registrationNumber": "U74999DL2015PTC284009",
-      "incorporationCountry": "India"
+      "companyStatus": "ACTIVE",
+      "directors": [
+        {
+          "din": "07168822",
+          "name": "Frank Kelvin",
+          "designation": "DIRECTOR"
+        },
+        {
+          "din": "07168826",
+          "name": "John Doe",
+          "designation": "DIRECTOR"
+        }
+      ]
     }
   }
 }

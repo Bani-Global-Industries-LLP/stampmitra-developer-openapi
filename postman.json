@@ -43,7 +43,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -88,25 +88,6 @@
                 }
               ],
               "body": "{\n  \"referenceId\": \"SMV-20260927-8F42K7\",\n  \"pan\": \"ABCDE1234F\",\n  \"type\": \"Individual\",\n  \"valid\": true,\n  \"registeredName\": \"RAHUL KUMAR\",\n  \"fatherName\": \"SURESH KUMAR\",\n  \"panStatus\": \"VALID\",\n  \"panStatusCode\": \"E\",\n  \"panStatusDescription\": \"Existing and valid PAN\",\n  \"nameMatchResult\": \"MATCH\",\n  \"nameMatchScore\": \"100\",\n  \"aadhaarSeedingStatus\": \"y\",\n  \"aadhaarSeedingStatusDescription\": \"Aadhaar linked\",\n  \"lastUpdatedAt\": \"2023-04-01\",\n  \"message\": \"PAN is Valid\"\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/pan"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
             },
             {
               "name": "400 Request failed validation",
@@ -185,14 +166,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/pan"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -201,7 +182,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -211,7 +211,7 @@
                   "raw": "{{baseUrl}}/v1/verify/pan"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -255,7 +255,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -272,7 +272,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"gstin\": \"07AAAAA1111A1Z1\",\n  \"businessName\": \"Jane Doe Enterprises\"\n}",
+              "raw": "{\n  \"gstin\": \"29AAICP2912R1ZR\",\n  \"businessName\": \"UJJIVAN SMALL FINANCE BANK LIMITED\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -299,26 +299,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"referenceId\": \"SMV-20260927-9K21P4\",\n  \"GSTIN\": \"07AAAAA1111A1Z1\",\n  \"valid\": true,\n  \"legalName\": \"Jane Doe Enterprises Private Limited\",\n  \"tradeName\": \"Jane Doe Enterprises\",\n  \"registrationStatus\": \"Active\",\n  \"principalPlaceOfBusiness\": \"123, MG Road, Bengaluru, Karnataka, 560001\",\n  \"message\": \"GSTIN Exists\"\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/gstin"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
+              "body": "{\n  \"referenceId\": \"SMV-20260927-9K21P4\",\n  \"verificationId\": \"VRF-4M8Q2T7XB9KD\",\n  \"gstin\": \"29AAICP2912R1ZR\",\n  \"GSTIN\": \"29AAICP2912R1ZR\",\n  \"valid\": true,\n  \"legalNameOfBusiness\": \"UJJIVAN SMALL FINANCE BANK LIMITED\",\n  \"tradeNameOfBusiness\": \"UJJIVAN SMALL FINANCE BANK\",\n  \"centerJurisdiction\": \"I-A RANGE\",\n  \"stateJurisdiction\": \"GUWAHATI - A - 1\",\n  \"dateOfRegistration\": \"2017-09-30\",\n  \"constitutionOfBusiness\": \"Public Limited Company\",\n  \"taxpayerType\": \"Regular\",\n  \"gstinStatus\": \"Active\",\n  \"lastUpdateDate\": \"2022-03-01\",\n  \"natureOfBusinessActivities\": [\n    \"Retail Business\",\n    \"Supplier of Services\",\n    \"Recipient of Goods or Services\",\n    \"Office / Sale Office\",\n    \"Others\"\n  ],\n  \"principalPlaceAddress\": \"First Floor 3512-DISPUR Prithivi Mansion opp. KFC building G.S. Road, Lachit Nagar Assam 781007\",\n  \"principalPlaceSplitAddress\": {\n    \"buildingName\": \"Prithivi Mansion\",\n    \"street\": \"G.S. Road\",\n    \"location\": \"Lachit Nagar\",\n    \"buildingNumber\": \"3512-DISPUR\",\n    \"district\": \"Guwahati\",\n    \"state\": \"Assam\",\n    \"city\": \"Dispur\",\n    \"flatNumber\": \"First Floor\",\n    \"latitude\": \"26.1445\",\n    \"longitude\": \"91.7362\",\n    \"pincode\": \"781007\"\n  },\n  \"additionalAddresses\": [\n    {\n      \"address\": \"Mirza Santipur NH-37 Dist-Kamrup Rural PS-Palashbari, PO  Mirza Kamrup Assam 781125\",\n      \"splitAddress\": {\n        \"buildingName\": \"\",\n        \"street\": \"NH-37\",\n        \"location\": \"Santipur, Mirza\",\n        \"buildingNumber\": \"\",\n        \"district\": \"Kamrup Rural\",\n        \"state\": \"Assam\",\n        \"city\": \"Palashbari\",\n        \"flatNumber\": \"\",\n        \"latitude\": \"26.0926\",\n        \"longitude\": \"91.5069\",\n        \"pincode\": \"781125\"\n      }\n    },\n    {\n      \"address\": \"N.A.C.C.I. Foundation 3559-Tezpur CHAMBER BHAWAN Binjraj Road, P. o. and P.S. - Tezpur, Dist. Binjraj Road, P. o. and P.S. - Tezpur, Dist. Sonitpur Assam 784154\",\n      \"splitAddress\": {\n        \"buildingName\": \"CHAMBER BHAWAN\",\n        \"street\": \"Binjraj Road\",\n        \"location\": \"Tezpur\",\n        \"buildingNumber\": \"3559-Tezpur\",\n        \"district\": \"Sonitpur\",\n        \"state\": \"Assam\",\n        \"city\": \"Tezpur\",\n        \"flatNumber\": \"\",\n        \"latitude\": \"26.6338\",\n        \"longitude\": \"92.8006\",\n        \"pincode\": \"784154\"\n      }\n    }\n  ],\n  \"message\": \"GSTIN Exists\",\n  \"legalName\": \"UJJIVAN SMALL FINANCE BANK LIMITED\",\n  \"tradeName\": \"UJJIVAN SMALL FINANCE BANK\",\n  \"registrationStatus\": \"Active\",\n  \"principalPlaceOfBusiness\": \"First Floor 3512-DISPUR Prithivi Mansion opp. KFC building G.S. Road, Lachit Nagar Assam 781007\"\n}"
             },
             {
               "name": "400 Request failed validation",
@@ -397,14 +378,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/gstin"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -413,7 +394,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/gstin"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -423,7 +423,7 @@
                   "raw": "{{baseUrl}}/v1/verify/gstin"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -467,7 +467,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -512,25 +512,6 @@
                 }
               ],
               "body": "{\n  \"referenceId\": \"SMV-20260927-3D71Q9\",\n  \"regNo\": \"MH12AB1234\",\n  \"registrationStatus\": \"VALID\",\n  \"ownerName\": \"RAHUL KUMAR\",\n  \"ownerFatherName\": \"SURESH KUMAR\",\n  \"vehicleClass\": \"LMV\",\n  \"vehicleManufacturerName\": \"MARUTI SUZUKI\",\n  \"model\": \"SWIFT\",\n  \"vehicleColor\": \"WHITE\",\n  \"chassis\": \"MA3ERLF1S00123456\",\n  \"engine\": \"K12MN1234567\",\n  \"registrationDate\": \"2019-05-14\",\n  \"rcStatus\": \"ACTIVE\",\n  \"rcExpiryDate\": \"2034-05-13\",\n  \"insuranceUpto\": \"2025-05-13\",\n  \"isCommercial\": false\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/rc"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
             },
             {
               "name": "400 Request failed validation",
@@ -609,14 +590,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/rc"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -625,7 +606,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/rc"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -635,7 +635,7 @@
                   "raw": "{{baseUrl}}/v1/verify/rc"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -679,7 +679,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -696,7 +696,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"voterId\": \"ABC1234567\",\n  \"name\": \"Rahul Kumar\"\n}",
+              "raw": "{\n  \"voterId\": \"UAI4574761\",\n  \"name\": \"HARSHIT PRAJAPATI\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -723,26 +723,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"referenceId\": \"SMV-20260927-7H83M1\",\n  \"valid\": true,\n  \"name\": \"RAHUL KUMAR\",\n  \"dob\": \"1990-01-01\",\n  \"gender\": \"M\",\n  \"age\": 35,\n  \"address\": \"123, MG Road, Bengaluru\",\n  \"state\": \"Karnataka\"\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/voter-id"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
+              "body": "{\n  \"referenceId\": \"SMV-20260927-7H83M1\",\n  \"verificationId\": \"VRF-4C8P2WJ6ZK9T\",\n  \"valid\": true,\n  \"status\": \"VALID\",\n  \"epicNumber\": \"UAI4574761\",\n  \"name\": \"HARSHIT PRAJAPATI\",\n  \"nameInRegionalLang\": \"हर्षित\",\n  \"age\": \"23\",\n  \"relationType\": \"FTHR\",\n  \"relationName\": \"RAJ PRAJAPATI\",\n  \"relationNameInRegionalLang\": \"राज\",\n  \"fatherName\": \"RAJ PRAJAPATI\",\n  \"dob\": \"2000-12-07\",\n  \"gender\": \"Male\",\n  \"address\": \"GOVT JUNIOR COLLEGE SIRWAR\",\n  \"photoUrl\": \"https://example.com/voter-photos/UAI4574761.jpeg\",\n  \"splitAddress\": {\n    \"district\": [\n      \"INDORE\"\n    ],\n    \"state\": [\n      \"Madhya Pradesh\"\n    ],\n    \"city\": [\n      \"SANER\"\n    ],\n    \"pincode\": \"560034\",\n    \"country\": [\n      \"IN\",\n      \"IND\",\n      \"INDIA\"\n    ],\n    \"addressLine\": \"GOVT JUNIOR COLLEGE SIRWAR\"\n  },\n  \"state\": \"Madhya Pradesh\",\n  \"assemblyConstituencyNumber\": \"211\",\n  \"assemblyConstituency\": \"SANER\",\n  \"parliamentaryConstituencyNumber\": \"25\",\n  \"parliamentaryConstituency\": \"INDORE\",\n  \"partNumber\": \"27\",\n  \"partName\": \"SIRWAR\",\n  \"serialNumber\": \"713\",\n  \"pollingStation\": \"GOVT JUNIOR COLLEGE SIRWAR\"\n}"
             },
             {
               "name": "400 Request failed validation",
@@ -821,14 +802,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/voter-id"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -837,7 +818,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/voter-id"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -847,7 +847,7 @@
                   "raw": "{{baseUrl}}/v1/verify/voter-id"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -891,7 +891,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -935,26 +935,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"referenceId\": \"SMV-20260927-2Q56T8\",\n  \"valid\": true,\n  \"name\": \"RAHUL KUMAR\",\n  \"fatherOrHusbandName\": \"SURESH KUMAR\",\n  \"dob\": \"1990-01-01\",\n  \"address\": \"123, MG Road, Bengaluru\",\n  \"validUpto\": \"2030-12-31\",\n  \"dlStatus\": \"ACTIVE\"\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/driving-license"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
+              "body": "{\n  \"referenceId\": \"SMV-20260927-2Q56T8\",\n  \"verificationId\": \"VRF-4H8Z2M6TQ9KW\",\n  \"valid\": true,\n  \"dlNumber\": \"KA51201900089895\",\n  \"dob\": \"1994-08-05\",\n  \"status\": \"VALID\",\n  \"dlStatus\": \"VALID\",\n  \"name\": \"JOHN DOE\",\n  \"fatherOrHusbandName\": \"JOHN DOE\",\n  \"address\": \"FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103\",\n  \"validUpto\": \"09/05/2039\",\n  \"badgeDetails\": [\n    {\n      \"badgeIssueDate\": null,\n      \"badgeNo\": null,\n      \"classOfVehicle\": [\n        \"LMV\"\n      ]\n    }\n  ],\n  \"dlValidity\": {\n    \"nonTransport\": {\n      \"to\": \"09/05/2039\",\n      \"from\": \"10/05/2019\"\n    },\n    \"hazardousValidTill\": null,\n    \"transport\": {\n      \"to\": null,\n      \"from\": null\n    },\n    \"hillValidTill\": null\n  },\n  \"detailsOfDrivingLicence\": {\n    \"dateOfIssue\": \"10/05/2019\",\n    \"dateOfLastTransaction\": null,\n    \"status\": null,\n    \"lastTransactedAt\": null,\n    \"name\": \"JOHN DOE\",\n    \"fatherOrHusbandName\": \"JOHN DOE\",\n    \"addressList\": [\n      {\n        \"completeAddress\": \"FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103\",\n        \"type\": \"permanent\",\n        \"splitAddress\": {\n          \"district\": [\n            \"BANGALORE\"\n          ],\n          \"state\": [\n            \"KARNATAKA\",\n            \"KA\"\n          ],\n          \"city\": [\n            \"BELLANDUR\"\n          ],\n          \"pincode\": \"560103\",\n          \"country\": [\n            \"IN\",\n            \"IND\",\n            \"INDIA\"\n          ],\n          \"addressLine\": \"FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103\"\n        }\n      },\n      {\n        \"completeAddress\": \"FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103\",\n        \"type\": \"temporary\",\n        \"splitAddress\": {\n          \"district\": [\n            \"BANGALORE\"\n          ],\n          \"state\": [\n            \"KARNATAKA\",\n            \"KA\"\n          ],\n          \"city\": [\n            \"BELLANDUR\"\n          ],\n          \"pincode\": \"560103\",\n          \"country\": [\n            \"IN\",\n            \"IND\",\n            \"INDIA\"\n          ],\n          \"addressLine\": \"FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103\"\n        }\n      }\n    ],\n    \"address\": \"FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103\",\n    \"photoUrl\": \"https://example.com/dl-photos/KA51201900089895.jpeg\",\n    \"splitAddress\": {\n      \"district\": [\n        \"BANGALORE\"\n      ],\n      \"state\": [\n        \"\"\n      ],\n      \"city\": [\n        \"BELLANDUR\"\n      ],\n      \"pincode\": \"560103\",\n      \"country\": [\n        \"IN\",\n        \"IND\",\n        \"INDIA\"\n      ],\n      \"addressLine\": \"FLAT NO D-901 SUNCITY,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103\"\n    },\n    \"covDetails\": []\n  }\n}"
             },
             {
               "name": "400 Request failed validation",
@@ -1033,14 +1014,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/driving-license"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1049,7 +1030,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/driving-license"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -1059,7 +1059,7 @@
                   "raw": "{{baseUrl}}/v1/verify/driving-license"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1103,7 +1103,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -1120,7 +1120,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fileNumber\": \"PA1079341954215\",\n  \"dob\": \"1990-01-01\",\n  \"name\": \"Rahul Kumar\"\n}",
+              "raw": "{\n  \"fileNumber\": \"PA1079341954215\",\n  \"dob\": \"1998-12-31\",\n  \"name\": \"John doe\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1147,26 +1147,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"referenceId\": \"SMV-20260927-4W19X6\",\n  \"valid\": true,\n  \"name\": \"RAHUL KUMAR\",\n  \"dob\": \"1990-01-01\",\n  \"applicationType\": \"Fresh\"\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/passport"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
+              "body": "{\n  \"referenceId\": \"SMV-20260927-4W19X6\",\n  \"verificationId\": \"VRF-6N2R8D4YTH3K\",\n  \"valid\": true,\n  \"status\": \"VALID\",\n  \"fileNumber\": \"PA1079341954215\",\n  \"name\": \"John doe\",\n  \"dob\": \"1998-12-31\",\n  \"applicationType\": \"NORMAL\",\n  \"applicationReceivedDate\": \"2003-12-31\"\n}"
             },
             {
               "name": "400 Request failed validation",
@@ -1245,14 +1226,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/passport"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1261,7 +1242,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/passport"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -1271,7 +1271,7 @@
                   "raw": "{{baseUrl}}/v1/verify/passport"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1315,7 +1315,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -1332,7 +1332,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"cin\": \"U74999DL2015PTC284009\"\n}",
+              "raw": "{\n  \"cin\": \"U72900KA2015PTC082988\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1359,26 +1359,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"referenceId\": \"SMV-20260927-6R38Y3\",\n  \"valid\": true,\n  \"companyName\": \"JANE DOE ENTERPRISES PRIVATE LIMITED\",\n  \"incorporationDate\": \"2015-03-12\",\n  \"cinStatus\": \"ACTIVE\",\n  \"companyStatus\": \"Active\",\n  \"directors\": [\n    {\n      \"din\": \"01234567\",\n      \"name\": \"RAHUL KUMAR\",\n      \"designation\": \"Director\"\n    }\n  ],\n  \"email\": \"contact@example.com\",\n  \"registrationNumber\": \"U74999DL2015PTC284009\",\n  \"incorporationCountry\": \"India\"\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/cin"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
+              "body": "{\n  \"referenceId\": \"SMV-20260927-6R38Y3\",\n  \"verificationId\": \"VRF-6C2N9V4HQ7ZE\",\n  \"valid\": true,\n  \"status\": \"VALID\",\n  \"cin\": \"U72900KA2015PTC082988\",\n  \"companyName\": \"COMPANY NAME\",\n  \"registrationNumber\": 82987,\n  \"incorporationDate\": \"2015-09-23\",\n  \"cinStatus\": \"ACTIVE\",\n  \"email\": \"abc@xyz.com\",\n  \"incorporationCountry\": \"INDIA\",\n  \"directorDetails\": [\n    {\n      \"din\": \"07168822\",\n      \"name\": \"Frank Kelvin\",\n      \"dob\": \"1997-07-21\",\n      \"designation\": \"DIRECTOR\",\n      \"address\": \"ST BED KORAMANGALA, BANGALORE, KARNATAKA, INDIA, 566634\"\n    },\n    {\n      \"din\": \"07168826\",\n      \"name\": \"John Doe\",\n      \"dob\": \"1997-02-07\",\n      \"designation\": \"DIRECTOR\",\n      \"address\": \"GAUTAM NAGAR, NOIDA, UTTAR PRADESH, INDIA, 211361\"\n    }\n  ],\n  \"companyStatus\": \"ACTIVE\",\n  \"directors\": [\n    {\n      \"din\": \"07168822\",\n      \"name\": \"Frank Kelvin\",\n      \"designation\": \"DIRECTOR\"\n    },\n    {\n      \"din\": \"07168826\",\n      \"name\": \"John Doe\",\n      \"designation\": \"DIRECTOR\"\n    }\n  ]\n}"
             },
             {
               "name": "400 Request failed validation",
@@ -1457,14 +1438,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/cin"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1473,7 +1454,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/cin"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -1483,7 +1483,7 @@
                   "raw": "{{baseUrl}}/v1/verify/cin"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1527,7 +1527,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -1544,7 +1544,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"udyamNumber\": \"UDYAM-MH-12-1234567\"\n}",
+              "raw": "{\n  \"udyamNumber\": \"UDYAM-UP-43-1234567\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1571,26 +1571,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"referenceId\": \"SMV-20260927-5U29V7\",\n  \"found\": true,\n  \"udyamStatus\": \"Active\",\n  \"enterpriseName\": \"Jane Doe Enterprises\",\n  \"enterpriseType\": \"Proprietorship\",\n  \"organizationType\": \"Micro\",\n  \"certificateUrl\": \"https://udyamregistration.gov.in/Udyam_Download/UDYAM-MH-12-1234567.pdf\"\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/udyam"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
+              "body": "{\n  \"referenceId\": \"SMV-20260927-5U29V7\",\n  \"verificationId\": \"VRF-7K3M9Q2XH4TB\",\n  \"found\": true,\n  \"status\": \"SUCCESS\",\n  \"udyamStatus\": \"SUCCESS\",\n  \"udyamNumber\": \"UDYAM-UP-43-1234567\",\n  \"enterpriseName\": \"helloscholar\",\n  \"organizationType\": \"Proprietary\",\n  \"majorActivity\": \"Services\",\n  \"socialCategory\": \"General\",\n  \"dateOfIncorporation\": \"2020-05-29\",\n  \"dateOfCommencement\": \"2020-05-29\",\n  \"dateOfUdyamRegistration\": \"2022-01-02\",\n  \"enterpriseType\": \"Micro\",\n  \"classificationYear\": \"2024-25\",\n  \"classificationDate\": \"2025-06-02\",\n  \"certificateUrl\": \"https://udyamregistration.gov.in/Udyam_Download/UDYAM-UP-43-1234567.pdf\",\n  \"classificationHistory\": [\n    {\n      \"serialNumber\": \"1\",\n      \"classificationYear\": \"2024-25\",\n      \"enterpriseType\": \"Micro\",\n      \"classificationDate\": \"2025-06-02\"\n    },\n    {\n      \"serialNumber\": \"2\",\n      \"classificationYear\": \"2023-24\",\n      \"enterpriseType\": \"Micro\",\n      \"classificationDate\": \"2023-05-09\"\n    },\n    {\n      \"serialNumber\": \"3\",\n      \"classificationYear\": \"2022-23\",\n      \"enterpriseType\": \"Micro\",\n      \"classificationDate\": \"2022-06-26\"\n    }\n  ],\n  \"splitAddress\": {\n    \"flat\": \"Ground Floor\",\n    \"building\": \"05 Raman Vihar\",\n    \"village\": \"Naubasta\",\n    \"block\": \"Naubasta\",\n    \"street\": \"Naubasta\",\n    \"city\": \"Kanpur\",\n    \"district\": \"KANPUR NAGAR\",\n    \"state\": \"UTTAR PRADESH\",\n    \"pincode\": \"208021\",\n    \"mobile\": \"70*****210\",\n    \"email\": \"helloscholar.edu@gmail.com\"\n  },\n  \"unitLocations\": [\n    {\n      \"serialNumber\": \"1\",\n      \"unitName\": \"hellobanker\",\n      \"flat\": \"Ground Floor\",\n      \"building\": \"05 Raman Vihar Naubasta\",\n      \"village\": \"KANPUR NAGAR\",\n      \"block\": \"KANPUR NAGAR\",\n      \"street\": \"05 Raman Vihar Naubasta Bamba\",\n      \"city\": \"Kanpur\",\n      \"district\": \"KANPUR NAGAR\",\n      \"state\": \"UTTAR PRADESH\",\n      \"pincode\": \"208021\"\n    },\n    {\n      \"serialNumber\": \"2\",\n      \"unitName\": \"helloscholar\",\n      \"flat\": \"Ground Floor\",\n      \"building\": \"05 Raman Vihar Naubasta\",\n      \"village\": \"Kanpur\",\n      \"block\": \"Kanpur\",\n      \"street\": \"Kanpur\",\n      \"city\": \"Kanpur\",\n      \"district\": \"KANPUR NAGAR\",\n      \"state\": \"UTTAR PRADESH\",\n      \"pincode\": \"208021\"\n    }\n  ],\n  \"nicCodes\": [\n    {\n      \"serialNumber\": \"1\",\n      \"nic2Digit\": \"85\",\n      \"nic2Description\": \"Education\",\n      \"nic4Digit\": \"8550\",\n      \"nic4Description\": \"Educational support services\",\n      \"nic5Digit\": \"85500\",\n      \"nic5Description\": \"Educational support services\",\n      \"activity\": \"Services\",\n      \"date\": \"2022-01-02\"\n    }\n  ],\n  \"dic\": \"KANPUR NAGAR\",\n  \"msmeDi\": \"KANPUR\"\n}"
             },
             {
               "name": "400 Request failed validation",
@@ -1669,14 +1650,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/udyam"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1685,7 +1666,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/udyam"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -1695,7 +1695,7 @@
                   "raw": "{{baseUrl}}/v1/verify/udyam"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1739,7 +1739,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -1786,25 +1786,6 @@
               "body": "{\n  \"referenceId\": \"SMV-20260927-1L67Z5\",\n  \"found\": true,\n  \"gstins\": [\n    {\n      \"gstin\": \"07AAAAA1111A1Z1\",\n      \"state\": \"Delhi\",\n      \"status\": \"Active\"\n    }\n  ]\n}"
             },
             {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
-            },
-            {
               "name": "400 Request failed validation",
               "originalRequest": {
                 "method": "POST",
@@ -1881,14 +1862,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1897,7 +1878,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -1907,7 +1907,7 @@
                   "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1951,7 +1951,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -1968,7 +1968,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"pan\": \"ABCDE1234F\"\n}",
+              "raw": "{\n  \"pan\": \"ABCPV1234D\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1995,26 +1995,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"referenceId\": \"SMV-20260927-0A44B2\",\n  \"found\": true,\n  \"status\": \"Active\",\n  \"udyamNumber\": \"UDYAM-MH-12-1234567\"\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
+              "body": "{\n  \"referenceId\": \"SMV-20260927-0A44B2\",\n  \"verificationId\": \"VRF-6N2P8W4RJ7ZK\",\n  \"found\": true,\n  \"status\": \"SUCCESS\",\n  \"pan\": \"ABCPV1234D\",\n  \"udyam\": \"UDYAM-MH-26-1234567\",\n  \"udyamNumber\": \"UDYAM-MH-26-1234567\"\n}"
             },
             {
               "name": "400 Request failed validation",
@@ -2093,14 +2074,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2109,7 +2090,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -2119,7 +2119,7 @@
                   "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2163,7 +2163,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -2208,25 +2208,6 @@
                 }
               ],
               "body": "{\n  \"referenceId\": \"SMV-20260927-3B71A0\",\n  \"valid\": true,\n  \"nameAtBank\": \"RAVI KUMAR\",\n  \"bankName\": \"ICICI Bank\",\n  \"utr\": \"017952100012345\",\n  \"city\": \"Mumbai\",\n  \"branch\": \"Andheri West\",\n  \"micr\": \"400229002\",\n  \"nameMatchScore\": \"100\",\n  \"nameMatchResult\": \"GOOD_MATCH\",\n  \"accountStatus\": \"ACCOUNT_IS_VALID\",\n  \"accountStatusCode\": \"1\",\n  \"ifscDetails\": {\n    \"bank\": \"ICICI Bank\",\n    \"ifsc\": \"ICIC0001234\",\n    \"micr\": \"400229002\",\n    \"address\": \"Andheri West, Mumbai\",\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"branch\": \"Andheri West\"\n  }\n}"
-            },
-            {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/verify/bank-account"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
             },
             {
               "name": "400 Request failed validation",
@@ -2305,14 +2286,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/bank-account"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2321,7 +2302,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/verify/bank-account"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -2331,7 +2331,7 @@
                   "raw": "{{baseUrl}}/v1/verify/bank-account"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2451,7 +2451,7 @@
                   "raw": "{{baseUrl}}/v1/services"
                 }
               },
-              "status": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later.",
+              "status": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later: the response carries a Retry-After header (seconds).",
               "code": 503,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2574,7 +2574,7 @@
                   "raw": "{{baseUrl}}/v1/services/{serviceCode}"
                 }
               },
-              "status": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later.",
+              "status": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later: the response carries a Retry-After header (seconds).",
               "code": 503,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2679,7 +2679,7 @@
                   "raw": "{{baseUrl}}/v1/estamp/schema/{serviceCode}"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2795,7 +2795,7 @@
                   "raw": "{{baseUrl}}/v1/estamp/states"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2939,7 +2939,7 @@
                   "raw": "{{baseUrl}}/v1/estamp/states/{stateCode}/instruments"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3083,7 +3083,7 @@
                   "raw": "{{baseUrl}}/v1/estamp/instruments/{instrumentCode}/articles"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3127,7 +3127,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -3270,14 +3270,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/duty/calculate"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3286,7 +3286,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/estamp/duty/calculate"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -3296,7 +3315,7 @@
                   "raw": "{{baseUrl}}/v1/estamp/duty/calculate"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3340,7 +3359,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -3510,14 +3529,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders/{orderId}/parties"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3526,7 +3545,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/estamp/orders/{orderId}/parties"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -3536,7 +3574,7 @@
                   "raw": "{{baseUrl}}/v1/estamp/orders/{orderId}/parties"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3580,7 +3618,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -3683,14 +3721,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "409 The Idempotency-Key was already used with a different request body",
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/orders"
                 }
               },
-              "status": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
               "code": 409,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3699,7 +3737,26 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"This Idempotency-Key was already used with a different request payload\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/orders"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
               "name": "429 Rate limit exceeded for this endpoint",
@@ -3709,7 +3766,7 @@
                   "raw": "{{baseUrl}}/v1/orders"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -4000,7 +4057,7 @@
               {
                 "key": "Idempotency-Key",
                 "value": "",
-                "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+                "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
                 "disabled": true
               }
             ],
@@ -4123,6 +4180,44 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
+              "name": "409 IDEMPOTENCY_IN_PROGRESS",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/payments/intents"
+                }
+              },
+              "status": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_IN_PROGRESS\",\n    \"message\": \"A request with this Idempotency-Key is being processed; retry shortly with the same key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "422 IDEMPOTENCY_KEY_REUSED",
+              "originalRequest": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/payments/intents"
+                }
+              },
+              "status": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
               "name": "429 Rate limit exceeded for this endpoint",
               "originalRequest": {
                 "method": "POST",
@@ -4130,7 +4225,7 @@
                   "raw": "{{baseUrl}}/v1/payments/intents"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -4614,7 +4709,7 @@
                   "raw": "{{baseUrl}}/v1/orders/{id}/documents/{documentId}/download"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -4652,7 +4747,7 @@
                   "raw": "{{baseUrl}}/v1/orders/{id}/documents/{documentId}/download"
                 }
               },
-              "status": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later.",
+              "status": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later: the response carries a Retry-After header (seconds).",
               "code": 503,
               "_postman_previewlanguage": "json",
               "header": [
@@ -4745,6 +4840,238 @@
                 }
               ],
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Wallet balance and low-balance state",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/account/balance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "account",
+                "balance"
+              ]
+            },
+            "description": "Your wallet balance in rupees and paise, the low-balance threshold (Rs 500 by default), the state (OK, LOW_BALANCE, FINISHED), how many calls it covers at the cheapest approved price and at your 7-day average price, the last top-up and the signup credit still left. Any key with a verification scope can read its own organization's balance. A sandbox key gets a sandbox notice and zero amounts, never a real balance. Rate limit: 60 per minute per key. Amounts exclude GST."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/balance"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"generatedAt\": \"2026-10-29T10:15:00.000Z\",\n  \"environment\": \"LIVE\",\n  \"sandbox\": false,\n  \"notice\": null,\n  \"currency\": \"INR\",\n  \"balance\": {\n    \"paise\": 125050,\n    \"rupees\": 1250.5\n  },\n  \"available\": {\n    \"paise\": 125050,\n    \"rupees\": 1250.5\n  },\n  \"state\": \"OK\",\n  \"lowBalance\": false,\n  \"lowBalanceThreshold\": {\n    \"paise\": 50000,\n    \"rupees\": 500\n  },\n  \"estimatedCallsRemaining\": {\n    \"atCheapestPrice\": 312,\n    \"cheapestProduct\": {\n      \"serviceCode\": \"bank-account.verify\",\n      \"name\": \"Bank account verification\",\n      \"price\": {\n        \"paise\": 400,\n        \"rupees\": 4\n      }\n    },\n    \"atSevenDayAverage\": 142,\n    \"sevenDayAverageCost\": {\n      \"paise\": 880,\n      \"rupees\": 8.8\n    }\n  },\n  \"lastTopUp\": {\n    \"amount\": {\n      \"paise\": 100000,\n      \"rupees\": 1000\n    },\n    \"at\": \"2026-10-21T08:00:00.000Z\"\n  },\n  \"signupCredit\": {\n    \"granted\": {\n      \"paise\": 10000,\n      \"rupees\": 100\n    },\n    \"left\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    }\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/balance"
+                }
+              },
+              "status": "Missing or invalid API key, or the key lacks the scope this endpoint requires (x-required-scope).",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/balance"
+                }
+              },
+              "status": "Valid key, but the request is not allowed: the caller's IP is not on the key's allowlist, or the plan/entitlement is not enabled or its limit is reached.",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limit exceeded for this endpoint",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/balance"
+                }
+              },
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "503 A dependency is temporarily unavailable",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/balance"
+                }
+              },
+              "status": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later: the response carries a Retry-After header (seconds).",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Service catalog is temporarily unavailable\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Usage this month and last month, with limits",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/account/usage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "account",
+                "usage"
+              ]
+            },
+            "description": "Current and previous calendar month in IST: requests, billed requests, failed-not-billed, spend before GST, a per-product breakdown and a per-day series, plus today against your limits (requests per minute and per day). A sandbox key sees its own sandbox usage with zero spend. Rate limit: 60 per minute per key."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/usage"
+                }
+              },
+              "status": "Success",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"generatedAt\": \"2026-10-29T10:15:00.000Z\",\n  \"environment\": \"LIVE\",\n  \"sandbox\": false,\n  \"notice\": null,\n  \"timezone\": \"Asia/Kolkata\",\n  \"currentMonth\": {\n    \"month\": \"2026-10\",\n    \"from\": \"2026-09-30T18:30:00.000Z\",\n    \"to\": \"2026-10-29T10:15:00.000Z\",\n    \"gstIncluded\": false,\n    \"requests\": 2,\n    \"billedRequests\": 1,\n    \"failedNotBilled\": 1,\n    \"successNotBilled\": 0,\n    \"pendingBilling\": 0,\n    \"spend\": {\n      \"paise\": 500,\n      \"rupees\": 5\n    },\n    \"byProduct\": [\n      {\n        \"serviceCode\": \"pan.verify\",\n        \"name\": \"PAN verification\",\n        \"requests\": 2,\n        \"billedRequests\": 1,\n        \"failedNotBilled\": 1,\n        \"successNotBilled\": 0,\n        \"pendingBilling\": 0,\n        \"spend\": {\n          \"paise\": 500,\n          \"rupees\": 5\n        }\n      }\n    ],\n    \"daily\": [\n      {\n        \"date\": \"2026-10-28\",\n        \"requests\": 1,\n        \"billedRequests\": 1,\n        \"failedNotBilled\": 0,\n        \"successNotBilled\": 0,\n        \"pendingBilling\": 0,\n        \"spend\": {\n          \"paise\": 500,\n          \"rupees\": 5\n        }\n      },\n      {\n        \"date\": \"2026-10-29\",\n        \"requests\": 1,\n        \"billedRequests\": 0,\n        \"failedNotBilled\": 1,\n        \"successNotBilled\": 0,\n        \"pendingBilling\": 0,\n        \"spend\": {\n          \"paise\": 0,\n          \"rupees\": 0\n        }\n      }\n    ]\n  },\n  \"previousMonth\": {\n    \"month\": \"2026-09\",\n    \"from\": \"2026-08-31T18:30:00.000Z\",\n    \"to\": \"2026-09-30T18:29:59.999Z\",\n    \"gstIncluded\": false,\n    \"requests\": 0,\n    \"billedRequests\": 0,\n    \"failedNotBilled\": 0,\n    \"successNotBilled\": 0,\n    \"pendingBilling\": 0,\n    \"spend\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    },\n    \"byProduct\": [],\n    \"daily\": []\n  },\n  \"today\": {\n    \"date\": \"2026-10-29\",\n    \"requests\": 1,\n    \"billedRequests\": 0,\n    \"failedNotBilled\": 1,\n    \"spend\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    },\n    \"requestsPerDay\": {\n      \"limit\": null,\n      \"used\": 1,\n      \"remaining\": null\n    }\n  },\n  \"limits\": {\n    \"requestsPerMinute\": {\n      \"limit\": 60,\n      \"source\": \"PLAN\"\n    },\n    \"requestsPerDay\": {\n      \"limit\": null,\n      \"source\": \"NONE\"\n    }\n  }\n}"
+            },
+            {
+              "name": "401 Missing or invalid API key",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/usage"
+                }
+              },
+              "status": "Missing or invalid API key, or the key lacks the scope this endpoint requires (x-required-scope).",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"UNAUTHORIZED\",\n    \"message\": \"Missing or invalid API key.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "403 Valid key",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/usage"
+                }
+              },
+              "status": "Valid key, but the request is not allowed: the caller's IP is not on the key's allowlist, or the plan/entitlement is not enabled or its limit is reached.",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "429 Rate limit exceeded for this endpoint",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/usage"
+                }
+              },
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"TOO_MANY_REQUESTS\",\n    \"message\": \"Rate limit exceeded\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
+            },
+            {
+              "name": "503 A dependency is temporarily unavailable",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/v1/account/usage"
+                }
+              },
+              "status": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later: the response carries a Retry-After header (seconds).",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"INTERNAL_ERROR\",\n    \"message\": \"Service catalog is temporarily unavailable\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             }
           ]
         },
@@ -4985,7 +5312,7 @@
                   "raw": "{{baseUrl}}/v1/webhooks/events"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -5065,25 +5392,6 @@
               "body": ""
             },
             {
-              "name": "201 Success",
-              "originalRequest": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/v1/webhooks/events/{id}/replay"
-                }
-              },
-              "status": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": ""
-            },
-            {
               "name": "401 Missing or invalid API key",
               "originalRequest": {
                 "method": "POST",
@@ -5148,7 +5456,7 @@
                   "raw": "{{baseUrl}}/v1/webhooks/events/{id}/replay"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [

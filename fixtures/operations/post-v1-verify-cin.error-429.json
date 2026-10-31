@@ -6,7 +6,7 @@
   },
   "scenario": "error-429",
   "source": "spec-example",
-  "description": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+  "description": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
   "request": {
     "method": "POST",
     "path": "/v1/verify/cin",
@@ -17,7 +17,7 @@
       "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
     },
     "body": {
-      "cin": "U74999DL2015PTC284009"
+      "cin": "U72900KA2015PTC082988"
     }
   },
   "response": {

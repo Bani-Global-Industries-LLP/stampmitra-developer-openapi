@@ -2,10 +2,10 @@
   "openapi": "3.1.0",
   "info": {
     "title": "StampMitra Developer API",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "x-api-version": "v1",
     "summary": "Indian identity verification and e-Stamp Paper APIs for the StampMitra developer portal.",
-    "description": "The API-key Developer Suite: verification (PAN, GSTIN, vehicle RC, Voter ID, Driving Licence, Passport, CIN, Udyam, bank account), e-Stamp Paper, usage and request logs, and webhook events. Generated from the same data as the docs at https://developer.stampmitra.in.\n\nAuthentication: send your API key as `Authorization: Bearer <key>` or `x-api-key: <key>`. Sandbox keys (sk_test_) and production keys (sk_live_) use the same host; the key prefix selects the environment. Sandbox keys are free and get 20% of each endpoint's production rate limit (minimum 1 request per window); production calls are metered per successful call.\n\nErrors: every error is `{ error: { code, message, requestId } }` (plus `field` where an input is at fault). Send an `X-Request-Id` header and it is echoed back as `requestId`. See `x-error-codes`.\n\nIdempotency: send an `Idempotency-Key` header on operations that accept it (metered verification and duty/parties calls, order creation, payment intents) to make retries safe. `x-idempotent` and `x-retry-safe` mark each operation.\n\nWebhooks: outbound order events are signed. `x-webhook-signature` and the top-level `webhooks` section describe the headers and the HMAC-SHA256 construction.\n\nVersioning: Contract version (info.version) follows semantic versioning, independent of the URL version (x-api-version: v1; every path is under /v1). MAJOR: any breaking change to the published contract (removed or renamed operationId, path, field or enum value; changed status code, error shape or required-ness; a /v2 prefix). Generated SDKs bump their major version too. MINOR: backwards-compatible additions (new endpoint, new optional request field, new response field, new error code or webhook event). Clients must ignore unknown response fields and treat unknown enum values as unknown-safe. PATCH: documentation, description and example corrections that do not change behaviour.",
+    "description": "The API-key Developer Suite: verification (PAN, GSTIN, vehicle RC, Voter ID, Driving Licence, Passport, CIN, Udyam, bank account), e-Stamp Paper, usage and request logs, and webhook events. Generated from the same data as the docs at https://developer.stampmitra.in.\n\nAuthentication: send your API key as `Authorization: Bearer <key>` or `x-api-key: <key>`. Sandbox keys (sk_test_) and production keys (sk_live_) use the same host; the key prefix selects the environment. Sandbox keys are free and get 20% of each endpoint's production rate limit (minimum 1 request per window); production calls are metered per successful call.\n\nErrors: every error is `{ error: { code, message, requestId } }` (plus `field` where an input is at fault). Send an `X-Request-Id` header and it is echoed back as `requestId`. See `x-error-codes`.\n\nIdempotency: send an `Idempotency-Key` header on operations that accept it (metered verification and duty/parties calls, order creation, payment intents) to make retries safe. The same key and request replays the stored response; the same key with a different request is 422 `IDEMPOTENCY_KEY_REUSED`; the same key while the first request is still running is 409 `IDEMPOTENCY_IN_PROGRESS` with `Retry-After`. Keys are scoped to your organization, the route and the environment and are kept for 24 hours. `x-idempotent` and `x-retry-safe` mark each operation.\n\nResponse headers on authenticated calls (additive, safe to ignore): `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` (seconds) on rate-limited routes, `Retry-After` on every 429 and 503, and for live keys `X-Wallet-State` (OK, LOW_BALANCE, FINISHED) and `X-Wallet-Balance-Low: true`. Read the exact balance with GET /v1/account/balance; guide: https://developer.stampmitra.in/docs/balance-usage-and-rate-limits.\n\nWebhooks: outbound order events are signed. `x-webhook-signature` and the top-level `webhooks` section describe the headers and the HMAC-SHA256 construction.\n\nVersioning: Contract version (info.version) follows semantic versioning, independent of the URL version (x-api-version: v1; every path is under /v1). MAJOR: any breaking change to the published contract (removed or renamed operationId, path, field or enum value; changed status code, error shape or required-ness; a /v2 prefix). Generated SDKs bump their major version too. MINOR: backwards-compatible additions (new endpoint, new optional request field, new response field, new error code or webhook event). Clients must ignore unknown response fields and treat unknown enum values as unknown-safe. PATCH: documentation, description and example corrections that do not change behaviour.",
     "termsOfService": "https://developer.stampmitra.in/legal/developer-terms",
     "contact": {
       "name": "StampMitra Developer Support",
@@ -40,7 +40,7 @@
     {
       "code": "BAD_REQUEST",
       "httpStatus": 400,
-      "description": "Validation failed or the request was rejected."
+      "description": "Validation failed or the request was rejected, or error.code IDEMPOTENCY_KEY_REQUIRED: the route requires an Idempotency-Key header (e-Stamp order creation, batches)."
     },
     {
       "code": "UNAUTHORIZED",
@@ -65,12 +65,12 @@
     {
       "code": "CONFLICT",
       "httpStatus": 409,
-      "description": "Idempotency-Key reused with a different body, or state conflict."
+      "description": "State conflict, or error.code IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry the identical request after Retry-After)."
     },
     {
       "code": "UNPROCESSABLE_ENTITY",
       "httpStatus": 422,
-      "description": "Request understood but cannot be processed."
+      "description": "Request understood but cannot be processed, or error.code IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request."
     },
     {
       "code": "TOO_MANY_REQUESTS",
@@ -163,16 +163,6 @@
               }
             }
           },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PanVerificationResult"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request failed validation, or the organization is not entitled to the service.",
             "content": {
@@ -202,6 +192,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -210,7 +203,7 @@
           }
         },
         "x-required-scope": "verification.pan.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -249,8 +242,8 @@
                 "$ref": "#/components/schemas/GstinVerifyRequest"
               },
               "example": {
-                "gstin": "07AAAAA1111A1Z1",
-                "businessName": "Jane Doe Enterprises"
+                "gstin": "29AAICP2912R1ZR",
+                "businessName": "UJJIVAN SMALL FINANCE BANK LIMITED"
               }
             }
           }
@@ -265,23 +258,79 @@
                 },
                 "example": {
                   "referenceId": "SMV-20260927-9K21P4",
-                  "GSTIN": "07AAAAA1111A1Z1",
+                  "verificationId": "VRF-4M8Q2T7XB9KD",
+                  "gstin": "29AAICP2912R1ZR",
+                  "GSTIN": "29AAICP2912R1ZR",
                   "valid": true,
-                  "legalName": "Jane Doe Enterprises Private Limited",
-                  "tradeName": "Jane Doe Enterprises",
+                  "legalNameOfBusiness": "UJJIVAN SMALL FINANCE BANK LIMITED",
+                  "tradeNameOfBusiness": "UJJIVAN SMALL FINANCE BANK",
+                  "centerJurisdiction": "I-A RANGE",
+                  "stateJurisdiction": "GUWAHATI - A - 1",
+                  "dateOfRegistration": "2017-09-30",
+                  "constitutionOfBusiness": "Public Limited Company",
+                  "taxpayerType": "Regular",
+                  "gstinStatus": "Active",
+                  "lastUpdateDate": "2022-03-01",
+                  "natureOfBusinessActivities": [
+                    "Retail Business",
+                    "Supplier of Services",
+                    "Recipient of Goods or Services",
+                    "Office / Sale Office",
+                    "Others"
+                  ],
+                  "principalPlaceAddress": "First Floor 3512-DISPUR Prithivi Mansion opp. KFC building G.S. Road, Lachit Nagar Assam 781007",
+                  "principalPlaceSplitAddress": {
+                    "buildingName": "Prithivi Mansion",
+                    "street": "G.S. Road",
+                    "location": "Lachit Nagar",
+                    "buildingNumber": "3512-DISPUR",
+                    "district": "Guwahati",
+                    "state": "Assam",
+                    "city": "Dispur",
+                    "flatNumber": "First Floor",
+                    "latitude": "26.1445",
+                    "longitude": "91.7362",
+                    "pincode": "781007"
+                  },
+                  "additionalAddresses": [
+                    {
+                      "address": "Mirza Santipur NH-37 Dist-Kamrup Rural PS-Palashbari, PO  Mirza Kamrup Assam 781125",
+                      "splitAddress": {
+                        "buildingName": "",
+                        "street": "NH-37",
+                        "location": "Santipur, Mirza",
+                        "buildingNumber": "",
+                        "district": "Kamrup Rural",
+                        "state": "Assam",
+                        "city": "Palashbari",
+                        "flatNumber": "",
+                        "latitude": "26.0926",
+                        "longitude": "91.5069",
+                        "pincode": "781125"
+                      }
+                    },
+                    {
+                      "address": "N.A.C.C.I. Foundation 3559-Tezpur CHAMBER BHAWAN Binjraj Road, P. o. and P.S. - Tezpur, Dist. Binjraj Road, P. o. and P.S. - Tezpur, Dist. Sonitpur Assam 784154",
+                      "splitAddress": {
+                        "buildingName": "CHAMBER BHAWAN",
+                        "street": "Binjraj Road",
+                        "location": "Tezpur",
+                        "buildingNumber": "3559-Tezpur",
+                        "district": "Sonitpur",
+                        "state": "Assam",
+                        "city": "Tezpur",
+                        "flatNumber": "",
+                        "latitude": "26.6338",
+                        "longitude": "92.8006",
+                        "pincode": "784154"
+                      }
+                    }
+                  ],
+                  "message": "GSTIN Exists",
+                  "legalName": "UJJIVAN SMALL FINANCE BANK LIMITED",
+                  "tradeName": "UJJIVAN SMALL FINANCE BANK",
                   "registrationStatus": "Active",
-                  "principalPlaceOfBusiness": "123, MG Road, Bengaluru, Karnataka, 560001",
-                  "message": "GSTIN Exists"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GstinVerificationResult"
+                  "principalPlaceOfBusiness": "First Floor 3512-DISPUR Prithivi Mansion opp. KFC building G.S. Road, Lachit Nagar Assam 781007"
                 }
               }
             }
@@ -315,6 +364,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -323,7 +375,7 @@
           }
         },
         "x-required-scope": "verification.gstin.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -396,16 +448,6 @@
               }
             }
           },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VehicleRcVerificationResult"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request failed validation, or the organization is not entitled to the service.",
             "content": {
@@ -435,6 +477,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -443,7 +488,7 @@
           }
         },
         "x-required-scope": "verification.rc.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 9,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -482,8 +527,8 @@
                 "$ref": "#/components/schemas/VoterIdVerifyRequest"
               },
               "example": {
-                "voterId": "ABC1234567",
-                "name": "Rahul Kumar"
+                "voterId": "UAI4574761",
+                "name": "HARSHIT PRAJAPATI"
               }
             }
           }
@@ -498,23 +543,48 @@
                 },
                 "example": {
                   "referenceId": "SMV-20260927-7H83M1",
+                  "verificationId": "VRF-4C8P2WJ6ZK9T",
                   "valid": true,
-                  "name": "RAHUL KUMAR",
-                  "dob": "1990-01-01",
-                  "gender": "M",
-                  "age": 35,
-                  "address": "123, MG Road, Bengaluru",
-                  "state": "Karnataka"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VoterIdVerificationResult"
+                  "status": "VALID",
+                  "epicNumber": "UAI4574761",
+                  "name": "HARSHIT PRAJAPATI",
+                  "nameInRegionalLang": "हर्षित",
+                  "age": "23",
+                  "relationType": "FTHR",
+                  "relationName": "RAJ PRAJAPATI",
+                  "relationNameInRegionalLang": "राज",
+                  "fatherName": "RAJ PRAJAPATI",
+                  "dob": "2000-12-07",
+                  "gender": "Male",
+                  "address": "GOVT JUNIOR COLLEGE SIRWAR",
+                  "photoUrl": "https://example.com/voter-photos/UAI4574761.jpeg",
+                  "splitAddress": {
+                    "district": [
+                      "INDORE"
+                    ],
+                    "state": [
+                      "Madhya Pradesh"
+                    ],
+                    "city": [
+                      "SANER"
+                    ],
+                    "pincode": "560034",
+                    "country": [
+                      "IN",
+                      "IND",
+                      "INDIA"
+                    ],
+                    "addressLine": "GOVT JUNIOR COLLEGE SIRWAR"
+                  },
+                  "state": "Madhya Pradesh",
+                  "assemblyConstituencyNumber": "211",
+                  "assemblyConstituency": "SANER",
+                  "parliamentaryConstituencyNumber": "25",
+                  "parliamentaryConstituency": "INDORE",
+                  "partNumber": "27",
+                  "partName": "SIRWAR",
+                  "serialNumber": "713",
+                  "pollingStation": "GOVT JUNIOR COLLEGE SIRWAR"
                 }
               }
             }
@@ -548,6 +618,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -556,7 +629,7 @@
           }
         },
         "x-required-scope": "verification.voter.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -611,23 +684,114 @@
                 },
                 "example": {
                   "referenceId": "SMV-20260927-2Q56T8",
+                  "verificationId": "VRF-4H8Z2M6TQ9KW",
                   "valid": true,
-                  "name": "RAHUL KUMAR",
-                  "fatherOrHusbandName": "SURESH KUMAR",
-                  "dob": "1990-01-01",
-                  "address": "123, MG Road, Bengaluru",
-                  "validUpto": "2030-12-31",
-                  "dlStatus": "ACTIVE"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DrivingLicenseVerificationResult"
+                  "dlNumber": "KA51201900089895",
+                  "dob": "1994-08-05",
+                  "status": "VALID",
+                  "dlStatus": "VALID",
+                  "name": "JOHN DOE",
+                  "fatherOrHusbandName": "JOHN DOE",
+                  "address": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103",
+                  "validUpto": "09/05/2039",
+                  "badgeDetails": [
+                    {
+                      "badgeIssueDate": null,
+                      "badgeNo": null,
+                      "classOfVehicle": [
+                        "LMV"
+                      ]
+                    }
+                  ],
+                  "dlValidity": {
+                    "nonTransport": {
+                      "to": "09/05/2039",
+                      "from": "10/05/2019"
+                    },
+                    "hazardousValidTill": null,
+                    "transport": {
+                      "to": null,
+                      "from": null
+                    },
+                    "hillValidTill": null
+                  },
+                  "detailsOfDrivingLicence": {
+                    "dateOfIssue": "10/05/2019",
+                    "dateOfLastTransaction": null,
+                    "status": null,
+                    "lastTransactedAt": null,
+                    "name": "JOHN DOE",
+                    "fatherOrHusbandName": "JOHN DOE",
+                    "addressList": [
+                      {
+                        "completeAddress": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103",
+                        "type": "permanent",
+                        "splitAddress": {
+                          "district": [
+                            "BANGALORE"
+                          ],
+                          "state": [
+                            "KARNATAKA",
+                            "KA"
+                          ],
+                          "city": [
+                            "BELLANDUR"
+                          ],
+                          "pincode": "560103",
+                          "country": [
+                            "IN",
+                            "IND",
+                            "INDIA"
+                          ],
+                          "addressLine": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103"
+                        }
+                      },
+                      {
+                        "completeAddress": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103",
+                        "type": "temporary",
+                        "splitAddress": {
+                          "district": [
+                            "BANGALORE"
+                          ],
+                          "state": [
+                            "KARNATAKA",
+                            "KA"
+                          ],
+                          "city": [
+                            "BELLANDUR"
+                          ],
+                          "pincode": "560103",
+                          "country": [
+                            "IN",
+                            "IND",
+                            "INDIA"
+                          ],
+                          "addressLine": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103"
+                        }
+                      }
+                    ],
+                    "address": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103",
+                    "photoUrl": "https://example.com/dl-photos/KA51201900089895.jpeg",
+                    "splitAddress": {
+                      "district": [
+                        "BANGALORE"
+                      ],
+                      "state": [
+                        ""
+                      ],
+                      "city": [
+                        "BELLANDUR"
+                      ],
+                      "pincode": "560103",
+                      "country": [
+                        "IN",
+                        "IND",
+                        "INDIA"
+                      ],
+                      "addressLine": "FLAT NO D-901 SUNCITY,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103"
+                    },
+                    "covDetails": []
+                  }
                 }
               }
             }
@@ -661,6 +825,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -669,7 +836,7 @@
           }
         },
         "x-required-scope": "verification.dl.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -709,8 +876,8 @@
               },
               "example": {
                 "fileNumber": "PA1079341954215",
-                "dob": "1990-01-01",
-                "name": "Rahul Kumar"
+                "dob": "1998-12-31",
+                "name": "John doe"
               }
             }
           }
@@ -725,20 +892,14 @@
                 },
                 "example": {
                   "referenceId": "SMV-20260927-4W19X6",
+                  "verificationId": "VRF-6N2R8D4YTH3K",
                   "valid": true,
-                  "name": "RAHUL KUMAR",
-                  "dob": "1990-01-01",
-                  "applicationType": "Fresh"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PassportVerificationResult"
+                  "status": "VALID",
+                  "fileNumber": "PA1079341954215",
+                  "name": "John doe",
+                  "dob": "1998-12-31",
+                  "applicationType": "NORMAL",
+                  "applicationReceivedDate": "2003-12-31"
                 }
               }
             }
@@ -772,6 +933,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -780,7 +944,7 @@
           }
         },
         "x-required-scope": "verification.passport.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 9,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -819,7 +983,7 @@
                 "$ref": "#/components/schemas/CinVerifyRequest"
               },
               "example": {
-                "cin": "U74999DL2015PTC284009"
+                "cin": "U72900KA2015PTC082988"
               }
             }
           }
@@ -834,31 +998,45 @@
                 },
                 "example": {
                   "referenceId": "SMV-20260927-6R38Y3",
+                  "verificationId": "VRF-6C2N9V4HQ7ZE",
                   "valid": true,
-                  "companyName": "JANE DOE ENTERPRISES PRIVATE LIMITED",
-                  "incorporationDate": "2015-03-12",
+                  "status": "VALID",
+                  "cin": "U72900KA2015PTC082988",
+                  "companyName": "COMPANY NAME",
+                  "registrationNumber": 82987,
+                  "incorporationDate": "2015-09-23",
                   "cinStatus": "ACTIVE",
-                  "companyStatus": "Active",
-                  "directors": [
+                  "email": "abc@xyz.com",
+                  "incorporationCountry": "INDIA",
+                  "directorDetails": [
                     {
-                      "din": "01234567",
-                      "name": "RAHUL KUMAR",
-                      "designation": "Director"
+                      "din": "07168822",
+                      "name": "Frank Kelvin",
+                      "dob": "1997-07-21",
+                      "designation": "DIRECTOR",
+                      "address": "ST BED KORAMANGALA, BANGALORE, KARNATAKA, INDIA, 566634"
+                    },
+                    {
+                      "din": "07168826",
+                      "name": "John Doe",
+                      "dob": "1997-02-07",
+                      "designation": "DIRECTOR",
+                      "address": "GAUTAM NAGAR, NOIDA, UTTAR PRADESH, INDIA, 211361"
                     }
                   ],
-                  "email": "contact@example.com",
-                  "registrationNumber": "U74999DL2015PTC284009",
-                  "incorporationCountry": "India"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CinVerificationResult"
+                  "companyStatus": "ACTIVE",
+                  "directors": [
+                    {
+                      "din": "07168822",
+                      "name": "Frank Kelvin",
+                      "designation": "DIRECTOR"
+                    },
+                    {
+                      "din": "07168826",
+                      "name": "John Doe",
+                      "designation": "DIRECTOR"
+                    }
+                  ]
                 }
               }
             }
@@ -892,6 +1070,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -900,7 +1081,7 @@
           }
         },
         "x-required-scope": "verification.cin.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -939,7 +1120,7 @@
                 "$ref": "#/components/schemas/UdyamVerifyRequest"
               },
               "example": {
-                "udyamNumber": "UDYAM-MH-12-1234567"
+                "udyamNumber": "UDYAM-UP-43-1234567"
               }
             }
           }
@@ -954,22 +1135,98 @@
                 },
                 "example": {
                   "referenceId": "SMV-20260927-5U29V7",
+                  "verificationId": "VRF-7K3M9Q2XH4TB",
                   "found": true,
-                  "udyamStatus": "Active",
-                  "enterpriseName": "Jane Doe Enterprises",
-                  "enterpriseType": "Proprietorship",
-                  "organizationType": "Micro",
-                  "certificateUrl": "https://udyamregistration.gov.in/Udyam_Download/UDYAM-MH-12-1234567.pdf"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UdyamVerificationResult"
+                  "status": "SUCCESS",
+                  "udyamStatus": "SUCCESS",
+                  "udyamNumber": "UDYAM-UP-43-1234567",
+                  "enterpriseName": "helloscholar",
+                  "organizationType": "Proprietary",
+                  "majorActivity": "Services",
+                  "socialCategory": "General",
+                  "dateOfIncorporation": "2020-05-29",
+                  "dateOfCommencement": "2020-05-29",
+                  "dateOfUdyamRegistration": "2022-01-02",
+                  "enterpriseType": "Micro",
+                  "classificationYear": "2024-25",
+                  "classificationDate": "2025-06-02",
+                  "certificateUrl": "https://udyamregistration.gov.in/Udyam_Download/UDYAM-UP-43-1234567.pdf",
+                  "classificationHistory": [
+                    {
+                      "serialNumber": "1",
+                      "classificationYear": "2024-25",
+                      "enterpriseType": "Micro",
+                      "classificationDate": "2025-06-02"
+                    },
+                    {
+                      "serialNumber": "2",
+                      "classificationYear": "2023-24",
+                      "enterpriseType": "Micro",
+                      "classificationDate": "2023-05-09"
+                    },
+                    {
+                      "serialNumber": "3",
+                      "classificationYear": "2022-23",
+                      "enterpriseType": "Micro",
+                      "classificationDate": "2022-06-26"
+                    }
+                  ],
+                  "splitAddress": {
+                    "flat": "Ground Floor",
+                    "building": "05 Raman Vihar",
+                    "village": "Naubasta",
+                    "block": "Naubasta",
+                    "street": "Naubasta",
+                    "city": "Kanpur",
+                    "district": "KANPUR NAGAR",
+                    "state": "UTTAR PRADESH",
+                    "pincode": "208021",
+                    "mobile": "70*****210",
+                    "email": "helloscholar.edu@gmail.com"
+                  },
+                  "unitLocations": [
+                    {
+                      "serialNumber": "1",
+                      "unitName": "hellobanker",
+                      "flat": "Ground Floor",
+                      "building": "05 Raman Vihar Naubasta",
+                      "village": "KANPUR NAGAR",
+                      "block": "KANPUR NAGAR",
+                      "street": "05 Raman Vihar Naubasta Bamba",
+                      "city": "Kanpur",
+                      "district": "KANPUR NAGAR",
+                      "state": "UTTAR PRADESH",
+                      "pincode": "208021"
+                    },
+                    {
+                      "serialNumber": "2",
+                      "unitName": "helloscholar",
+                      "flat": "Ground Floor",
+                      "building": "05 Raman Vihar Naubasta",
+                      "village": "Kanpur",
+                      "block": "Kanpur",
+                      "street": "Kanpur",
+                      "city": "Kanpur",
+                      "district": "KANPUR NAGAR",
+                      "state": "UTTAR PRADESH",
+                      "pincode": "208021"
+                    }
+                  ],
+                  "nicCodes": [
+                    {
+                      "serialNumber": "1",
+                      "nic2Digit": "85",
+                      "nic2Description": "Education",
+                      "nic4Digit": "8550",
+                      "nic4Description": "Educational support services",
+                      "nic5Digit": "85500",
+                      "nic5Description": "Educational support services",
+                      "activity": "Services",
+                      "date": "2022-01-02"
+                    }
+                  ],
+                  "dic": "KANPUR NAGAR",
+                  "msmeDi": "KANPUR"
                 }
               }
             }
@@ -1003,6 +1260,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -1011,7 +1271,7 @@
           }
         },
         "x-required-scope": "verification.udyam.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -1077,16 +1337,6 @@
               }
             }
           },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PanToGstinResult"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request failed validation, or the organization is not entitled to the service.",
             "content": {
@@ -1116,6 +1366,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -1124,7 +1377,7 @@
           }
         },
         "x-required-scope": "verification.pan_to_gstin.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -1163,7 +1416,7 @@
                 "$ref": "#/components/schemas/PanToUdyamRequest"
               },
               "example": {
-                "pan": "ABCDE1234F"
+                "pan": "ABCPV1234D"
               }
             }
           }
@@ -1178,19 +1431,12 @@
                 },
                 "example": {
                   "referenceId": "SMV-20260927-0A44B2",
+                  "verificationId": "VRF-6N2P8W4RJ7ZK",
                   "found": true,
-                  "status": "Active",
-                  "udyamNumber": "UDYAM-MH-12-1234567"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PanToUdyamResult"
+                  "status": "SUCCESS",
+                  "pan": "ABCPV1234D",
+                  "udyam": "UDYAM-MH-26-1234567",
+                  "udyamNumber": "UDYAM-MH-26-1234567"
                 }
               }
             }
@@ -1224,6 +1470,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -1232,7 +1481,7 @@
           }
         },
         "x-required-scope": "verification.pan_to_udyam.read",
-        "x-price-inr-per-successful-call": 2,
+        "x-price-inr-per-successful-call": 5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -1312,16 +1561,6 @@
               }
             }
           },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BankAccountVerificationResult"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Request failed validation, or the organization is not entitled to the service.",
             "content": {
@@ -1350,6 +1589,9 @@
           },
           "409": {
             "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
@@ -1560,6 +1802,7 @@
             "$ref": "#/components/responses/BadGateway"
           }
         },
+        "x-required-scope": "estamp.read",
         "x-idempotent": true,
         "x-retry-safe": true,
         "externalDocs": {
@@ -1608,6 +1851,7 @@
             "$ref": "#/components/responses/BadGateway"
           }
         },
+        "x-required-scope": "estamp.read",
         "x-idempotent": true,
         "x-retry-safe": true,
         "externalDocs": {
@@ -1670,6 +1914,7 @@
             "$ref": "#/components/responses/BadGateway"
           }
         },
+        "x-required-scope": "estamp.read",
         "x-idempotent": true,
         "x-retry-safe": true,
         "externalDocs": {
@@ -1732,6 +1977,7 @@
             "$ref": "#/components/responses/BadGateway"
           }
         },
+        "x-required-scope": "estamp.read",
         "x-idempotent": true,
         "x-retry-safe": true,
         "externalDocs": {
@@ -1811,6 +2057,9 @@
           },
           "409": {
             "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
@@ -1914,6 +2163,9 @@
           "409": {
             "$ref": "#/components/responses/Conflict"
           },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
           },
@@ -2000,6 +2252,9 @@
           },
           "409": {
             "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
@@ -2206,6 +2461,12 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
@@ -2547,6 +2808,287 @@
         "x-retry-safe": true
       }
     },
+    "/v1/account/balance": {
+      "get": {
+        "operationId": "getAccountBalance",
+        "summary": "Wallet balance and low-balance state",
+        "description": "Your wallet balance in rupees and paise, the low-balance threshold (Rs 500 by default), the state (OK, LOW_BALANCE, FINISHED), how many calls it covers at the cheapest approved price and at your 7-day average price, the last top-up and the signup credit still left. Any key with a verification scope can read its own organization's balance. A sandbox key gets a sandbox notice and zero amounts, never a real balance. Rate limit: 60 per minute per key. Amounts exclude GST.",
+        "tags": [
+          "Usage & Logs"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountBalance"
+                },
+                "example": {
+                  "generatedAt": "2026-10-29T10:15:00.000Z",
+                  "environment": "LIVE",
+                  "sandbox": false,
+                  "notice": null,
+                  "currency": "INR",
+                  "balance": {
+                    "paise": 125050,
+                    "rupees": 1250.5
+                  },
+                  "available": {
+                    "paise": 125050,
+                    "rupees": 1250.5
+                  },
+                  "state": "OK",
+                  "lowBalance": false,
+                  "lowBalanceThreshold": {
+                    "paise": 50000,
+                    "rupees": 500
+                  },
+                  "estimatedCallsRemaining": {
+                    "atCheapestPrice": 312,
+                    "cheapestProduct": {
+                      "serviceCode": "bank-account.verify",
+                      "name": "Bank account verification",
+                      "price": {
+                        "paise": 400,
+                        "rupees": 4
+                      }
+                    },
+                    "atSevenDayAverage": 142,
+                    "sevenDayAverageCost": {
+                      "paise": 880,
+                      "rupees": 8.8
+                    }
+                  },
+                  "lastTopUp": {
+                    "amount": {
+                      "paise": 100000,
+                      "rupees": 1000
+                    },
+                    "at": "2026-10-21T08:00:00.000Z"
+                  },
+                  "signupCredit": {
+                    "granted": {
+                      "paise": 10000,
+                      "rupees": 100
+                    },
+                    "left": {
+                      "paise": 0,
+                      "rupees": 0
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              },
+              "X-Wallet-State": {
+                "$ref": "#/components/headers/WalletState"
+              },
+              "X-Wallet-Balance-Low": {
+                "$ref": "#/components/headers/WalletBalanceLow"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        },
+        "x-idempotent": true,
+        "x-retry-safe": true
+      }
+    },
+    "/v1/account/usage": {
+      "get": {
+        "operationId": "getAccountUsage",
+        "summary": "Usage this month and last month, with limits",
+        "description": "Current and previous calendar month in IST: requests, billed requests, failed-not-billed, spend before GST, a per-product breakdown and a per-day series, plus today against your limits (requests per minute and per day). A sandbox key sees its own sandbox usage with zero spend. Rate limit: 60 per minute per key.",
+        "tags": [
+          "Usage & Logs"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountUsage"
+                },
+                "example": {
+                  "generatedAt": "2026-10-29T10:15:00.000Z",
+                  "environment": "LIVE",
+                  "sandbox": false,
+                  "notice": null,
+                  "timezone": "Asia/Kolkata",
+                  "currentMonth": {
+                    "month": "2026-10",
+                    "from": "2026-09-30T18:30:00.000Z",
+                    "to": "2026-10-29T10:15:00.000Z",
+                    "gstIncluded": false,
+                    "requests": 2,
+                    "billedRequests": 1,
+                    "failedNotBilled": 1,
+                    "successNotBilled": 0,
+                    "pendingBilling": 0,
+                    "spend": {
+                      "paise": 500,
+                      "rupees": 5
+                    },
+                    "byProduct": [
+                      {
+                        "serviceCode": "pan.verify",
+                        "name": "PAN verification",
+                        "requests": 2,
+                        "billedRequests": 1,
+                        "failedNotBilled": 1,
+                        "successNotBilled": 0,
+                        "pendingBilling": 0,
+                        "spend": {
+                          "paise": 500,
+                          "rupees": 5
+                        }
+                      }
+                    ],
+                    "daily": [
+                      {
+                        "date": "2026-10-28",
+                        "requests": 1,
+                        "billedRequests": 1,
+                        "failedNotBilled": 0,
+                        "successNotBilled": 0,
+                        "pendingBilling": 0,
+                        "spend": {
+                          "paise": 500,
+                          "rupees": 5
+                        }
+                      },
+                      {
+                        "date": "2026-10-29",
+                        "requests": 1,
+                        "billedRequests": 0,
+                        "failedNotBilled": 1,
+                        "successNotBilled": 0,
+                        "pendingBilling": 0,
+                        "spend": {
+                          "paise": 0,
+                          "rupees": 0
+                        }
+                      }
+                    ]
+                  },
+                  "previousMonth": {
+                    "month": "2026-09",
+                    "from": "2026-08-31T18:30:00.000Z",
+                    "to": "2026-09-30T18:29:59.999Z",
+                    "gstIncluded": false,
+                    "requests": 0,
+                    "billedRequests": 0,
+                    "failedNotBilled": 0,
+                    "successNotBilled": 0,
+                    "pendingBilling": 0,
+                    "spend": {
+                      "paise": 0,
+                      "rupees": 0
+                    },
+                    "byProduct": [],
+                    "daily": []
+                  },
+                  "today": {
+                    "date": "2026-10-29",
+                    "requests": 1,
+                    "billedRequests": 0,
+                    "failedNotBilled": 1,
+                    "spend": {
+                      "paise": 0,
+                      "rupees": 0
+                    },
+                    "requestsPerDay": {
+                      "limit": null,
+                      "used": 1,
+                      "remaining": null
+                    }
+                  },
+                  "limits": {
+                    "requestsPerMinute": {
+                      "limit": 60,
+                      "source": "PLAN"
+                    },
+                    "requestsPerDay": {
+                      "limit": null,
+                      "source": "NONE"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              },
+              "X-Wallet-State": {
+                "$ref": "#/components/headers/WalletState"
+              },
+              "X-Wallet-Balance-Low": {
+                "$ref": "#/components/headers/WalletBalanceLow"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        },
+        "x-idempotent": true,
+        "x-retry-safe": true
+      }
+    },
     "/v1/logs": {
       "get": {
         "operationId": "listLogs",
@@ -2784,16 +3326,6 @@
         "responses": {
           "200": {
             "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/WebhookReplayResponse"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3253,7 +3785,7 @@
             "description": "The voter ID (EPIC number) to verify.",
             "pattern": "^[A-Z]{3}[0-9]{7}$",
             "examples": [
-              "ABC1234567"
+              "UAI4574761"
             ]
           },
           "name": {
@@ -3347,7 +3879,7 @@
             "description": "The Udyam (MSME) registration number to verify.",
             "pattern": "^UDYAM-[A-Z]{2}-[0-9]{2}-[0-9]{7}$",
             "examples": [
-              "UDYAM-MH-12-1234567"
+              "UDYAM-UP-43-1234567"
             ]
           }
         },
@@ -3382,19 +3914,19 @@
         "properties": {
           "pan": {
             "type": "string",
-            "description": "The PAN to look associated Udyam registration(s) up for.",
+            "description": "The PAN to look the associated Udyam registration up for.",
             "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]$",
             "minLength": 10,
             "maxLength": 10,
             "examples": [
-              "ABCDE1234F"
+              "ABCPV1234D"
             ]
           }
         },
         "required": [
           "pan"
         ],
-        "description": "Resolve a PAN to its Udyam registration(s).",
+        "description": "Resolve a PAN to its Udyam registration.",
         "additionalProperties": false
       },
       "BankAccountVerifyRequest": {
@@ -3651,6 +4183,70 @@
         ],
         "description": "Result of a PAN verification."
       },
+      "GstinSplitAddress": {
+        "type": "object",
+        "properties": {
+          "buildingName": {
+            "type": "string",
+            "description": "Building or premises name."
+          },
+          "street": {
+            "type": "string",
+            "description": "Street / road."
+          },
+          "location": {
+            "type": "string",
+            "description": "Locality."
+          },
+          "buildingNumber": {
+            "type": "string",
+            "description": "Building or door number."
+          },
+          "district": {
+            "type": "string",
+            "description": "District."
+          },
+          "state": {
+            "type": "string",
+            "description": "State."
+          },
+          "city": {
+            "type": "string",
+            "description": "City."
+          },
+          "flatNumber": {
+            "type": "string",
+            "description": "Flat / floor."
+          },
+          "latitude": {
+            "type": "string",
+            "description": "Latitude, as a string exactly as the registry returns it."
+          },
+          "longitude": {
+            "type": "string",
+            "description": "Longitude, as a string exactly as the registry returns it."
+          },
+          "pincode": {
+            "type": "string",
+            "description": "Six-digit PIN code."
+          }
+        },
+        "description": "One GST address split into parts."
+      },
+      "GstinAdditionalAddress": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "The additional place of business as one address string."
+          },
+          "splitAddress": {
+            "$ref": "#/components/schemas/GstinSplitAddress",
+            "description": "The same address split into parts."
+          }
+        },
+        "description": "An additional place of business on the registration."
+      },
       "GstinVerificationResult": {
         "type": "object",
         "properties": {
@@ -3658,41 +4254,112 @@
             "type": "string",
             "description": "StampMitra's own transaction id for this call (SMV-YYYYMMDD-XXXXXXX). Always present, including on a negative result. Not an idempotency key."
           },
+          "verificationId": {
+            "type": "string",
+            "description": "StampMitra's own id for this verification (VRF- followed by 12 base32 characters). Generated for every call, unique to it. Always present. Quote it in support requests.",
+            "pattern": "^VRF-[0-9A-HJKMNP-TV-Z]{12}$"
+          },
+          "gstin": {
+            "type": "string",
+            "description": "The GSTIN that was verified. Always present; on an unknown GSTIN it is the number you sent."
+          },
           "GSTIN": {
             "type": "string",
-            "description": "The GSTIN that was verified."
+            "description": "Same value as gstin. Kept so existing integrations keep working."
           },
           "valid": {
             "type": "boolean",
-            "description": "Whether the GSTIN exists and is valid."
+            "description": "Whether the GSTIN exists and is registered. Always present."
           },
-          "legalName": {
+          "legalNameOfBusiness": {
             "type": "string",
-            "description": "Legal name of the registrant."
+            "description": "Legal name of the business registered against this GSTIN."
           },
-          "tradeName": {
+          "tradeNameOfBusiness": {
             "type": "string",
-            "description": "Trade name of the registrant."
+            "description": "Trade name of the business, when it has one."
           },
-          "registrationStatus": {
+          "centerJurisdiction": {
             "type": "string",
-            "description": "Registration status, e.g. Active."
+            "description": "Central tax jurisdiction (range) of the registration."
           },
-          "principalPlaceOfBusiness": {
+          "stateJurisdiction": {
             "type": "string",
-            "description": "Principal place of business."
+            "description": "State tax jurisdiction of the registration."
+          },
+          "dateOfRegistration": {
+            "type": "string",
+            "description": "Date of GST registration, ISO yyyy-mm-dd.",
+            "format": "date"
+          },
+          "constitutionOfBusiness": {
+            "type": "string",
+            "description": "Constitution of the business (legal form), for example Public Limited Company."
+          },
+          "taxpayerType": {
+            "type": "string",
+            "description": "Taxpayer type, for example Regular or Composition."
+          },
+          "gstinStatus": {
+            "type": "string",
+            "description": "GST registration status, for example Active."
+          },
+          "lastUpdateDate": {
+            "type": "string",
+            "description": "Date the registration record was last updated, ISO yyyy-mm-dd.",
+            "format": "date"
+          },
+          "natureOfBusinessActivities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Nature of business activities declared on the registration."
+          },
+          "principalPlaceAddress": {
+            "type": "string",
+            "description": "Principal place of business as one address string."
+          },
+          "principalPlaceSplitAddress": {
+            "$ref": "#/components/schemas/GstinSplitAddress",
+            "description": "Principal place of business split into parts."
+          },
+          "additionalAddresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GstinAdditionalAddress"
+            },
+            "description": "Additional places of business on the registration."
           },
           "message": {
             "type": "string",
-            "description": "Provider message."
+            "description": "Human-readable outcome, for example GSTIN Exists or GSTIN Doesn't Exist."
+          },
+          "legalName": {
+            "type": "string",
+            "description": "Same value as legalNameOfBusiness. Kept so existing integrations keep working."
+          },
+          "tradeName": {
+            "type": "string",
+            "description": "Same value as tradeNameOfBusiness. Kept so existing integrations keep working."
+          },
+          "registrationStatus": {
+            "type": "string",
+            "description": "Same value as gstinStatus. Kept so existing integrations keep working."
+          },
+          "principalPlaceOfBusiness": {
+            "type": "string",
+            "description": "Same value as principalPlaceAddress. Kept so existing integrations keep working."
           }
         },
         "required": [
           "referenceId",
+          "verificationId",
+          "gstin",
           "GSTIN",
           "valid"
         ],
-        "description": "Result of a GSTIN verification."
+        "description": "Result of a GSTIN verification: the full registration record. Every field except referenceId, verificationId, gstin, GSTIN and valid is optional and is omitted when the registry does not provide it."
       },
       "VehicleRcVerificationResult": {
         "type": "object",
@@ -3769,6 +4436,52 @@
         ],
         "description": "Result of a vehicle RC verification."
       },
+      "VoterIdSplitAddress": {
+        "type": "object",
+        "properties": {
+          "district": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "District name."
+            },
+            "description": "District(s)."
+          },
+          "state": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "State name."
+            },
+            "description": "State name(s), as a flat list."
+          },
+          "city": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "City or town name."
+            },
+            "description": "City or town name(s)."
+          },
+          "pincode": {
+            "type": "string",
+            "description": "PIN code."
+          },
+          "country": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Country code or name."
+            },
+            "description": "Country, as the codes and name given by the registry."
+          },
+          "addressLine": {
+            "type": "string",
+            "description": "The address as one line."
+          }
+        },
+        "description": "The registered address of the voter, split into parts."
+      },
       "VoterIdVerificationResult": {
         "type": "object",
         "properties": {
@@ -3776,40 +4489,402 @@
             "type": "string",
             "description": "StampMitra's own transaction id for this call (SMV-YYYYMMDD-XXXXXXX). Always present, including on a negative result. Not an idempotency key."
           },
+          "verificationId": {
+            "type": "string",
+            "description": "StampMitra's own id for this verification (VRF- followed by 12 base32 characters). Generated for every call, unique to it. Always present. Quote it in support requests.",
+            "pattern": "^VRF-[0-9A-HJKMNP-TV-Z]{12}$"
+          },
           "valid": {
             "type": "boolean",
-            "description": "Whether the Voter ID is valid."
+            "description": "Whether the voter ID is valid. Always present."
+          },
+          "status": {
+            "type": "string",
+            "description": "Outcome of the lookup: VALID or INVALID.",
+            "enum": [
+              "VALID",
+              "INVALID"
+            ]
+          },
+          "epicNumber": {
+            "type": "string",
+            "description": "The voter ID (EPIC) number that was looked up."
           },
           "name": {
             "type": "string",
-            "description": "Registered name."
+            "description": "The voter's registered name, when the voter ID is valid."
+          },
+          "nameInRegionalLang": {
+            "type": "string",
+            "description": "The voter's name in the regional language of the roll."
+          },
+          "age": {
+            "type": "string",
+            "description": "The voter's age in years, as a string, when available."
+          },
+          "relationType": {
+            "type": "string",
+            "description": "Type of the relation named on the roll (for example FTHR for father, HUSB for husband)."
+          },
+          "relationName": {
+            "type": "string",
+            "description": "Name of the relative named on the roll."
+          },
+          "relationNameInRegionalLang": {
+            "type": "string",
+            "description": "The relative's name in the regional language of the roll."
+          },
+          "fatherName": {
+            "type": "string",
+            "description": "The voter's father's name, when the roll gives it."
           },
           "dob": {
             "type": "string",
-            "description": "Date of birth."
+            "description": "The voter's date of birth, ISO yyyy-mm-dd, when the roll has one.",
+            "format": "date"
           },
           "gender": {
             "type": "string",
-            "description": "Gender."
-          },
-          "age": {
-            "type": "integer",
-            "description": "Age in years."
+            "description": "The voter's gender, when the voter ID is valid."
           },
           "address": {
             "type": "string",
-            "description": "Registered address."
+            "description": "The registered address as one line, when the voter ID is valid."
+          },
+          "photoUrl": {
+            "type": "string",
+            "description": "A link to the voter photo, when the roll has one. A link only, never image data; it can expire, so fetch it promptly.",
+            "format": "uri"
+          },
+          "splitAddress": {
+            "$ref": "#/components/schemas/VoterIdSplitAddress",
+            "description": "The registered address split into parts."
           },
           "state": {
             "type": "string",
-            "description": "State."
+            "description": "The registered state, when the voter ID is valid."
+          },
+          "assemblyConstituencyNumber": {
+            "type": "string",
+            "description": "Assembly constituency number."
+          },
+          "assemblyConstituency": {
+            "type": "string",
+            "description": "Assembly constituency name."
+          },
+          "parliamentaryConstituencyNumber": {
+            "type": "string",
+            "description": "Parliamentary constituency number."
+          },
+          "parliamentaryConstituency": {
+            "type": "string",
+            "description": "Parliamentary constituency name."
+          },
+          "partNumber": {
+            "type": "string",
+            "description": "Part number of the electoral roll."
+          },
+          "partName": {
+            "type": "string",
+            "description": "Part name of the electoral roll."
+          },
+          "serialNumber": {
+            "type": "string",
+            "description": "Serial number of the voter within the part."
+          },
+          "pollingStation": {
+            "type": "string",
+            "description": "Name of the polling station."
           }
         },
         "required": [
           "referenceId",
+          "verificationId",
           "valid"
         ],
-        "description": "Result of a Voter ID verification."
+        "description": "Result of a Voter ID verification: the full voter record. Every field except referenceId, verificationId and valid is optional."
+      },
+      "DrivingLicenseSplitAddress": {
+        "type": "object",
+        "properties": {
+          "district": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "District name(s)."
+          },
+          "state": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "State name and code as one flat list. Can be [\"\"] when the record carries no state."
+          },
+          "city": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "City or locality name(s)."
+          },
+          "pincode": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Six-digit PIN code."
+          },
+          "country": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Country code(s) and name."
+          },
+          "addressLine": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The address as one line."
+          }
+        },
+        "description": "A driving licence address split into parts. Every part can be null when the record holds none."
+      },
+      "DrivingLicenseAddressEntry": {
+        "type": "object",
+        "properties": {
+          "completeAddress": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The complete address as one string."
+          },
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Address type: permanent or temporary."
+          },
+          "splitAddress": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DrivingLicenseSplitAddress"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The same address split into parts."
+          }
+        },
+        "description": "One address on the licence record."
+      },
+      "DrivingLicenseBadgeDetail": {
+        "type": "object",
+        "properties": {
+          "badgeIssueDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Date the transport badge was issued, as supplied. null when the licence has no badge."
+          },
+          "badgeNo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Transport badge number. null when the licence has no badge."
+          },
+          "classOfVehicle": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Classes of vehicle the licence covers, for example LMV."
+          }
+        },
+        "description": "Transport badge details and the classes of vehicle covered."
+      },
+      "DrivingLicenseValidityPeriod": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "End of the validity period, a date string exactly as supplied (dd/mm/yyyy in the example). null when the class does not apply."
+          },
+          "from": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Start of the validity period, a date string exactly as supplied (dd/mm/yyyy in the example). null when the class does not apply."
+          }
+        },
+        "description": "One validity period, as date strings exactly as supplied."
+      },
+      "DrivingLicenseValidity": {
+        "type": "object",
+        "properties": {
+          "nonTransport": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DrivingLicenseValidityPeriod"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Validity of the non-transport (private vehicle) classes."
+          },
+          "hazardousValidTill": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Validity end for hazardous-goods vehicles, as supplied. null when not applicable."
+          },
+          "transport": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DrivingLicenseValidityPeriod"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Validity of the transport (commercial vehicle) classes. Both dates are null when the licence has no transport class."
+          },
+          "hillValidTill": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Validity end for hill-area driving, as supplied. null when not applicable."
+          }
+        },
+        "description": "Validity periods of the licence by class."
+      },
+      "DrivingLicenseDetails": {
+        "type": "object",
+        "properties": {
+          "dateOfIssue": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Date the licence was issued, a date string exactly as supplied (dd/mm/yyyy in the example)."
+          },
+          "dateOfLastTransaction": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Date of the last transaction on the licence record, as supplied. null when there is none."
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Status text on the licence record. null when the record carries none."
+          },
+          "lastTransactedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Office where the last transaction was made. null when there is none."
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name of the licence holder."
+          },
+          "fatherOrHusbandName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name of the holder's father or husband."
+          },
+          "addressList": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/DrivingLicenseAddressEntry"
+            },
+            "description": "Addresses on record, each with its type (permanent or temporary)."
+          },
+          "address": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The holder address as one string."
+          },
+          "photoUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "A link to the licence holder photograph (a URL, never image data). The link is temporary: download the image promptly if you need it."
+          },
+          "splitAddress": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DrivingLicenseSplitAddress"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The holder address split into parts."
+          },
+          "covDetails": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "description": "Class-of-vehicle detail entries when the record carries any; an empty list otherwise."
+          }
+        },
+        "description": "Details held on the licence record."
       },
       "DrivingLicenseVerificationResult": {
         "type": "object",
@@ -3818,40 +4893,91 @@
             "type": "string",
             "description": "StampMitra's own transaction id for this call (SMV-YYYYMMDD-XXXXXXX). Always present, including on a negative result. Not an idempotency key."
           },
+          "verificationId": {
+            "type": "string",
+            "description": "StampMitra's own id for this verification (VRF- followed by 12 base32 characters). Generated for every call, unique to it. Always present. Quote it in support requests.",
+            "pattern": "^VRF-[0-9A-HJKMNP-TV-Z]{12}$"
+          },
           "valid": {
             "type": "boolean",
-            "description": "Whether the licence is valid."
+            "description": "Whether the driving licence is valid. Always present."
           },
-          "name": {
+          "dlNumber": {
             "type": "string",
-            "description": "Licence holder's name."
-          },
-          "fatherOrHusbandName": {
-            "type": "string",
-            "description": "Father's or husband's name."
+            "description": "The driving licence number that was looked up."
           },
           "dob": {
             "type": "string",
-            "description": "Date of birth."
+            "description": "The licence holder's date of birth, ISO yyyy-mm-dd.",
+            "format": "date"
           },
-          "address": {
+          "status": {
             "type": "string",
-            "description": "Address."
-          },
-          "validUpto": {
-            "type": "string",
-            "description": "Licence valid-until date."
+            "description": "Outcome of the lookup: VALID or INVALID.",
+            "enum": [
+              "VALID",
+              "INVALID"
+            ]
           },
           "dlStatus": {
             "type": "string",
-            "description": "Licence status, e.g. ACTIVE."
+            "description": "Same value as status. Kept so existing integrations keep working."
+          },
+          "name": {
+            "type": "string",
+            "description": "The licence holder's registered name. Same as detailsOfDrivingLicence.name. Kept for existing integrations."
+          },
+          "fatherOrHusbandName": {
+            "type": "string",
+            "description": "Name of the holder's father or husband. Same as detailsOfDrivingLicence.fatherOrHusbandName. Kept for existing integrations."
+          },
+          "address": {
+            "type": "string",
+            "description": "The registered address as one string. Same as detailsOfDrivingLicence.address. Kept for existing integrations."
+          },
+          "validUpto": {
+            "type": "string",
+            "description": "End of validity of the non-transport classes, a date string exactly as supplied (dd/mm/yyyy in the example). Same as dlValidity.nonTransport.to. Kept for existing integrations."
+          },
+          "badgeDetails": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/DrivingLicenseBadgeDetail"
+            },
+            "description": "Transport badge details and the classes of vehicle covered. null when the record carries no badge block."
+          },
+          "dlValidity": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DrivingLicenseValidity"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Validity periods of the licence by class: non-transport, transport, hazardous goods and hill area."
+          },
+          "detailsOfDrivingLicence": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DrivingLicenseDetails"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Details held on the licence record: issue date, holder names, addresses, photograph link and class-of-vehicle details."
           }
         },
         "required": [
           "referenceId",
+          "verificationId",
           "valid"
         ],
-        "description": "Result of a driving licence verification."
+        "description": "Result of a driving licence verification: the full licence record. Every field except referenceId, verificationId and valid is optional."
       },
       "PassportVerificationResult": {
         "type": "object",
@@ -3860,28 +4986,52 @@
             "type": "string",
             "description": "StampMitra's own transaction id for this call (SMV-YYYYMMDD-XXXXXXX). Always present, including on a negative result. Not an idempotency key."
           },
+          "verificationId": {
+            "type": "string",
+            "description": "StampMitra's own id for this verification (VRF- followed by 12 base32 characters). Generated for every call, unique to it. Always present. Quote it in support requests.",
+            "pattern": "^VRF-[0-9A-HJKMNP-TV-Z]{12}$"
+          },
           "valid": {
             "type": "boolean",
-            "description": "Whether the passport application was found and matches."
+            "description": "Whether the passport application file number is valid. Always present."
+          },
+          "status": {
+            "type": "string",
+            "description": "Outcome of the lookup: VALID or INVALID.",
+            "enum": [
+              "VALID",
+              "INVALID"
+            ]
+          },
+          "fileNumber": {
+            "type": "string",
+            "description": "The passport application file number that was looked up. This is the application file number, not the passport number."
           },
           "name": {
             "type": "string",
-            "description": "Applicant's name."
+            "description": "The applicant's name as held on the application, when valid."
           },
           "dob": {
             "type": "string",
-            "description": "Date of birth."
+            "description": "The applicant's date of birth, ISO yyyy-mm-dd, when valid.",
+            "format": "date"
           },
           "applicationType": {
             "type": "string",
-            "description": "Application type, e.g. Fresh."
+            "description": "The type of passport application (for example NORMAL), when valid."
+          },
+          "applicationReceivedDate": {
+            "type": "string",
+            "description": "Date the application was received, ISO yyyy-mm-dd, when valid.",
+            "format": "date"
           }
         },
         "required": [
           "referenceId",
+          "verificationId",
           "valid"
         ],
-        "description": "Result of a passport verification."
+        "description": "Result of a passport verification: the application record. Every field except referenceId, verificationId and valid is optional."
       },
       "CinDirector": {
         "type": "object",
@@ -3906,6 +5056,33 @@
         ],
         "description": "A company director."
       },
+      "CinDirectorDetail": {
+        "type": "object",
+        "properties": {
+          "din": {
+            "type": "string",
+            "description": "Director Identification Number (DIN)."
+          },
+          "name": {
+            "type": "string",
+            "description": "Director's name."
+          },
+          "dob": {
+            "type": "string",
+            "description": "Director's date of birth, ISO yyyy-mm-dd.",
+            "format": "date"
+          },
+          "designation": {
+            "type": "string",
+            "description": "Director's designation, for example DIRECTOR."
+          },
+          "address": {
+            "type": "string",
+            "description": "Director's address on record, as one string."
+          }
+        },
+        "description": "A director or designated partner as the registry returns them."
+      },
       "CinVerificationResult": {
         "type": "object",
         "properties": {
@@ -3913,51 +5090,244 @@
             "type": "string",
             "description": "StampMitra's own transaction id for this call (SMV-YYYYMMDD-XXXXXXX). Always present, including on a negative result. Not an idempotency key."
           },
+          "verificationId": {
+            "type": "string",
+            "description": "StampMitra's own id for this verification (VRF- followed by 12 base32 characters). Generated for every call, unique to it. Always present. Quote it in support requests.",
+            "pattern": "^VRF-[0-9A-HJKMNP-TV-Z]{12}$"
+          },
           "valid": {
             "type": "boolean",
-            "description": "Whether the CIN is valid."
+            "description": "Whether the CIN is valid. Always present. True exactly when status is VALID."
+          },
+          "status": {
+            "type": "string",
+            "description": "Registry outcome of the lookup: VALID or INVALID.",
+            "enum": [
+              "VALID",
+              "INVALID"
+            ]
+          },
+          "cin": {
+            "type": "string",
+            "description": "The CIN that was verified. Always present; on an invalid CIN it is the number you sent."
           },
           "companyName": {
             "type": "string",
-            "description": "Company name."
+            "description": "Registered company name, when the CIN is valid."
+          },
+          "registrationNumber": {
+            "type": "integer",
+            "description": "Company registration number, a number (not a string), when available."
           },
           "incorporationDate": {
             "type": "string",
-            "description": "Incorporation date."
+            "description": "Date of incorporation, ISO yyyy-mm-dd.",
+            "format": "date"
           },
           "cinStatus": {
             "type": "string",
-            "description": "CIN status."
+            "description": "Company status as recorded by the MCA, for example ACTIVE."
+          },
+          "email": {
+            "type": "string",
+            "description": "Registered email address of the company."
+          },
+          "incorporationCountry": {
+            "type": "string",
+            "description": "Country of incorporation, for example INDIA."
+          },
+          "directorDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CinDirectorDetail"
+            },
+            "description": "Directors / designated partners on record, with date of birth and address."
           },
           "companyStatus": {
             "type": "string",
-            "description": "Company status."
+            "description": "Same value as cinStatus. Kept so existing integrations keep working."
           },
           "directors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CinDirector"
             },
-            "description": "Directors on record."
-          },
-          "email": {
-            "type": "string",
-            "description": "Company email address."
-          },
-          "registrationNumber": {
-            "type": "string",
-            "description": "Registration number."
-          },
-          "incorporationCountry": {
-            "type": "string",
-            "description": "Country of incorporation."
+            "description": "Directors with name, DIN and designation only. Kept so existing integrations keep working; directorDetails has the full entries."
           }
         },
         "required": [
           "referenceId",
-          "valid"
+          "verificationId",
+          "valid",
+          "cin"
         ],
-        "description": "Result of a company CIN verification."
+        "description": "Result of a company CIN verification: the full company record. Every field except referenceId, verificationId, valid and cin is optional and is omitted when the registry does not provide it."
+      },
+      "UdyamClassificationHistoryEntry": {
+        "type": "object",
+        "properties": {
+          "serialNumber": {
+            "type": "string",
+            "description": "Position of the entry in the history."
+          },
+          "classificationYear": {
+            "type": "string",
+            "description": "Financial year of that classification."
+          },
+          "enterpriseType": {
+            "type": "string",
+            "description": "Micro, Small or Medium for that year."
+          },
+          "classificationDate": {
+            "type": "string",
+            "description": "Date of that classification, ISO yyyy-mm-dd.",
+            "format": "date"
+          }
+        },
+        "description": "One year of the enterprise's MSME classification history."
+      },
+      "UdyamSplitAddress": {
+        "type": "object",
+        "properties": {
+          "flat": {
+            "type": "string",
+            "description": "Flat / door / floor."
+          },
+          "building": {
+            "type": "string",
+            "description": "Building or premises name / number."
+          },
+          "village": {
+            "type": "string",
+            "description": "Village or town."
+          },
+          "block": {
+            "type": "string",
+            "description": "Block."
+          },
+          "street": {
+            "type": "string",
+            "description": "Street / road."
+          },
+          "city": {
+            "type": "string",
+            "description": "City."
+          },
+          "district": {
+            "type": "string",
+            "description": "District."
+          },
+          "state": {
+            "type": "string",
+            "description": "State."
+          },
+          "pincode": {
+            "type": "string",
+            "description": "Six-digit PIN code."
+          },
+          "mobile": {
+            "type": "string",
+            "description": "Registered mobile number, already masked at source (for example 70*****210). Passed through as received, never unmasked."
+          },
+          "email": {
+            "type": "string",
+            "description": "Registered email address."
+          }
+        },
+        "description": "Registered address of the enterprise, with the registered contact details."
+      },
+      "UdyamUnitLocation": {
+        "type": "object",
+        "properties": {
+          "serialNumber": {
+            "type": "string",
+            "description": "Position of the unit in the list."
+          },
+          "unitName": {
+            "type": "string",
+            "description": "Name of the unit."
+          },
+          "flat": {
+            "type": "string",
+            "description": "Flat / door / floor."
+          },
+          "building": {
+            "type": "string",
+            "description": "Building or premises name / number."
+          },
+          "village": {
+            "type": "string",
+            "description": "Village or town."
+          },
+          "block": {
+            "type": "string",
+            "description": "Block."
+          },
+          "street": {
+            "type": "string",
+            "description": "Street / road."
+          },
+          "city": {
+            "type": "string",
+            "description": "City."
+          },
+          "district": {
+            "type": "string",
+            "description": "District."
+          },
+          "state": {
+            "type": "string",
+            "description": "State."
+          },
+          "pincode": {
+            "type": "string",
+            "description": "Six-digit PIN code."
+          }
+        },
+        "description": "One unit location of the enterprise."
+      },
+      "UdyamNicCode": {
+        "type": "object",
+        "properties": {
+          "serialNumber": {
+            "type": "string",
+            "description": "Position of the activity in the list."
+          },
+          "nic2Digit": {
+            "type": "string",
+            "description": "NIC 2-digit division code."
+          },
+          "nic2Description": {
+            "type": "string",
+            "description": "NIC 2-digit division description."
+          },
+          "nic4Digit": {
+            "type": "string",
+            "description": "NIC 4-digit class code."
+          },
+          "nic4Description": {
+            "type": "string",
+            "description": "NIC 4-digit class description."
+          },
+          "nic5Digit": {
+            "type": "string",
+            "description": "NIC 5-digit sub-class code."
+          },
+          "nic5Description": {
+            "type": "string",
+            "description": "NIC 5-digit sub-class description."
+          },
+          "activity": {
+            "type": "string",
+            "description": "Activity type: Manufacturing, Services or Trading."
+          },
+          "date": {
+            "type": "string",
+            "description": "Date the activity was added, ISO yyyy-mm-dd.",
+            "format": "date"
+          }
+        },
+        "description": "One NIC activity code the enterprise is registered under."
       },
       "UdyamVerificationResult": {
         "type": "object",
@@ -3966,37 +5336,121 @@
             "type": "string",
             "description": "StampMitra's own transaction id for this call (SMV-YYYYMMDD-XXXXXXX). Always present, including on a negative result. Not an idempotency key."
           },
+          "verificationId": {
+            "type": "string",
+            "description": "StampMitra's own id for this verification (VRF- followed by 12 base32 characters). Generated for every call, unique to it. Always present. Quote it in support requests.",
+            "pattern": "^VRF-[0-9A-HJKMNP-TV-Z]{12}$"
+          },
           "found": {
             "type": "boolean",
-            "description": "Whether the Udyam registration was found."
+            "description": "Whether an active Udyam registration was found. Always present."
+          },
+          "status": {
+            "type": "string",
+            "description": "Outcome of the lookup: SUCCESS, UDYAM_NOT_FOUND or UDYAM_IS_CANCELLED.",
+            "enum": [
+              "SUCCESS",
+              "UDYAM_NOT_FOUND",
+              "UDYAM_IS_CANCELLED"
+            ]
           },
           "udyamStatus": {
             "type": "string",
-            "description": "Registration status."
+            "description": "Same value as status. Kept so existing integrations keep working."
+          },
+          "udyamNumber": {
+            "type": "string",
+            "description": "The Udyam registration number that was looked up."
           },
           "enterpriseName": {
             "type": "string",
-            "description": "Enterprise name."
-          },
-          "enterpriseType": {
-            "type": "string",
-            "description": "Enterprise type."
+            "description": "Registered enterprise name."
           },
           "organizationType": {
             "type": "string",
-            "description": "Organization type, e.g. Micro."
+            "description": "Legal form of the organisation, for example Proprietary."
+          },
+          "majorActivity": {
+            "type": "string",
+            "description": "Major activity: Manufacturing, Services or Trading."
+          },
+          "socialCategory": {
+            "type": "string",
+            "description": "Social category of the owner, for example General."
+          },
+          "dateOfIncorporation": {
+            "type": "string",
+            "description": "Date of incorporation, ISO yyyy-mm-dd.",
+            "format": "date"
+          },
+          "dateOfCommencement": {
+            "type": "string",
+            "description": "Date business commenced, ISO yyyy-mm-dd.",
+            "format": "date"
+          },
+          "dateOfUdyamRegistration": {
+            "type": "string",
+            "description": "Date the Udyam registration was issued, ISO yyyy-mm-dd.",
+            "format": "date"
+          },
+          "enterpriseType": {
+            "type": "string",
+            "description": "Current MSME classification: Micro, Small or Medium."
+          },
+          "classificationYear": {
+            "type": "string",
+            "description": "Financial year of the current classification, for example 2024-25."
+          },
+          "classificationDate": {
+            "type": "string",
+            "description": "Date of the current classification, ISO yyyy-mm-dd.",
+            "format": "date"
           },
           "certificateUrl": {
             "type": "string",
-            "description": "URL of the Udyam certificate.",
+            "description": "URL of the Udyam registration certificate (PDF).",
             "format": "uri"
+          },
+          "classificationHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UdyamClassificationHistoryEntry"
+            },
+            "description": "Year-by-year classification history, most recent first."
+          },
+          "splitAddress": {
+            "$ref": "#/components/schemas/UdyamSplitAddress",
+            "description": "Registered address of the enterprise, split into parts, with the registered contact details."
+          },
+          "unitLocations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UdyamUnitLocation"
+            },
+            "description": "Locations of the enterprise units."
+          },
+          "nicCodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UdyamNicCode"
+            },
+            "description": "NIC activity codes the enterprise is registered under."
+          },
+          "dic": {
+            "type": "string",
+            "description": "District Industries Centre."
+          },
+          "msmeDi": {
+            "type": "string",
+            "description": "MSME Development Institute."
           }
         },
         "required": [
           "referenceId",
+          "verificationId",
           "found"
         ],
-        "description": "Result of a Udyam verification."
+        "description": "Result of a Udyam verification: the full registration record. Every field except referenceId, verificationId and found is optional."
       },
       "PanToGstinEntry": {
         "type": "object",
@@ -4054,24 +5508,49 @@
             "type": "string",
             "description": "StampMitra's own transaction id for this call (SMV-YYYYMMDD-XXXXXXX). Always present, including on a negative result. Not an idempotency key."
           },
+          "verificationId": {
+            "type": "string",
+            "description": "StampMitra's own id for this verification (VRF- followed by 12 base32 characters). Generated for every call, unique to it. Always present. Quote it in support requests.",
+            "pattern": "^VRF-[0-9A-HJKMNP-TV-Z]{12}$"
+          },
           "found": {
             "type": "boolean",
-            "description": "Whether a Udyam registration was found for the PAN."
+            "description": "Whether an active Udyam registration was found for the PAN. Always present."
           },
           "status": {
             "type": "string",
-            "description": "Registration status."
+            "description": "Outcome of the lookup: SUCCESS, UDYAM_NOT_FOUND or UDYAM_IS_CANCELLED.",
+            "enum": [
+              "SUCCESS",
+              "UDYAM_NOT_FOUND",
+              "UDYAM_IS_CANCELLED"
+            ]
+          },
+          "pan": {
+            "type": "string",
+            "description": "The PAN the lookup was made for."
+          },
+          "udyam": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The Udyam registration number linked to the PAN, at most one. null when no registration is linked."
           },
           "udyamNumber": {
-            "type": "string",
-            "description": "The Udyam registration number."
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Same value as udyam. Kept so existing integrations keep working."
           }
         },
         "required": [
           "referenceId",
+          "verificationId",
           "found"
         ],
-        "description": "Result of a PAN to Udyam lookup."
+        "description": "Result of a PAN to Udyam lookup. Every field except referenceId, verificationId and found is optional; udyam and udyamNumber carry the same value."
       },
       "IfscDetails": {
         "type": "object",
@@ -4720,6 +6199,879 @@
           "error"
         ],
         "description": "Every error response from this API has exactly this shape."
+      },
+      "AccountBalance": {
+        "type": "object",
+        "properties": {
+          "generatedAt": {
+            "type": "string",
+            "description": "When this snapshot was computed (cached up to 5 seconds).",
+            "format": "date-time"
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "LIVE",
+              "SANDBOX"
+            ],
+            "description": "Environment of the API key."
+          },
+          "sandbox": {
+            "type": "boolean",
+            "description": "True for an sk_test_ key: no real balance is ever returned."
+          },
+          "notice": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Sandbox notice; null for a live key."
+          },
+          "currency": {
+            "type": "string",
+            "description": "Always INR.",
+            "enum": [
+              "INR"
+            ]
+          },
+          "balance": {
+            "type": "object",
+            "properties": {
+              "paise": {
+                "type": "integer",
+                "description": "Amount in paise (integer)."
+              },
+              "rupees": {
+                "type": "number",
+                "description": "Amount in rupees (paise / 100)."
+              }
+            },
+            "required": [
+              "paise",
+              "rupees"
+            ],
+            "description": "Wallet cash balance (includes any leftover signup credit). Zero for a sandbox key."
+          },
+          "available": {
+            "type": "object",
+            "properties": {
+              "paise": {
+                "type": "integer",
+                "description": "Amount in paise (integer)."
+              },
+              "rupees": {
+                "type": "number",
+                "description": "Amount in rupees (paise / 100)."
+              }
+            },
+            "required": [
+              "paise",
+              "rupees"
+            ],
+            "description": "What a call can spend now: cash plus eligible promo credit."
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "OK",
+              "LOW_BALANCE",
+              "FINISHED"
+            ],
+            "description": "OK; LOW_BALANCE below the threshold; FINISHED at zero or below the cheapest call (live calls then answer 402)."
+          },
+          "lowBalance": {
+            "type": "boolean",
+            "description": "True when state is not OK."
+          },
+          "lowBalanceThreshold": {
+            "type": "object",
+            "properties": {
+              "paise": {
+                "type": "integer",
+                "description": "Amount in paise (integer)."
+              },
+              "rupees": {
+                "type": "number",
+                "description": "Amount in rupees (paise / 100)."
+              }
+            },
+            "required": [
+              "paise",
+              "rupees"
+            ],
+            "description": "Low-balance threshold (Rs 500 by default)."
+          },
+          "estimatedCallsRemaining": {
+            "type": "object",
+            "properties": {
+              "atCheapestPrice": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "available / cheapest approved product price; null when none."
+              },
+              "cheapestProduct": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The cheapest approved, priced product.",
+                "properties": {
+                  "serviceCode": {
+                    "type": "string",
+                    "description": "Service code."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Product name."
+                  },
+                  "price": {
+                    "type": "object",
+                    "properties": {
+                      "paise": {
+                        "type": "integer",
+                        "description": "Amount in paise (integer)."
+                      },
+                      "rupees": {
+                        "type": "number",
+                        "description": "Amount in rupees (paise / 100)."
+                      }
+                    },
+                    "required": [
+                      "paise",
+                      "rupees"
+                    ],
+                    "description": "Price per call before GST."
+                  }
+                },
+                "required": [
+                  "serviceCode",
+                  "name",
+                  "price"
+                ]
+              },
+              "atSevenDayAverage": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "available / your average billed price over the last 7 days; null without billed calls."
+              },
+              "sevenDayAverageCost": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "paise": {
+                    "type": "integer",
+                    "description": "Amount in paise (integer)."
+                  },
+                  "rupees": {
+                    "type": "number",
+                    "description": "Amount in rupees (paise / 100)."
+                  }
+                },
+                "required": [
+                  "paise",
+                  "rupees"
+                ],
+                "description": "Average billed price per call over the last 7 days."
+              }
+            },
+            "required": [
+              "atCheapestPrice",
+              "cheapestProduct",
+              "atSevenDayAverage",
+              "sevenDayAverageCost"
+            ]
+          },
+          "lastTopUp": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Newest top-up, base amount credited (GST excluded); null when never topped up.",
+            "properties": {
+              "amount": {
+                "type": "object",
+                "properties": {
+                  "paise": {
+                    "type": "integer",
+                    "description": "Amount in paise (integer)."
+                  },
+                  "rupees": {
+                    "type": "number",
+                    "description": "Amount in rupees (paise / 100)."
+                  }
+                },
+                "required": [
+                  "paise",
+                  "rupees"
+                ],
+                "description": "Base amount credited."
+              },
+              "at": {
+                "type": "string",
+                "description": "When it was credited.",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "amount",
+              "at"
+            ]
+          },
+          "signupCredit": {
+            "type": "object",
+            "properties": {
+              "granted": {
+                "type": "object",
+                "properties": {
+                  "paise": {
+                    "type": "integer",
+                    "description": "Amount in paise (integer)."
+                  },
+                  "rupees": {
+                    "type": "number",
+                    "description": "Amount in rupees (paise / 100)."
+                  }
+                },
+                "required": [
+                  "paise",
+                  "rupees"
+                ],
+                "description": "Signup credit granted (zero when never)."
+              },
+              "left": {
+                "type": "object",
+                "properties": {
+                  "paise": {
+                    "type": "integer",
+                    "description": "Amount in paise (integer)."
+                  },
+                  "rupees": {
+                    "type": "number",
+                    "description": "Amount in rupees (paise / 100)."
+                  }
+                },
+                "required": [
+                  "paise",
+                  "rupees"
+                ],
+                "description": "Part of it still left in the balance."
+              }
+            },
+            "required": [
+              "granted",
+              "left"
+            ]
+          }
+        },
+        "required": [
+          "generatedAt",
+          "environment",
+          "sandbox",
+          "notice",
+          "currency",
+          "balance",
+          "available",
+          "state",
+          "lowBalance",
+          "lowBalanceThreshold",
+          "estimatedCallsRemaining",
+          "lastTopUp",
+          "signupCredit"
+        ],
+        "description": "Wallet balance and low-balance state of the organization that owns the API key."
+      },
+      "AccountUsage": {
+        "type": "object",
+        "properties": {
+          "generatedAt": {
+            "type": "string",
+            "description": "When this snapshot was computed (cached up to 30 seconds).",
+            "format": "date-time"
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "LIVE",
+              "SANDBOX"
+            ],
+            "description": "Environment of the API key; only that environment's calls are counted."
+          },
+          "sandbox": {
+            "type": "boolean",
+            "description": "True for an sk_test_ key."
+          },
+          "notice": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Sandbox notice; null for a live key."
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Day and month boundaries use this zone.",
+            "enum": [
+              "Asia/Kolkata"
+            ]
+          },
+          "currentMonth": {
+            "type": "object",
+            "properties": {
+              "month": {
+                "type": "string",
+                "description": "IST calendar month, YYYY-MM.",
+                "pattern": "^[0-9]{4}-[0-9]{2}$"
+              },
+              "from": {
+                "type": "string",
+                "description": "Start of the month, 00:00 IST, as a UTC instant.",
+                "format": "date-time"
+              },
+              "to": {
+                "type": "string",
+                "description": "End of the covered period (now for the current month, the last millisecond of the month for the previous one).",
+                "format": "date-time"
+              },
+              "gstIncluded": {
+                "type": "boolean",
+                "const": false,
+                "description": "Always false: spend is the price-book price before GST."
+              },
+              "requests": {
+                "type": "integer",
+                "description": "Calls recorded on the metered product routes (/v1/verify, /v1/estamp, /v1/esign), including calls stopped before the provider (402, 429)."
+              },
+              "billedRequests": {
+                "type": "integer",
+                "description": "Calls that were billed."
+              },
+              "failedNotBilled": {
+                "type": "integer",
+                "description": "Calls with HTTP status 400 or above that were not billed."
+              },
+              "successNotBilled": {
+                "type": "integer",
+                "description": "Calls with HTTP status below 400 that were not billed (sandbox calls, unpriced products)."
+              },
+              "pendingBilling": {
+                "type": "integer",
+                "description": "Calls whose debit is waiting to be applied; their amount is not in spend yet."
+              },
+              "spend": {
+                "type": "object",
+                "properties": {
+                  "paise": {
+                    "type": "integer",
+                    "description": "Amount in paise (integer)."
+                  },
+                  "rupees": {
+                    "type": "number",
+                    "description": "Amount in rupees (paise / 100)."
+                  }
+                },
+                "required": [
+                  "paise",
+                  "rupees"
+                ],
+                "description": "Spend on the billed calls, BEFORE GST."
+              },
+              "byProduct": {
+                "type": "array",
+                "description": "Per product, most requests first.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "serviceCode": {
+                      "type": "string",
+                      "description": "Service code, e.g. pan.verify."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Product name."
+                    },
+                    "requests": {
+                      "type": "integer",
+                      "description": "Calls recorded on the metered product routes (/v1/verify, /v1/estamp, /v1/esign), including calls stopped before the provider (402, 429)."
+                    },
+                    "billedRequests": {
+                      "type": "integer",
+                      "description": "Calls that were billed."
+                    },
+                    "failedNotBilled": {
+                      "type": "integer",
+                      "description": "Calls with HTTP status 400 or above that were not billed."
+                    },
+                    "successNotBilled": {
+                      "type": "integer",
+                      "description": "Calls with HTTP status below 400 that were not billed (sandbox calls, unpriced products)."
+                    },
+                    "pendingBilling": {
+                      "type": "integer",
+                      "description": "Calls whose debit is waiting to be applied; their amount is not in spend yet."
+                    },
+                    "spend": {
+                      "type": "object",
+                      "properties": {
+                        "paise": {
+                          "type": "integer",
+                          "description": "Amount in paise (integer)."
+                        },
+                        "rupees": {
+                          "type": "number",
+                          "description": "Amount in rupees (paise / 100)."
+                        }
+                      },
+                      "required": [
+                        "paise",
+                        "rupees"
+                      ],
+                      "description": "Spend on the billed calls, BEFORE GST."
+                    }
+                  },
+                  "required": [
+                    "serviceCode",
+                    "name",
+                    "requests",
+                    "billedRequests",
+                    "failedNotBilled",
+                    "successNotBilled",
+                    "pendingBilling",
+                    "spend"
+                  ]
+                }
+              },
+              "daily": {
+                "type": "array",
+                "description": "One entry per IST day, zero-filled: day 1 up to today for the current month, the whole previous month.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "description": "IST day, YYYY-MM-DD.",
+                      "format": "date"
+                    },
+                    "requests": {
+                      "type": "integer",
+                      "description": "Calls recorded on the metered product routes (/v1/verify, /v1/estamp, /v1/esign), including calls stopped before the provider (402, 429)."
+                    },
+                    "billedRequests": {
+                      "type": "integer",
+                      "description": "Calls that were billed."
+                    },
+                    "failedNotBilled": {
+                      "type": "integer",
+                      "description": "Calls with HTTP status 400 or above that were not billed."
+                    },
+                    "successNotBilled": {
+                      "type": "integer",
+                      "description": "Calls with HTTP status below 400 that were not billed (sandbox calls, unpriced products)."
+                    },
+                    "pendingBilling": {
+                      "type": "integer",
+                      "description": "Calls whose debit is waiting to be applied; their amount is not in spend yet."
+                    },
+                    "spend": {
+                      "type": "object",
+                      "properties": {
+                        "paise": {
+                          "type": "integer",
+                          "description": "Amount in paise (integer)."
+                        },
+                        "rupees": {
+                          "type": "number",
+                          "description": "Amount in rupees (paise / 100)."
+                        }
+                      },
+                      "required": [
+                        "paise",
+                        "rupees"
+                      ],
+                      "description": "Spend on the billed calls, BEFORE GST."
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "requests",
+                    "billedRequests",
+                    "failedNotBilled",
+                    "successNotBilled",
+                    "pendingBilling",
+                    "spend"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "month",
+              "from",
+              "to",
+              "gstIncluded",
+              "requests",
+              "billedRequests",
+              "failedNotBilled",
+              "successNotBilled",
+              "pendingBilling",
+              "spend",
+              "byProduct",
+              "daily"
+            ]
+          },
+          "previousMonth": {
+            "type": "object",
+            "properties": {
+              "month": {
+                "type": "string",
+                "description": "IST calendar month, YYYY-MM.",
+                "pattern": "^[0-9]{4}-[0-9]{2}$"
+              },
+              "from": {
+                "type": "string",
+                "description": "Start of the month, 00:00 IST, as a UTC instant.",
+                "format": "date-time"
+              },
+              "to": {
+                "type": "string",
+                "description": "End of the covered period (now for the current month, the last millisecond of the month for the previous one).",
+                "format": "date-time"
+              },
+              "gstIncluded": {
+                "type": "boolean",
+                "const": false,
+                "description": "Always false: spend is the price-book price before GST."
+              },
+              "requests": {
+                "type": "integer",
+                "description": "Calls recorded on the metered product routes (/v1/verify, /v1/estamp, /v1/esign), including calls stopped before the provider (402, 429)."
+              },
+              "billedRequests": {
+                "type": "integer",
+                "description": "Calls that were billed."
+              },
+              "failedNotBilled": {
+                "type": "integer",
+                "description": "Calls with HTTP status 400 or above that were not billed."
+              },
+              "successNotBilled": {
+                "type": "integer",
+                "description": "Calls with HTTP status below 400 that were not billed (sandbox calls, unpriced products)."
+              },
+              "pendingBilling": {
+                "type": "integer",
+                "description": "Calls whose debit is waiting to be applied; their amount is not in spend yet."
+              },
+              "spend": {
+                "type": "object",
+                "properties": {
+                  "paise": {
+                    "type": "integer",
+                    "description": "Amount in paise (integer)."
+                  },
+                  "rupees": {
+                    "type": "number",
+                    "description": "Amount in rupees (paise / 100)."
+                  }
+                },
+                "required": [
+                  "paise",
+                  "rupees"
+                ],
+                "description": "Spend on the billed calls, BEFORE GST."
+              },
+              "byProduct": {
+                "type": "array",
+                "description": "Per product, most requests first.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "serviceCode": {
+                      "type": "string",
+                      "description": "Service code, e.g. pan.verify."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Product name."
+                    },
+                    "requests": {
+                      "type": "integer",
+                      "description": "Calls recorded on the metered product routes (/v1/verify, /v1/estamp, /v1/esign), including calls stopped before the provider (402, 429)."
+                    },
+                    "billedRequests": {
+                      "type": "integer",
+                      "description": "Calls that were billed."
+                    },
+                    "failedNotBilled": {
+                      "type": "integer",
+                      "description": "Calls with HTTP status 400 or above that were not billed."
+                    },
+                    "successNotBilled": {
+                      "type": "integer",
+                      "description": "Calls with HTTP status below 400 that were not billed (sandbox calls, unpriced products)."
+                    },
+                    "pendingBilling": {
+                      "type": "integer",
+                      "description": "Calls whose debit is waiting to be applied; their amount is not in spend yet."
+                    },
+                    "spend": {
+                      "type": "object",
+                      "properties": {
+                        "paise": {
+                          "type": "integer",
+                          "description": "Amount in paise (integer)."
+                        },
+                        "rupees": {
+                          "type": "number",
+                          "description": "Amount in rupees (paise / 100)."
+                        }
+                      },
+                      "required": [
+                        "paise",
+                        "rupees"
+                      ],
+                      "description": "Spend on the billed calls, BEFORE GST."
+                    }
+                  },
+                  "required": [
+                    "serviceCode",
+                    "name",
+                    "requests",
+                    "billedRequests",
+                    "failedNotBilled",
+                    "successNotBilled",
+                    "pendingBilling",
+                    "spend"
+                  ]
+                }
+              },
+              "daily": {
+                "type": "array",
+                "description": "One entry per IST day, zero-filled: day 1 up to today for the current month, the whole previous month.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "description": "IST day, YYYY-MM-DD.",
+                      "format": "date"
+                    },
+                    "requests": {
+                      "type": "integer",
+                      "description": "Calls recorded on the metered product routes (/v1/verify, /v1/estamp, /v1/esign), including calls stopped before the provider (402, 429)."
+                    },
+                    "billedRequests": {
+                      "type": "integer",
+                      "description": "Calls that were billed."
+                    },
+                    "failedNotBilled": {
+                      "type": "integer",
+                      "description": "Calls with HTTP status 400 or above that were not billed."
+                    },
+                    "successNotBilled": {
+                      "type": "integer",
+                      "description": "Calls with HTTP status below 400 that were not billed (sandbox calls, unpriced products)."
+                    },
+                    "pendingBilling": {
+                      "type": "integer",
+                      "description": "Calls whose debit is waiting to be applied; their amount is not in spend yet."
+                    },
+                    "spend": {
+                      "type": "object",
+                      "properties": {
+                        "paise": {
+                          "type": "integer",
+                          "description": "Amount in paise (integer)."
+                        },
+                        "rupees": {
+                          "type": "number",
+                          "description": "Amount in rupees (paise / 100)."
+                        }
+                      },
+                      "required": [
+                        "paise",
+                        "rupees"
+                      ],
+                      "description": "Spend on the billed calls, BEFORE GST."
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "requests",
+                    "billedRequests",
+                    "failedNotBilled",
+                    "successNotBilled",
+                    "pendingBilling",
+                    "spend"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "month",
+              "from",
+              "to",
+              "gstIncluded",
+              "requests",
+              "billedRequests",
+              "failedNotBilled",
+              "successNotBilled",
+              "pendingBilling",
+              "spend",
+              "byProduct",
+              "daily"
+            ]
+          },
+          "today": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "Today in IST, YYYY-MM-DD.",
+                "format": "date"
+              },
+              "requests": {
+                "type": "integer",
+                "description": "Calls today."
+              },
+              "billedRequests": {
+                "type": "integer",
+                "description": "Billed calls today."
+              },
+              "failedNotBilled": {
+                "type": "integer",
+                "description": "Failed, not billed calls today."
+              },
+              "spend": {
+                "type": "object",
+                "properties": {
+                  "paise": {
+                    "type": "integer",
+                    "description": "Amount in paise (integer)."
+                  },
+                  "rupees": {
+                    "type": "number",
+                    "description": "Amount in rupees (paise / 100)."
+                  }
+                },
+                "required": [
+                  "paise",
+                  "rupees"
+                ],
+                "description": "Spend today before GST."
+              },
+              "requestsPerDay": {
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Per-day request cap; null = none enforced."
+                  },
+                  "used": {
+                    "type": "integer",
+                    "description": "Calls today."
+                  },
+                  "remaining": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "limit - used; null when there is no cap."
+                  }
+                },
+                "required": [
+                  "limit",
+                  "used",
+                  "remaining"
+                ]
+              }
+            },
+            "required": [
+              "date",
+              "requests",
+              "billedRequests",
+              "failedNotBilled",
+              "spend",
+              "requestsPerDay"
+            ]
+          },
+          "limits": {
+            "type": "object",
+            "properties": {
+              "requestsPerMinute": {
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Requests per minute (the X-RateLimit-Limit of verification routes); null = no cap."
+                  },
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "PLAN",
+                      "LIVE_RAMP",
+                      "SANDBOX",
+                      "NONE"
+                    ]
+                  }
+                },
+                "required": [
+                  "limit",
+                  "source"
+                ]
+              },
+              "requestsPerDay": {
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Per-day request cap; null = none enforced."
+                  },
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "PROVISIONAL",
+                      "NONE"
+                    ]
+                  }
+                },
+                "required": [
+                  "limit",
+                  "source"
+                ]
+              }
+            },
+            "required": [
+              "requestsPerMinute",
+              "requestsPerDay"
+            ]
+          }
+        },
+        "required": [
+          "generatedAt",
+          "environment",
+          "sandbox",
+          "notice",
+          "timezone",
+          "currentMonth",
+          "previousMonth",
+          "today",
+          "limits"
+        ],
+        "description": "Usage of the organization that owns the API key: current and previous IST month, today, and the limits."
       }
     },
     "parameters": {
@@ -4727,7 +7079,7 @@
         "name": "Idempotency-Key",
         "in": "header",
         "required": false,
-        "description": "Optional client-generated key (scoped to your organization) that makes a retried POST safe. Retrying with the same key and the same body replays the original result without repeating the work or billing again. Reusing a key with a different body returns 409, except for payment intents, which return the existing intent for that key.",
+        "description": "Optional client-generated key (1 to 255 printable characters) that makes a retried POST safe. A key is scoped to your organization, the route and the environment (a sandbox key never matches a live one) and is kept for 24 hours. Retrying with the same key and the same request replays the original response (same status and body) without repeating the work or billing again. The same key with a different request returns 422 IDEMPOTENCY_KEY_REUSED. The same key while the first request is still being processed returns 409 IDEMPOTENCY_IN_PROGRESS with a Retry-After header. Routes that require the key (POST /v1/estamp/orders, POST /v1/batches) answer 400 IDEMPOTENCY_KEY_REQUIRED without it.",
         "schema": {
           "type": "string",
           "minLength": 1
@@ -4760,6 +7112,48 @@
         "description": "Id of this delivery's event; stable across retries, so use it to de-duplicate.",
         "schema": {
           "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "RateLimitLimit": {
+        "description": "Requests allowed in the current per-minute window (sent on routes that use the rate limiter).",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "RateLimitRemaining": {
+        "description": "Requests left in the current window after this one.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "RateLimitReset": {
+        "description": "Whole seconds until the window ends and the counter resets.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "WalletState": {
+        "description": "Live keys only: OK, LOW_BALANCE or FINISHED. Optional: clients must tolerate its absence. Never carries the amount.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "LOW_BALANCE",
+            "FINISHED"
+          ]
+        }
+      },
+      "WalletBalanceLow": {
+        "description": "Live keys only, sent as true only when the wallet is low (LOW_BALANCE or FINISHED).",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "true"
+          ]
         }
       }
     },
@@ -4850,7 +7244,7 @@
         }
       },
       "Conflict": {
-        "description": "The Idempotency-Key was already used with a different request body, or the resource is in a state that does not allow the action.",
+        "description": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry with the same key after the Retry-After delay), or the resource is in a state that does not allow the action.",
         "content": {
           "application/json": {
             "schema": {
@@ -4858,8 +7252,25 @@
             },
             "example": {
               "error": {
-                "code": "CONFLICT",
-                "message": "This Idempotency-Key was already used with a different request payload",
+                "code": "IDEMPOTENCY_IN_PROGRESS",
+                "message": "A request with this Idempotency-Key is being processed; retry shortly with the same key",
+                "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+              }
+            }
+          }
+        }
+      },
+      "UnprocessableEntity": {
+        "description": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": {
+                "code": "IDEMPOTENCY_KEY_REUSED",
+                "message": "This Idempotency-Key was already used with a different request",
                 "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
               }
             }
@@ -4867,7 +7278,7 @@
         }
       },
       "TooManyRequests": {
-        "description": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+        "description": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
         "content": {
           "application/json": {
             "schema": {
@@ -4901,7 +7312,7 @@
         }
       },
       "ServiceUnavailable": {
-        "description": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later.",
+        "description": "A dependency is temporarily unavailable (for example the service catalog, or document downloads for an order). Retry later: the response carries a Retry-After header (seconds).",
         "content": {
           "application/json": {
             "schema": {

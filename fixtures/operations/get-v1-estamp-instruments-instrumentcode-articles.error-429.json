@@ -6,7 +6,7 @@
   },
   "scenario": "error-429",
   "source": "spec-example",
-  "description": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The API sends no Retry-After header: wait for the next window (typically 60 seconds) before retrying.",
+  "description": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
   "request": {
     "method": "GET",
     "path": "/v1/estamp/instruments/rent_agreement/articles",

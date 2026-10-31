@@ -1,0 +1,129 @@
+{
+  "name": "GET /v1/account/usage - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/account/usage"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/account/usage",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "generatedAt": "2026-10-29T10:15:00.000Z",
+      "environment": "LIVE",
+      "sandbox": false,
+      "notice": null,
+      "timezone": "Asia/Kolkata",
+      "currentMonth": {
+        "month": "2026-10",
+        "from": "2026-09-30T18:30:00.000Z",
+        "to": "2026-10-29T10:15:00.000Z",
+        "gstIncluded": false,
+        "requests": 2,
+        "billedRequests": 1,
+        "failedNotBilled": 1,
+        "successNotBilled": 0,
+        "pendingBilling": 0,
+        "spend": {
+          "paise": 500,
+          "rupees": 5
+        },
+        "byProduct": [
+          {
+            "serviceCode": "pan.verify",
+            "name": "PAN verification",
+            "requests": 2,
+            "billedRequests": 1,
+            "failedNotBilled": 1,
+            "successNotBilled": 0,
+            "pendingBilling": 0,
+            "spend": {
+              "paise": 500,
+              "rupees": 5
+            }
+          }
+        ],
+        "daily": [
+          {
+            "date": "2026-10-28",
+            "requests": 1,
+            "billedRequests": 1,
+            "failedNotBilled": 0,
+            "successNotBilled": 0,
+            "pendingBilling": 0,
+            "spend": {
+              "paise": 500,
+              "rupees": 5
+            }
+          },
+          {
+            "date": "2026-10-29",
+            "requests": 1,
+            "billedRequests": 0,
+            "failedNotBilled": 1,
+            "successNotBilled": 0,
+            "pendingBilling": 0,
+            "spend": {
+              "paise": 0,
+              "rupees": 0
+            }
+          }
+        ]
+      },
+      "previousMonth": {
+        "month": "2026-09",
+        "from": "2026-08-31T18:30:00.000Z",
+        "to": "2026-09-30T18:29:59.999Z",
+        "gstIncluded": false,
+        "requests": 0,
+        "billedRequests": 0,
+        "failedNotBilled": 0,
+        "successNotBilled": 0,
+        "pendingBilling": 0,
+        "spend": {
+          "paise": 0,
+          "rupees": 0
+        },
+        "byProduct": [],
+        "daily": []
+      },
+      "today": {
+        "date": "2026-10-29",
+        "requests": 1,
+        "billedRequests": 0,
+        "failedNotBilled": 1,
+        "spend": {
+          "paise": 0,
+          "rupees": 0
+        },
+        "requestsPerDay": {
+          "limit": null,
+          "used": 1,
+          "remaining": null
+        }
+      },
+      "limits": {
+        "requestsPerMinute": {
+          "limit": 60,
+          "source": "PLAN"
+        },
+        "requestsPerDay": {
+          "limit": null,
+          "source": "NONE"
+        }
+      }
+    }
+  }
+}

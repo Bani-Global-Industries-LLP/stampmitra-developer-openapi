@@ -28,13 +28,114 @@
     },
     "body": {
       "referenceId": "SMV-20260927-2Q56T8",
+      "verificationId": "VRF-4H8Z2M6TQ9KW",
       "valid": true,
-      "name": "RAHUL KUMAR",
-      "fatherOrHusbandName": "SURESH KUMAR",
-      "dob": "1990-01-01",
-      "address": "123, MG Road, Bengaluru",
-      "validUpto": "2030-12-31",
-      "dlStatus": "ACTIVE"
+      "dlNumber": "KA51201900089895",
+      "dob": "1994-08-05",
+      "status": "VALID",
+      "dlStatus": "VALID",
+      "name": "JOHN DOE",
+      "fatherOrHusbandName": "JOHN DOE",
+      "address": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103",
+      "validUpto": "09/05/2039",
+      "badgeDetails": [
+        {
+          "badgeIssueDate": null,
+          "badgeNo": null,
+          "classOfVehicle": [
+            "LMV"
+          ]
+        }
+      ],
+      "dlValidity": {
+        "nonTransport": {
+          "to": "09/05/2039",
+          "from": "10/05/2019"
+        },
+        "hazardousValidTill": null,
+        "transport": {
+          "to": null,
+          "from": null
+        },
+        "hillValidTill": null
+      },
+      "detailsOfDrivingLicence": {
+        "dateOfIssue": "10/05/2019",
+        "dateOfLastTransaction": null,
+        "status": null,
+        "lastTransactedAt": null,
+        "name": "JOHN DOE",
+        "fatherOrHusbandName": "JOHN DOE",
+        "addressList": [
+          {
+            "completeAddress": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103",
+            "type": "permanent",
+            "splitAddress": {
+              "district": [
+                "BANGALORE"
+              ],
+              "state": [
+                "KARNATAKA",
+                "KA"
+              ],
+              "city": [
+                "BELLANDUR"
+              ],
+              "pincode": "560103",
+              "country": [
+                "IN",
+                "IND",
+                "INDIA"
+              ],
+              "addressLine": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103"
+            }
+          },
+          {
+            "completeAddress": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103",
+            "type": "temporary",
+            "splitAddress": {
+              "district": [
+                "BANGALORE"
+              ],
+              "state": [
+                "KARNATAKA",
+                "KA"
+              ],
+              "city": [
+                "BELLANDUR"
+              ],
+              "pincode": "560103",
+              "country": [
+                "IN",
+                "IND",
+                "INDIA"
+              ],
+              "addressLine": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103"
+            }
+          }
+        ],
+        "address": "FLAT NO D-901 SUN,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103",
+        "photoUrl": "https://example.com/dl-photos/KA51201900089895.jpeg",
+        "splitAddress": {
+          "district": [
+            "BANGALORE"
+          ],
+          "state": [
+            ""
+          ],
+          "city": [
+            "BELLANDUR"
+          ],
+          "pincode": "560103",
+          "country": [
+            "IN",
+            "IND",
+            "INDIA"
+          ],
+          "addressLine": "FLAT NO D-901 SUNCITY,BELLANDUR, BANGALORE SOUTH,BANGALORE,KA 560103"
+        },
+        "covDetails": []
+      }
     }
   }
 }
