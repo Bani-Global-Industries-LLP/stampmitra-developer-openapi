@@ -20,7 +20,7 @@
     "test:sync": "node scripts/sync-guard-test.mjs"
   },
   "devDependencies": {
-    "@seriousme/openapi-schema-validator": "^2.4.0",
+    "@seriousme/openapi-schema-validator": "^2.12.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"
   }
