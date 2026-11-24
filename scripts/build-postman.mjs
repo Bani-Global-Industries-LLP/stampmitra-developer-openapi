@@ -20,6 +20,18 @@ function deref(doc, value) {
   return found ?? value;
 }
 
+/** Form fields of a multipart/form-data request body, from its schema: a binary property is a file field, the rest are text fields set to their default. */
+function formFields(doc, op) {
+  const media = op.requestBody?.content?.["multipart/form-data"];
+  if (!media) return undefined;
+  const schema = deref(doc, media.schema ?? {});
+  return Object.entries(schema.properties ?? {}).map(([key, prop]) =>
+    prop.format === "binary"
+      ? { key, type: "file", src: [], description: prop.description }
+      : { key, type: "text", value: prop.default === undefined ? "" : String(prop.default), description: prop.description },
+  );
+}
+
 function requestItem(doc, path, method, op) {
   const params = (op.parameters ?? []).map((p) => deref(doc, p));
   const pathVars = params.filter((p) => p.in === "path").map((p) => ({ key: p.name, value: `<${p.name}>`, description: p.description }));
@@ -27,6 +39,7 @@ function requestItem(doc, path, method, op) {
     .filter((p) => p.in === "query")
     .map((p) => ({ key: p.name, value: "", description: p.description, disabled: !p.required }));
   const bodyExample = pickExample(op.requestBody?.content);
+  const form = formFields(doc, op);
   // Optional header parameters (Idempotency-Key) are listed but disabled so they are one click away.
   const headerParams = params
     .filter((p) => p.in === "header")
@@ -62,9 +75,11 @@ function requestItem(doc, path, method, op) {
         ...(pathVars.length ? { variable: pathVars } : {}),
         ...(query.length ? { query } : {}),
       },
-      ...(bodyExample === undefined
-        ? {}
-        : { body: { mode: "raw", raw: JSON.stringify(bodyExample, null, 2), options: { raw: { language: "json" } } } }),
+      ...(form
+        ? { body: { mode: "formdata", formdata: form } }
+        : bodyExample === undefined
+          ? {}
+          : { body: { mode: "raw", raw: JSON.stringify(bodyExample, null, 2), options: { raw: { language: "json" } } } }),
       description: op.description,
     },
     response: responses,
