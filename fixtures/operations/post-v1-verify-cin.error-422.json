@@ -1,0 +1,36 @@
+{
+  "name": "POST /v1/verify/cin - error-422",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/verify/cin"
+  },
+  "scenario": "error-422",
+  "source": "spec-example",
+  "description": "IDEMPOTENCY_KEY_REUSED: the Idempotency-Key was already used with a different request. The first request is unchanged and nothing was run or charged for this one. Use a new key for a different request.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/verify/cin",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "cin": "U72900KA2015PTC082988"
+    }
+  },
+  "response": {
+    "status": 422,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "IDEMPOTENCY_KEY_REUSED",
+        "message": "This Idempotency-Key was already used with a different request",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

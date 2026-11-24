@@ -18,8 +18,8 @@
     },
     "body": {
       "fileNumber": "PA1079341954215",
-      "dob": "1990-01-01",
-      "name": "Rahul Kumar"
+      "dob": "1998-12-31",
+      "name": "John doe"
     }
   },
   "response": {
@@ -29,10 +29,14 @@
     },
     "body": {
       "referenceId": "SMV-20260927-4W19X6",
+      "verificationId": "VRF-6N2R8D4YTH3K",
       "valid": true,
-      "name": "RAHUL KUMAR",
-      "dob": "1990-01-01",
-      "applicationType": "Fresh"
+      "status": "VALID",
+      "fileNumber": "PA1079341954215",
+      "name": "John doe",
+      "dob": "1998-12-31",
+      "applicationType": "NORMAL",
+      "applicationReceivedDate": "2003-12-31"
     }
   }
 }

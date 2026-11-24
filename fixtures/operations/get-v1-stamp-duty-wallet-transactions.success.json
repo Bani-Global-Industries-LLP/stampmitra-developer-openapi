@@ -1,0 +1,52 @@
+{
+  "name": "GET /v1/stamp-duty-wallet/transactions - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/stamp-duty-wallet/transactions"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/stamp-duty-wallet/transactions",
+    "query": {
+      "limit": "20"
+    },
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "items": [
+        {
+          "id": "wtx_01HZX4K9",
+          "type": "TOPUP",
+          "amount": "1000.00",
+          "balanceAfter": "1250.00",
+          "referenceId": "order_Lm3n4o5p6q7r8s",
+          "description": "Wallet top-up",
+          "mode": "RAZORPAY",
+          "createdAt": "2026-10-29T09:12:03.000Z"
+        },
+        {
+          "id": "wtx_01HZX1A2",
+          "type": "TOPUP",
+          "amount": "250.00",
+          "balanceAfter": "250.00",
+          "referenceId": "order_Kd9f2g3h4j5k6l",
+          "description": "Wallet top-up",
+          "mode": "RAZORPAY",
+          "createdAt": "2026-10-28T16:40:11.000Z"
+        }
+      ],
+      "nextCursor": "wtx_01HZX1A2"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "GET /v1/stamp-duty-wallet/invoices/{id} - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/stamp-duty-wallet/invoices/{id}"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/stamp-duty-wallet/invoices/cmwtopup1234567890",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "id": "cmwtopup1234567890",
+      "invoiceNumber": "SM/2026-27/000143",
+      "razorpayOrderId": "order_Lm3n4o5p6q7r8s",
+      "baseAmount": "60.00",
+      "gstAmount": "10.80",
+      "totalCharged": "70.80",
+      "creditedAmount": "1000.00",
+      "gstin": "07AAAAA1111A1Z1",
+      "gstinVerified": true,
+      "legalBusinessName": "Acme Traders Pvt Ltd",
+      "status": "PAID",
+      "paidAt": "2026-10-29T09:14:40.000Z"
+    }
+  }
+}

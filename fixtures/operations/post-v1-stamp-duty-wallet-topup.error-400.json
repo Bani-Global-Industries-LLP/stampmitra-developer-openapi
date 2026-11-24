@@ -1,0 +1,35 @@
+{
+  "name": "POST /v1/stamp-duty-wallet/topup - error-400",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/stamp-duty-wallet/topup"
+  },
+  "scenario": "error-400",
+  "source": "spec-example",
+  "description": "AMOUNT_BELOW_MINIMUM or AMOUNT_ABOVE_MAXIMUM (the message states the limit), or baseAmount is not a positive number.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/stamp-duty-wallet/topup",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "baseAmount": 1000
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "AMOUNT_BELOW_MINIMUM",
+        "message": "The amount is below the minimum.",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

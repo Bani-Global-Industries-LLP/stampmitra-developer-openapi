@@ -1,0 +1,81 @@
+{
+  "name": "POST /v1/estamp/orders - error-400",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/orders"
+  },
+  "scenario": "error-400",
+  "source": "spec-example",
+  "description": "VALIDATION_FAILED (the body is rejected; error.details.errors[] lists each finding), WARNINGS_NOT_ACKNOWLEDGED, or IDEMPOTENCY_KEY_REQUIRED (no Idempotency-Key header). Nothing was created.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/orders",
+    "query": {
+      "page": "1",
+      "limit": "20"
+    },
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "reference": "order-2026-0917",
+      "stamps": [
+        {
+          "clientReference": "line-001",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 1000,
+          "firstParty": {
+            "name": "Jane Doe",
+            "address": "12 MG Road, Pune"
+          },
+          "secondParty": {
+            "name": "John Smith"
+          },
+          "purpose": "Rental Agreement"
+        },
+        {
+          "clientReference": "line-002",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 500,
+          "firstParty": {
+            "name": "Jane Doe"
+          },
+          "secondParty": {
+            "name": "Acme Pvt Ltd"
+          },
+          "purpose": "Indemnity Bond"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "VALIDATION_FAILED: stamps[0].articleCode: articleCode is required",
+        "details": {
+          "errors": [
+            {
+              "field": "stamps[0].articleCode",
+              "code": "REQUIRED",
+              "message": "articleCode is required",
+              "index": 0
+            }
+          ]
+        },
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "name": "POST /v1/estamp/orders/validate - error-409",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/validate"
+  },
+  "scenario": "error-409",
+  "source": "spec-example",
+  "description": "SERVICE_UNAVAILABLE: e-Stamp ordering is temporarily paused. The message is customer-facing. Retry later with backoff.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/validate",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "reference": "order-2026-0917",
+      "stamps": [
+        {
+          "clientReference": "line-001",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 1000,
+          "firstParty": {
+            "name": "Jane Doe",
+            "address": "12 MG Road, Pune"
+          },
+          "secondParty": {
+            "name": "John Smith"
+          },
+          "purpose": "Rental Agreement"
+        },
+        {
+          "clientReference": "line-002",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 500,
+          "firstParty": {
+            "name": "Jane Doe"
+          },
+          "secondParty": {
+            "name": "Acme Pvt Ltd"
+          },
+          "purpose": "Indemnity Bond"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 409,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "SERVICE_UNAVAILABLE",
+        "message": "E-Stamp ordering is temporarily paused. Please try again shortly.",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

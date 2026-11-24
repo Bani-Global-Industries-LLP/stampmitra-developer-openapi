@@ -1,0 +1,36 @@
+{
+  "name": "GET /v1/estamp/states/{stateCode}/requirements - error-400",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/states/{stateCode}/requirements"
+  },
+  "scenario": "error-400",
+  "source": "spec-example",
+  "description": "category is not e_stamp or traditional_stamp, or another query parameter is invalid.",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/states/MH/requirements",
+    "query": {
+      "articleCode": "ART1",
+      "denomination": "500",
+      "category": "e_stamp"
+    },
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "category must be one of the following values: e_stamp, traditional_stamp",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

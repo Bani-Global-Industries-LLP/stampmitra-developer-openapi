@@ -1,0 +1,44 @@
+{
+  "name": "GET /v1/service-fee-wallet/invoices - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/service-fee-wallet/invoices"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/service-fee-wallet/invoices",
+    "query": {
+      "limit": "20"
+    },
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "items": [
+        {
+          "id": "inv_01HZX4K9",
+          "invoiceNumber": "SM/2026-27/000142",
+          "baseAmount": "500.00",
+          "gstAmount": "90.00",
+          "totalCharged": "590.00",
+          "gstin": "07AAAAA1111A1Z1",
+          "gstinVerified": true,
+          "legalBusinessName": "Acme Traders Pvt Ltd",
+          "status": "PAID",
+          "paidAt": "2026-10-29T09:14:40.000Z"
+        }
+      ],
+      "nextCursor": null
+    }
+  }
+}

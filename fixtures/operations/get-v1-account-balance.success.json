@@ -1,0 +1,78 @@
+{
+  "name": "GET /v1/account/balance - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/account/balance"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/account/balance",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "generatedAt": "2026-10-29T10:15:00.000Z",
+      "environment": "LIVE",
+      "sandbox": false,
+      "notice": null,
+      "currency": "INR",
+      "balance": {
+        "paise": 125050,
+        "rupees": 1250.5
+      },
+      "available": {
+        "paise": 125050,
+        "rupees": 1250.5
+      },
+      "state": "OK",
+      "lowBalance": false,
+      "lowBalanceThreshold": {
+        "paise": 50000,
+        "rupees": 500
+      },
+      "estimatedCallsRemaining": {
+        "atCheapestPrice": 312,
+        "cheapestProduct": {
+          "serviceCode": "bank-account.verify",
+          "name": "Bank account verification",
+          "price": {
+            "paise": 400,
+            "rupees": 4
+          }
+        },
+        "atSevenDayAverage": 142,
+        "sevenDayAverageCost": {
+          "paise": 880,
+          "rupees": 8.8
+        }
+      },
+      "lastTopUp": {
+        "amount": {
+          "paise": 100000,
+          "rupees": 1000
+        },
+        "at": "2026-10-21T08:00:00.000Z"
+      },
+      "signupCredit": {
+        "granted": {
+          "paise": 10000,
+          "rupees": 100
+        },
+        "left": {
+          "paise": 0,
+          "rupees": 0
+        }
+      }
+    }
+  }
+}

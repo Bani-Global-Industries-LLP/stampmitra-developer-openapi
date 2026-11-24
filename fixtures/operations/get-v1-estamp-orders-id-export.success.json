@@ -1,0 +1,28 @@
+{
+  "name": "GET /v1/estamp/orders/{id}/export - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/orders/{id}/export"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/orders/estord_9c1f2a3b/export",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "filename": "estamp-order-estord_9c1f2a3b.csv",
+      "csv": "id,orderId,status,state,articleCode,denomination,providerRef,createdAt,updatedAt\nestord_9c1f2a3b,6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55,PENDING_REVIEW,MH,ART1,1000,,2026-10-29T09:12:03.000Z,2026-10-29T09:12:03.000Z\n"
+    }
+  }
+}

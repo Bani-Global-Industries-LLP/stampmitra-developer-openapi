@@ -1,0 +1,72 @@
+{
+  "name": "POST /v1/estamp/orders - error-409",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/orders"
+  },
+  "scenario": "error-409",
+  "source": "spec-example",
+  "description": "IDEMPOTENCY_IN_PROGRESS: a request with this Idempotency-Key is still being processed (retry the identical request after the Retry-After delay), or SERVICE_UNAVAILABLE: e-Stamp ordering is paused.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/orders",
+    "query": {
+      "page": "1",
+      "limit": "20"
+    },
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "reference": "order-2026-0917",
+      "stamps": [
+        {
+          "clientReference": "line-001",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 1000,
+          "firstParty": {
+            "name": "Jane Doe",
+            "address": "12 MG Road, Pune"
+          },
+          "secondParty": {
+            "name": "John Smith"
+          },
+          "purpose": "Rental Agreement"
+        },
+        {
+          "clientReference": "line-002",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 500,
+          "firstParty": {
+            "name": "Jane Doe"
+          },
+          "secondParty": {
+            "name": "Acme Pvt Ltd"
+          },
+          "purpose": "Indemnity Bond"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 409,
+    "headers": {
+      "Content-Type": "application/json",
+      "Retry-After": "1"
+    },
+    "body": {
+      "error": {
+        "code": "IDEMPOTENCY_IN_PROGRESS",
+        "message": "A request with this Idempotency-Key is being processed; retry shortly with the same key",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

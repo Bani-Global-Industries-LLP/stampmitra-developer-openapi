@@ -1,0 +1,40 @@
+{
+  "name": "GET /v1/estamp/states/availability - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/states/availability"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/states/availability",
+    "query": {
+      "active": "true"
+    },
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "data": [
+        {
+          "code": "HR",
+          "name": "Haryana",
+          "active": true,
+          "eStampAvailable": true,
+          "traditionalAvailable": false
+        }
+      ],
+      "count": 1,
+      "activeCount": 1
+    }
+  }
+}

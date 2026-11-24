@@ -1,0 +1,34 @@
+{
+  "name": "GET /v1/estamp/states/{stateCode}/districts/{districtCode}/sros - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/states/{stateCode}/districts/{districtCode}/sros"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/states/MH/districts/PUNE/sros",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": [
+      {
+        "value": "SRO-14",
+        "label": "Pune Sub-Registrar 14"
+      },
+      {
+        "value": "SRO-15",
+        "label": "Pune Sub-Registrar 15"
+      }
+    ]
+  }
+}

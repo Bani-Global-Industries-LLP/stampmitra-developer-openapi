@@ -1,0 +1,40 @@
+{
+  "name": "GET /v1/estamp/states/{stateCode} - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/states/{stateCode}"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/states/MH",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "code": "MH",
+      "name": "Maharashtra",
+      "isActive": true,
+      "eStampAvailable": true,
+      "traditionalAvailable": true,
+      "minAmount": "100.00",
+      "maxAmount": "500000.00",
+      "sroRequired": true,
+      "cessRequired": false,
+      "propertyAreaRequired": true,
+      "fatherHusbandNameRequired": false,
+      "firstPartyAddressRequired": true,
+      "panCardImageRequired": false,
+      "instrumentCount": 42
+    }
+  }
+}

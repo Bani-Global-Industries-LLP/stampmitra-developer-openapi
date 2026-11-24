@@ -1,0 +1,35 @@
+{
+  "name": "POST /v1/estamp/stamps/{stampId}/pan-card - error-409",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/{stampId}/pan-card"
+  },
+  "scenario": "error-409",
+  "source": "spec-example",
+  "description": "CONFLICT: the stamp has progressed too far, is fulfilled or is cancelled, so its PAN card can no longer be changed.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/eststamp_4f21ab/pan-card",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "panCardImage": "https://cdn.example.com/kyc/pan-4417.jpg"
+    }
+  },
+  "response": {
+    "status": 409,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "CONFLICT",
+        "message": "Cannot change the PAN card of a stamp already in status VERIFIED",
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

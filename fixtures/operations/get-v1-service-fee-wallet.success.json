@@ -1,0 +1,28 @@
+{
+  "name": "GET /v1/service-fee-wallet - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/service-fee-wallet"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/service-fee-wallet",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "balance": "1250.00",
+      "currency": "INR"
+    }
+  }
+}
