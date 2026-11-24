@@ -89,10 +89,26 @@ const ILLUSTRATIVE = {
   "POST /v1/webhooks/events/{id}/replay": { id: "evt_01HZX3P0C4", status: "QUEUED" },
 };
 
-const PATH_PARAMS = { serviceCode: "estamp.instrument.rent_agreement", stateCode: "MH", instrumentCode: "rent_agreement", orderId: "ord_ext_123", id: "ord_ext_123", documentId: "doc_01HZX3MA77" };
-const ID_OVERRIDE = { "GET /v1/payments/intents/{id}": "pi_01HZX3N5B8", "POST /v1/webhooks/events/{id}/replay": "evt_01HZX3P0C4" };
+const PATH_PARAMS = { serviceCode: "estamp.instrument.rent_agreement", stateCode: "MH", instrumentCode: "rent_agreement", orderId: "ord_ext_123", id: "ord_ext_123", documentId: "doc_01HZX3MA77", stampId: "eststamp_4f21ab", districtCode: "PUNE" };
+const ID_OVERRIDE = {
+  "GET /v1/payments/intents/{id}": "pi_01HZX3N5B8", "POST /v1/webhooks/events/{id}/replay": "evt_01HZX3P0C4",
+  // contract 1.2.0: typed e-Stamp orders use the ids of the spec examples (estord_...), wallet invoices theirs
+  "GET /v1/estamp/orders/{id}": "estord_9c1f2a3b", "POST /v1/estamp/orders/{id}/cancel": "estord_9c1f2a3b",
+  "GET /v1/estamp/orders/{id}/export": "estord_9c1f2a3b", "GET /v1/estamp/orders/{id}/stamps": "estord_9c1f2a3b",
+  "GET /v1/stamp-duty-wallet/invoices/{id}": "cmwtopup1234567890", "GET /v1/service-fee-wallet/invoices/{id}": "inv_01HZX4K9",
+};
+// path params that are named `orderId` but belong to the typed e-Stamp order routes (the legacy parties route keeps ord_ext_123)
+const ORDER_ID_OVERRIDE = { "POST /v1/estamp/orders/{orderId}/documents": "estord_9c1f2a3b" };
+// Multipart request bodies (contract 1.2.0, POST /v1/estamp/orders/{orderId}/documents): a tiny fixed placeholder file, never a real document.
+const MULTIPART_FILE = { filename: "pan.pdf", contentType: "application/pdf", content: "%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF\n" };
 const IDEM_KEY = "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11";
-const QUERY = { "/v1/logs": { from: "2026-10-01T00:00:00.000Z", to: "2026-10-16T00:00:00.000Z", service: "pan.verify", status: "success", limit: "50" }, "/v1/webhooks/events": { limit: "20" } };
+const QUERY = {
+  "/v1/logs": { from: "2026-10-01T00:00:00.000Z", to: "2026-10-16T00:00:00.000Z", service: "pan.verify", status: "success", limit: "50" }, "/v1/webhooks/events": { limit: "20" },
+  "/v1/estamp/orders": { page: "1", limit: "20" }, "/v1/estamp/states/availability": { active: "true" },
+  "/v1/estamp/states/{stateCode}/requirements": { articleCode: "ART1", denomination: "500", category: "e_stamp" },
+  "/v1/stamp-duty-wallet/transactions": { limit: "20" }, "/v1/stamp-duty-wallet/invoices": { limit: "20" },
+  "/v1/service-fee-wallet/transactions": { limit: "20" }, "/v1/service-fee-wallet/invoices": { limit: "20" },
+};
 
 const json = (c) => c?.["application/json"];
 const slug = (m, p) => `${m}-${p.replace(/[{}]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "")}`.toLowerCase();
@@ -110,19 +126,30 @@ function pickBody(key, schemaNode, mediaExample, fallbackExample, illustrative) 
   throw new Error(`no body for ${key}`);
 }
 
+// Contract 1.2.0: the API sends `Retry-After` (seconds) on every 429 and 503 and on 409 IDEMPOTENCY_IN_PROGRESS. The spec gives no
+// value, so fixtures carry "1" (keeps SDK retry tests fast). Derived from the spec's own wording, so an older spec (which said
+// "sends no Retry-After") regenerates without the header.
+const sendsRetryAfter = (description, body) => /carries a Retry-After header/i.test(description ?? "") || body?.error?.code === "IDEMPOTENCY_IN_PROGRESS";
+
 function build(method, path, op) {
   const M = method.toUpperCase();
   const key = `${M} ${path}`;
   const params = (op.parameters ?? []).map(deref);
   let url = path;
   for (const p of params.filter((x) => x.in === "path")) {
-    const v = (p.name === "id" && ID_OVERRIDE[key]) || p.example || PATH_PARAMS[p.name] || "example";
+    const v = (p.name === "id" && ID_OVERRIDE[key]) || (p.name === "orderId" && ORDER_ID_OVERRIDE[key]) || p.example || PATH_PARAMS[p.name] || "example";
     url = url.replace(`{${p.name}}`, encodeURIComponent(v));
   }
   const headers = { Authorization: "Bearer sk_test_EXAMPLEKEY00000000", Accept: "application/json" };
   const reqMedia = json(op.requestBody?.content);
-  let body, reqSource;
-  if (op.requestBody) {
+  const formMedia = op.requestBody?.content?.["multipart/form-data"];
+  let body, reqSource, multipart;
+  if (formMedia) {
+    // The client builds the boundary, so the fixture carries parts, not bytes: {name, filename?, contentType?, content|value}.
+    headers["Content-Type"] = "multipart/form-data";
+    const props = deref(formMedia.schema).properties ?? {};
+    multipart = { parts: Object.entries(props).map(([name, prop]) => (prop.format === "binary" ? { name, ...MULTIPART_FILE } : { name, value: String(prop.default ?? prop.enum?.[0] ?? name) })) };
+  } else if (op.requestBody) {
     headers["Content-Type"] = "application/json";
     ({ body, source: reqSource } = pickBody(`${key} request`, reqMedia?.schema, reqMedia?.example, undefined, undefined));
   }
@@ -138,7 +165,7 @@ function build(method, path, op) {
     const { body: rbody, source: rsrc } = pickBody(`${key} ${status}`, media?.schema, media?.example, isOk ? okExamples[0] : undefined, isOk ? ILLUSTRATIVE[key] : undefined);
     // First 2xx is `success`; further documented 2xx (e.g. POST 200 + 201) become `success-<status>`.
     const scenario = !isOk ? `error-${status}` : status === firstOk ? "success" : `success-${status}`;
-    const request = { method: M, path: url, ...(QUERY[path] ? { query: QUERY[path] } : {}), headers, ...(body !== undefined ? { body } : {}) };
+    const request = { method: M, path: url, ...(QUERY[path] ? { query: QUERY[path] } : {}), headers, ...(body !== undefined ? { body } : {}), ...(multipart ? { multipart } : {}) };
     const sources = [rsrc, reqSource].filter(Boolean);
     const source = sources.includes("illustrative") ? "illustrative" : sources.includes("schema-derived") ? "schema-derived" : "spec-example";
     fixtures.push({
@@ -148,7 +175,7 @@ function build(method, path, op) {
       source,
       description: res.description,
       request,
-      response: { status: Number(status), headers: { "Content-Type": "application/json" }, body: sorted(rbody) },
+      response: { status: Number(status), headers: { "Content-Type": "application/json", ...(sendsRetryAfter(res.description, rbody) ? { "Retry-After": "1" } : {}) }, body: sorted(rbody) },
     });
   }
   return fixtures;

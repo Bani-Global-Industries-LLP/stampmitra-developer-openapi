@@ -67,8 +67,32 @@ for (const [path, item] of Object.entries(spec.paths)) {
         bodiesChecked++;
         if (!v(fx.request.body)) fail(`${fx.f}: request body violates schema: ${ajv.errorsText(v.errors)}`);
       } else if (fx.request.body !== undefined) fail(`${fx.f}: body present but operation has no requestBody`);
-      // The hardened contract documents that the API sends NO Retry-After on 429, so fixtures must not invent one.
-      if (status === "429" && fx.response.headers?.["Retry-After"]) fail(`${fx.f}: 429 fixture must not carry Retry-After (spec: the API sends none)`);
+      // multipart/form-data (contract 1.2.0): the fixture carries `request.multipart.parts` instead of a JSON body; the parts must match the schema properties.
+      const formSchema = op.requestBody?.content?.["multipart/form-data"]?.schema;
+      if (formSchema) {
+        const props = deref(formSchema).properties ?? {};
+        const need = deref(formSchema).required ?? [];
+        const parts = fx.request.multipart?.parts;
+        bodiesChecked++;
+        if (!Array.isArray(parts)) fail(`${fx.f}: multipart operation needs request.multipart.parts`);
+        else {
+          if (fx.request.body !== undefined) fail(`${fx.f}: multipart fixture must not also carry a JSON body`);
+          if (fx.request.headers?.["Content-Type"] !== "multipart/form-data") fail(`${fx.f}: multipart fixture Content-Type must be multipart/form-data (the client adds the boundary)`);
+          for (const n of need) if (!parts.some((x) => x.name === n)) fail(`${fx.f}: multipart part "${n}" is required`);
+          for (const part of parts) {
+            const prop = props[part.name];
+            if (!prop) { fail(`${fx.f}: multipart part "${part.name}" is not in the schema`); continue; }
+            if (prop.format === "binary") { if (!part.filename || !part.contentType || typeof part.content !== "string") fail(`${fx.f}: file part "${part.name}" needs filename, contentType and content`); }
+            else if (typeof part.value !== "string" || (prop.enum && !prop.enum.includes(part.value))) fail(`${fx.f}: text part "${part.name}" has an invalid value`);
+          }
+        }
+      } else if (fx.request.multipart !== undefined) fail(`${fx.f}: multipart present but operation has no multipart requestBody`);
+      // Contract >= 1.2.0 sends Retry-After on every 429 and 503 (and 409 IDEMPOTENCY_IN_PROGRESS); the older contract sent none on 429. Follow the spec's own wording.
+      const resDesc = deref(op.responses[status]).description ?? "";
+      const carriesRetryAfter = /carries a Retry-After header/i.test(resDesc) || fx.response.body?.error?.code === "IDEMPOTENCY_IN_PROGRESS";
+      const ra = fx.response.headers?.["Retry-After"];
+      if (carriesRetryAfter && !/^[1-9]\d*$/.test(String(ra ?? ""))) fail(`${fx.f}: spec says this response carries Retry-After (seconds); fixture must have a positive integer`);
+      if (!carriesRetryAfter && status === "429" && /sends no Retry-After/i.test(resDesc) && ra) fail(`${fx.f}: 429 fixture must not carry Retry-After (spec: the API sends none)`);
       if (!status.startsWith("2") && !fx.response.body?.error?.requestId) fail(`${fx.f}: error fixture lacks error.requestId`);
       if (!SOURCES.has(fx.source)) fail(`${fx.f}: source must be one of ${[...SOURCES].join("|")}`);
       if (fx.source === "spec-example") {
@@ -145,7 +169,7 @@ const rs = read("fixtures/retry-scenarios.json");
 const RETRY = new Set([429, 502, 503, 504]);
 const simulate = (s) => {
   const max = (s.maxRetries ?? rs.defaults.maxRetries) + 1;
-  const retriable = s.method === "GET" || s.idempotencyKey !== false;
+  const retriable = s.method === "GET" || s.idempotencyKey !== false || s.retrySafe === true;
   let attempts = 0;
   for (const item of s.sequence) {
     attempts++;
