@@ -1,0 +1,43 @@
+{
+  "name": "POST /v1/estamp/stamps/{stampId}/cancel - success",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/{stampId}/cancel"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/eststamp_4f21ab/cancel",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "id": "eststamp_4f21ab",
+      "clientReference": "line-001",
+      "bulkOrderId": "estord_9c1f2a3b",
+      "status": "CANCELLED",
+      "verified": false,
+      "panCard": {
+        "status": "VERIFIED",
+        "code": null,
+        "message": null
+      },
+      "state": "MH",
+      "category": "e_stamp",
+      "amount": 1000,
+      "uin": "IN-MH12345678901234",
+      "costCentre": "CC-100",
+      "businessUnit": "BU-Retail",
+      "purpose": "Rental Agreement"
+    }
+  }
+}

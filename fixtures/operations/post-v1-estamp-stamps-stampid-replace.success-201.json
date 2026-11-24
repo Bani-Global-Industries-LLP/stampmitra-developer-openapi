@@ -1,0 +1,43 @@
+{
+  "name": "POST /v1/estamp/stamps/{stampId}/replace - success-201",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/{stampId}/replace"
+  },
+  "scenario": "success-201",
+  "source": "spec-example",
+  "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/eststamp_4f21ab/replace",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "id": "eststamp_9b3c77",
+      "clientReference": "line-001",
+      "bulkOrderId": "estord_9c1f2a3b",
+      "status": "PLACED",
+      "verified": false,
+      "panCard": {
+        "status": "NOT_PROVIDED",
+        "code": null,
+        "message": null
+      },
+      "state": "MH",
+      "category": "e_stamp",
+      "amount": 1000,
+      "uin": "IN-MH12345678901234",
+      "costCentre": "CC-100",
+      "businessUnit": "BU-Retail",
+      "purpose": "Rental Agreement"
+    }
+  }
+}

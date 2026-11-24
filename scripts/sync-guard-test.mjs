@@ -20,8 +20,10 @@ for (const p of Object.keys(old.paths).slice(-4)) delete old.paths[p];
 old.webhooks = undefined;
 // SAME version, fewer operations
 const sameFewer = clone(current); delete sameFewer.paths[Object.keys(sameFewer.paths).at(-1)];
-// NEWER portal: minor bump with one extra operation
-const newer = clone(current); newer.info.version = "1.1.0";
+// NEWER portal: minor bump (current + 0.1.0) with one extra operation
+const [cMaj, cMin] = current.info.version.split(".").map(Number);
+const newerVersion = `${cMaj}.${cMin + 1}.0`; // always one minor above whatever contract version is mirrored
+const newer = clone(current); newer.info.version = newerVersion;
 newer.paths["/v1/ping"] = { get: { summary: "ping", tags: [newer.tags[0].name], responses: { 200: { description: "ok" } } } };
 
 let served = old; let mode = "json";
@@ -68,7 +70,7 @@ try {
     served = newer; const r = await run("--dry-run"); assert.equal(r.code, 0, r.err); assert.equal(localVersion(), current.info.version);
   });
   await t("newer spec is accepted and postman.json regenerated", async () => {
-    served = newer; const r = await run(); assert.equal(r.code, 0, r.err); assert.equal(localVersion(), "1.1.0");
+    served = newer; const r = await run(); assert.equal(r.code, 0, r.err); assert.equal(localVersion(), newerVersion);
     assert.equal(readFileSync(resolve(dir, "postman.json"), "utf8"), JSON.stringify(buildPostman(newer), null, 2) + "\n");
   });
   await t("HTTP 500 -> exit 1, nothing changed", async () => {

@@ -1,0 +1,44 @@
+{
+  "name": "POST /v1/estamp/stamps/{stampId}/pan-card - error-400",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/{stampId}/pan-card"
+  },
+  "scenario": "error-400",
+  "source": "spec-example",
+  "description": "VALIDATION_FAILED: panCardImage is missing or not an https link (HTTPS_URL_REQUIRED), or the issuing side refused the link (INVALID_PAN_CARD_LINK).",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/eststamp_4f21ab/pan-card",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "panCardImage": "https://cdn.example.com/kyc/pan-4417.jpg"
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "VALIDATION_FAILED: panCardImage: panCardImage must be an https link (default port, no credentials)",
+        "details": {
+          "errors": [
+            {
+              "field": "panCardImage",
+              "code": "HTTPS_URL_REQUIRED",
+              "message": "panCardImage must be an https link (default port, no credentials)"
+            }
+          ]
+        },
+        "requestId": "a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d"
+      }
+    }
+  }
+}

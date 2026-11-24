@@ -1,0 +1,88 @@
+{
+  "name": "POST /v1/estamp/orders/validate - success-201",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/validate"
+  },
+  "scenario": "success-201",
+  "source": "spec-example",
+  "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/validate",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "reference": "order-2026-0917",
+      "stamps": [
+        {
+          "clientReference": "line-001",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 1000,
+          "firstParty": {
+            "name": "Jane Doe",
+            "address": "12 MG Road, Pune"
+          },
+          "secondParty": {
+            "name": "John Smith"
+          },
+          "purpose": "Rental Agreement"
+        },
+        {
+          "clientReference": "line-002",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 500,
+          "firstParty": {
+            "name": "Jane Doe"
+          },
+          "secondParty": {
+            "name": "Acme Pvt Ltd"
+          },
+          "purpose": "Indemnity Bond"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "valid": true,
+      "reference": "order-2026-0917",
+      "state": "MH",
+      "status": "READY_TO_PLACE",
+      "isTest": false,
+      "counts": {
+        "total": 2,
+        "e_stamp": 2,
+        "traditional_stamp": 0
+      },
+      "errors": [],
+      "warnings": [],
+      "quote": {
+        "faceValueTotal": 1500,
+        "serviceFeeTotal": 208,
+        "gstOnFee": 37.44,
+        "serviceWalletDebitTotal": 208
+      },
+      "documentsRequired": [
+        {
+          "type": "PAN_CARD_IMAGE",
+          "required": false,
+          "recommended": true,
+          "uploadWith": "POST /v1/estamp/orders/{id}/documents"
+        }
+      ],
+      "createdAt": "2026-10-29T09:12:03.000Z"
+    }
+  }
+}

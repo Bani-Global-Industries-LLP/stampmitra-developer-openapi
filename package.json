@@ -1,6 +1,6 @@
 {
   "name": "stampmitra-developer-openapi",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "private": true,
   "description": "Public source-of-truth mirror of the StampMitra Developer API contract and shared SDK conformance assets.",
   "license": "MIT",

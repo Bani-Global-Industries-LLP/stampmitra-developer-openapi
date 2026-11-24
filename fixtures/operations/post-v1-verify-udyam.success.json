@@ -17,7 +17,7 @@
       "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
     },
     "body": {
-      "udyamNumber": "UDYAM-MH-12-1234567"
+      "udyamNumber": "UDYAM-UP-43-1234567"
     }
   },
   "response": {
@@ -27,12 +27,98 @@
     },
     "body": {
       "referenceId": "SMV-20260927-5U29V7",
+      "verificationId": "VRF-7K3M9Q2XH4TB",
       "found": true,
-      "udyamStatus": "Active",
-      "enterpriseName": "Jane Doe Enterprises",
-      "enterpriseType": "Proprietorship",
-      "organizationType": "Micro",
-      "certificateUrl": "https://udyamregistration.gov.in/Udyam_Download/UDYAM-MH-12-1234567.pdf"
+      "status": "SUCCESS",
+      "udyamStatus": "SUCCESS",
+      "udyamNumber": "UDYAM-UP-43-1234567",
+      "enterpriseName": "helloscholar",
+      "organizationType": "Proprietary",
+      "majorActivity": "Services",
+      "socialCategory": "General",
+      "dateOfIncorporation": "2020-05-29",
+      "dateOfCommencement": "2020-05-29",
+      "dateOfUdyamRegistration": "2022-01-02",
+      "enterpriseType": "Micro",
+      "classificationYear": "2024-25",
+      "classificationDate": "2025-06-02",
+      "certificateUrl": "https://udyamregistration.gov.in/Udyam_Download/UDYAM-UP-43-1234567.pdf",
+      "classificationHistory": [
+        {
+          "serialNumber": "1",
+          "classificationYear": "2024-25",
+          "enterpriseType": "Micro",
+          "classificationDate": "2025-06-02"
+        },
+        {
+          "serialNumber": "2",
+          "classificationYear": "2023-24",
+          "enterpriseType": "Micro",
+          "classificationDate": "2023-05-09"
+        },
+        {
+          "serialNumber": "3",
+          "classificationYear": "2022-23",
+          "enterpriseType": "Micro",
+          "classificationDate": "2022-06-26"
+        }
+      ],
+      "splitAddress": {
+        "flat": "Ground Floor",
+        "building": "05 Raman Vihar",
+        "village": "Naubasta",
+        "block": "Naubasta",
+        "street": "Naubasta",
+        "city": "Kanpur",
+        "district": "KANPUR NAGAR",
+        "state": "UTTAR PRADESH",
+        "pincode": "208021",
+        "mobile": "70*****210",
+        "email": "helloscholar.edu@gmail.com"
+      },
+      "unitLocations": [
+        {
+          "serialNumber": "1",
+          "unitName": "hellobanker",
+          "flat": "Ground Floor",
+          "building": "05 Raman Vihar Naubasta",
+          "village": "KANPUR NAGAR",
+          "block": "KANPUR NAGAR",
+          "street": "05 Raman Vihar Naubasta Bamba",
+          "city": "Kanpur",
+          "district": "KANPUR NAGAR",
+          "state": "UTTAR PRADESH",
+          "pincode": "208021"
+        },
+        {
+          "serialNumber": "2",
+          "unitName": "helloscholar",
+          "flat": "Ground Floor",
+          "building": "05 Raman Vihar Naubasta",
+          "village": "Kanpur",
+          "block": "Kanpur",
+          "street": "Kanpur",
+          "city": "Kanpur",
+          "district": "KANPUR NAGAR",
+          "state": "UTTAR PRADESH",
+          "pincode": "208021"
+        }
+      ],
+      "nicCodes": [
+        {
+          "serialNumber": "1",
+          "nic2Digit": "85",
+          "nic2Description": "Education",
+          "nic4Digit": "8550",
+          "nic4Description": "Educational support services",
+          "nic5Digit": "85500",
+          "nic5Description": "Educational support services",
+          "activity": "Services",
+          "date": "2022-01-02"
+        }
+      ],
+      "dic": "KANPUR NAGAR",
+      "msmeDi": "KANPUR"
     }
   }
 }

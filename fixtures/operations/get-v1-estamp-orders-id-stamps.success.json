@@ -1,0 +1,45 @@
+{
+  "name": "GET /v1/estamp/orders/{id}/stamps - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/orders/{id}/stamps"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/orders/estord_9c1f2a3b/stamps",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "items": [
+        {
+          "id": "eststamp_4f21ab",
+          "clientReference": "line-001",
+          "status": "PLACED",
+          "verified": false,
+          "panCard": {
+            "status": "PROCESSING",
+            "code": null,
+            "message": null
+          },
+          "state": "MH",
+          "category": "e_stamp",
+          "amount": 1000,
+          "purpose": "Rental Agreement"
+        }
+      ],
+      "count": 1,
+      "nextCursor": null
+    }
+  }
+}

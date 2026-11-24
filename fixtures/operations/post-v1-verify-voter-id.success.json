@@ -17,8 +17,8 @@
       "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
     },
     "body": {
-      "voterId": "ABC1234567",
-      "name": "Rahul Kumar"
+      "voterId": "UAI4574761",
+      "name": "HARSHIT PRAJAPATI"
     }
   },
   "response": {
@@ -28,13 +28,48 @@
     },
     "body": {
       "referenceId": "SMV-20260927-7H83M1",
+      "verificationId": "VRF-4C8P2WJ6ZK9T",
       "valid": true,
-      "name": "RAHUL KUMAR",
-      "dob": "1990-01-01",
-      "gender": "M",
-      "age": 35,
-      "address": "123, MG Road, Bengaluru",
-      "state": "Karnataka"
+      "status": "VALID",
+      "epicNumber": "UAI4574761",
+      "name": "HARSHIT PRAJAPATI",
+      "nameInRegionalLang": "हर्षित",
+      "age": "23",
+      "relationType": "FTHR",
+      "relationName": "RAJ PRAJAPATI",
+      "relationNameInRegionalLang": "राज",
+      "fatherName": "RAJ PRAJAPATI",
+      "dob": "2000-12-07",
+      "gender": "Male",
+      "address": "GOVT JUNIOR COLLEGE SIRWAR",
+      "photoUrl": "https://example.com/voter-photos/UAI4574761.jpeg",
+      "splitAddress": {
+        "district": [
+          "INDORE"
+        ],
+        "state": [
+          "Madhya Pradesh"
+        ],
+        "city": [
+          "SANER"
+        ],
+        "pincode": "560034",
+        "country": [
+          "IN",
+          "IND",
+          "INDIA"
+        ],
+        "addressLine": "GOVT JUNIOR COLLEGE SIRWAR"
+      },
+      "state": "Madhya Pradesh",
+      "assemblyConstituencyNumber": "211",
+      "assemblyConstituency": "SANER",
+      "parliamentaryConstituencyNumber": "25",
+      "parliamentaryConstituency": "INDORE",
+      "partNumber": "27",
+      "partName": "SIRWAR",
+      "serialNumber": "713",
+      "pollingStation": "GOVT JUNIOR COLLEGE SIRWAR"
     }
   }
 }

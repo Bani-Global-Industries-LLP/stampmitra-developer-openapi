@@ -1,0 +1,50 @@
+{
+  "name": "POST /v1/estamp/orders/{orderId}/documents - success",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/{orderId}/documents"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Created",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/orders/estord_9c1f2a3b/documents",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "multipart/form-data",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "multipart": {
+      "parts": [
+        {
+          "name": "file",
+          "filename": "pan.pdf",
+          "contentType": "application/pdf",
+          "content": "%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF\n"
+        },
+        {
+          "name": "type",
+          "value": "pan_card"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "documentId": "estdoc_8d41c2",
+      "orderId": "estord_9c1f2a3b",
+      "type": "pan_card",
+      "fileName": "pan.pdf",
+      "mimeType": "application/pdf",
+      "sizeBytes": 48211,
+      "receivedAt": "2026-10-29T09:12:03.000Z",
+      "status": "RECEIVED"
+    }
+  }
+}

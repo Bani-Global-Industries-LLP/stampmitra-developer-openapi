@@ -1,0 +1,36 @@
+{
+  "name": "POST /v1/estamp/stamps/{stampId}/pan-card - success",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/{stampId}/pan-card"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Accepted for processing",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/stamps/eststamp_4f21ab/pan-card",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "panCardImage": "https://cdn.example.com/kyc/pan-4417.jpg"
+    }
+  },
+  "response": {
+    "status": 202,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "stampId": "eststamp_4f21ab",
+      "panCard": {
+        "status": "PROCESSING",
+        "code": null,
+        "message": null
+      }
+    }
+  }
+}

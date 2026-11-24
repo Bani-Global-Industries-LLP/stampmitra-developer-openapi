@@ -1,0 +1,31 @@
+{
+  "name": "GET /v1/estamp/stamps/{stampId}/certificate - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/stamps/{stampId}/certificate"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/stamps/eststamp_4f21ab/certificate",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "available": true,
+      "status": "available",
+      "downloadUrl": "https://api-b2b.stampmitra.in/v1/estamp/certificates/eststamp_4f21ab/download?token=abc123",
+      "expiresAt": "2026-10-29T10:05:00.000Z",
+      "certificateNumber": "IN-MH-2026-0917-001234"
+    }
+  }
+}

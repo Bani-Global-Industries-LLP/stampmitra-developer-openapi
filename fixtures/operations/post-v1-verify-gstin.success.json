@@ -17,8 +17,8 @@
       "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
     },
     "body": {
-      "gstin": "07AAAAA1111A1Z1",
-      "businessName": "Jane Doe Enterprises"
+      "gstin": "29AAICP2912R1ZR",
+      "businessName": "UJJIVAN SMALL FINANCE BANK LIMITED"
     }
   },
   "response": {
@@ -28,13 +28,79 @@
     },
     "body": {
       "referenceId": "SMV-20260927-9K21P4",
-      "GSTIN": "07AAAAA1111A1Z1",
+      "verificationId": "VRF-4M8Q2T7XB9KD",
+      "gstin": "29AAICP2912R1ZR",
+      "GSTIN": "29AAICP2912R1ZR",
       "valid": true,
-      "legalName": "Jane Doe Enterprises Private Limited",
-      "tradeName": "Jane Doe Enterprises",
+      "legalNameOfBusiness": "UJJIVAN SMALL FINANCE BANK LIMITED",
+      "tradeNameOfBusiness": "UJJIVAN SMALL FINANCE BANK",
+      "centerJurisdiction": "I-A RANGE",
+      "stateJurisdiction": "GUWAHATI - A - 1",
+      "dateOfRegistration": "2017-09-30",
+      "constitutionOfBusiness": "Public Limited Company",
+      "taxpayerType": "Regular",
+      "gstinStatus": "Active",
+      "lastUpdateDate": "2022-03-01",
+      "natureOfBusinessActivities": [
+        "Retail Business",
+        "Supplier of Services",
+        "Recipient of Goods or Services",
+        "Office / Sale Office",
+        "Others"
+      ],
+      "principalPlaceAddress": "First Floor 3512-DISPUR Prithivi Mansion opp. KFC building G.S. Road, Lachit Nagar Assam 781007",
+      "principalPlaceSplitAddress": {
+        "buildingName": "Prithivi Mansion",
+        "street": "G.S. Road",
+        "location": "Lachit Nagar",
+        "buildingNumber": "3512-DISPUR",
+        "district": "Guwahati",
+        "state": "Assam",
+        "city": "Dispur",
+        "flatNumber": "First Floor",
+        "latitude": "26.1445",
+        "longitude": "91.7362",
+        "pincode": "781007"
+      },
+      "additionalAddresses": [
+        {
+          "address": "Mirza Santipur NH-37 Dist-Kamrup Rural PS-Palashbari, PO  Mirza Kamrup Assam 781125",
+          "splitAddress": {
+            "buildingName": "",
+            "street": "NH-37",
+            "location": "Santipur, Mirza",
+            "buildingNumber": "",
+            "district": "Kamrup Rural",
+            "state": "Assam",
+            "city": "Palashbari",
+            "flatNumber": "",
+            "latitude": "26.0926",
+            "longitude": "91.5069",
+            "pincode": "781125"
+          }
+        },
+        {
+          "address": "N.A.C.C.I. Foundation 3559-Tezpur CHAMBER BHAWAN Binjraj Road, P. o. and P.S. - Tezpur, Dist. Binjraj Road, P. o. and P.S. - Tezpur, Dist. Sonitpur Assam 784154",
+          "splitAddress": {
+            "buildingName": "CHAMBER BHAWAN",
+            "street": "Binjraj Road",
+            "location": "Tezpur",
+            "buildingNumber": "3559-Tezpur",
+            "district": "Sonitpur",
+            "state": "Assam",
+            "city": "Tezpur",
+            "flatNumber": "",
+            "latitude": "26.6338",
+            "longitude": "92.8006",
+            "pincode": "784154"
+          }
+        }
+      ],
+      "message": "GSTIN Exists",
+      "legalName": "UJJIVAN SMALL FINANCE BANK LIMITED",
+      "tradeName": "UJJIVAN SMALL FINANCE BANK",
       "registrationStatus": "Active",
-      "principalPlaceOfBusiness": "123, MG Road, Bengaluru, Karnataka, 560001",
-      "message": "GSTIN Exists"
+      "principalPlaceOfBusiness": "First Floor 3512-DISPUR Prithivi Mansion opp. KFC building G.S. Road, Lachit Nagar Assam 781007"
     }
   }
 }

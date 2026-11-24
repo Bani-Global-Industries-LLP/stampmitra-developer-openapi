@@ -1,0 +1,79 @@
+{
+  "name": "GET /v1/estamp/states/{stateCode}/requirements - success",
+  "operation": {
+    "method": "GET",
+    "path": "/v1/estamp/states/{stateCode}/requirements"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Success",
+  "request": {
+    "method": "GET",
+    "path": "/v1/estamp/states/MH/requirements",
+    "query": {
+      "articleCode": "ART1",
+      "denomination": "500",
+      "category": "e_stamp"
+    },
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "state": {
+        "code": "MH",
+        "name": "Maharashtra",
+        "active": true
+      },
+      "category": "e_stamp",
+      "article": {
+        "code": "ART1",
+        "isSecondPartyNA": false
+      },
+      "denomination": {
+        "provided": 500,
+        "min": 100,
+        "max": null,
+        "allowedAmounts": null,
+        "multipleOf": null
+      },
+      "fields": [
+        {
+          "field": "firstParty",
+          "required": true,
+          "enforcedByBulkApi": true
+        },
+        {
+          "field": "panCardImage",
+          "required": false,
+          "recommended": true,
+          "enforcedByBulkApi": false
+        }
+      ],
+      "exampleBody": {
+        "stamps": [
+          {
+            "clientReference": "line-001",
+            "state": "MH",
+            "category": "e_stamp",
+            "articleCode": "ART1",
+            "denomination": 500,
+            "firstParty": {
+              "name": "Jane Doe"
+            },
+            "secondParty": {
+              "name": "John Smith"
+            },
+            "purpose": "Rental Agreement"
+          }
+        ]
+      }
+    }
+  }
+}

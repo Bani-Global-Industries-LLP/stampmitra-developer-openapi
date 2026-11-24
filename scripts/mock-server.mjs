@@ -16,6 +16,9 @@
 // Auth: requests without `Authorization: Bearer ...` or `x-api-key` get 401 (like the real API).
 // Control: GET /__mock/requests -> recorded requests (method, path, headers, body); POST /__mock/reset clears
 //          recordings and sequences. GET /__mock/health -> {ok:true}.
+// multipart/form-data requests (POST /v1/estamp/orders/{orderId}/documents) are accepted and recorded as
+//          body = { multipart: [ { name, filename?, contentType?, size, value? } ] } (`value` only for text parts; file bytes are not kept),
+//          so SDK tests can assert the `file` part, its filename/content type and the `type` text part. The response is the fixture, as for any route.
 import { createServer } from "node:http";
 import { readFileSync, readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -33,6 +36,31 @@ export function loadFixtures(dir = resolve(root, "fixtures/operations")) {
   }
   // most specific (fewest params / longest) first
   return [...routes.values()].sort((a, b) => (a.template.match(/\{/g)?.length ?? 0) - (b.template.match(/\{/g)?.length ?? 0) || b.template.length - a.template.length);
+}
+
+/** Minimal multipart/form-data reader: returns [{name, filename?, contentType?, size, value?}] or undefined when the body is not multipart. */
+export function parseMultipart(contentType, buf) {
+  const m = /^multipart\/form-data;.*boundary="?([^";]+)"?/i.exec(contentType ?? "");
+  if (!m) return undefined;
+  const delim = Buffer.from(`--${m[1]}`);
+  const parts = [];
+  let pos = buf.indexOf(delim);
+  while (pos > -1) {
+    const start = pos + delim.length;
+    if (buf.subarray(start, start + 2).toString() === "--") break;
+    const next = buf.indexOf(delim, start);
+    if (next === -1) break;
+    const chunk = buf.subarray(start + 2, next - 2); // strip the CRLF after the boundary and before the next one
+    const sep = chunk.indexOf("\r\n\r\n");
+    const head = chunk.subarray(0, sep === -1 ? chunk.length : sep).toString("utf8");
+    const data = sep === -1 ? Buffer.alloc(0) : chunk.subarray(sep + 4);
+    const name = /name="([^"]*)"/i.exec(head)?.[1];
+    const filename = /filename="([^"]*)"/i.exec(head)?.[1];
+    const ct = /^content-type:\s*(.+)$/im.exec(head)?.[1]?.trim();
+    parts.push({ name, ...(filename !== undefined ? { filename } : {}), ...(ct ? { contentType: ct } : {}), size: data.length, ...(filename === undefined ? { value: data.toString("utf8") } : {}) });
+    pos = next;
+  }
+  return parts;
 }
 
 const GENERIC = {
@@ -60,9 +88,11 @@ export function createMockServer({ routes = loadFixtures() } = {}) {
       if (url.pathname === "/__mock/requests") return send(200, { "Content-Type": "application/json" }, recorded);
       if (url.pathname === "/__mock/reset" && method === "POST") { recorded = []; seqs.clear(); return send(200, { "Content-Type": "application/json" }, { ok: true }); }
 
-      const raw = Buffer.concat(chunks).toString("utf8");
-      let parsed = raw;
-      try { parsed = raw ? JSON.parse(raw) : undefined; } catch { /* keep raw */ }
+      const buf = Buffer.concat(chunks);
+      const mp = parseMultipart(req.headers["content-type"], buf);
+      const raw = buf.toString("utf8");
+      let parsed = mp ? { multipart: mp } : raw;
+      if (!mp) try { parsed = raw ? JSON.parse(raw) : undefined; } catch { /* keep raw */ }
       recorded.push({ method, path: url.pathname, query: Object.fromEntries(url.searchParams), headers: req.headers, body: parsed });
 
       const route = routes.find((r) => r.method === method && r.re.test(url.pathname));

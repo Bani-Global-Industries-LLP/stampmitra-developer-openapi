@@ -1,0 +1,103 @@
+{
+  "name": "POST /v1/estamp/orders - success",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/estamp/orders"
+  },
+  "scenario": "success",
+  "source": "spec-example",
+  "description": "Created",
+  "request": {
+    "method": "POST",
+    "path": "/v1/estamp/orders",
+    "query": {
+      "page": "1",
+      "limit": "20"
+    },
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Idempotency-Key": "7b1d2c58-4f1a-4c1e-9a53-0d6f7e2b9c11"
+    },
+    "body": {
+      "reference": "order-2026-0917",
+      "stamps": [
+        {
+          "clientReference": "line-001",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 1000,
+          "firstParty": {
+            "name": "Jane Doe",
+            "address": "12 MG Road, Pune"
+          },
+          "secondParty": {
+            "name": "John Smith"
+          },
+          "purpose": "Rental Agreement"
+        },
+        {
+          "clientReference": "line-002",
+          "state": "MH",
+          "category": "e_stamp",
+          "articleCode": "ART1",
+          "denomination": 500,
+          "firstParty": {
+            "name": "Jane Doe"
+          },
+          "secondParty": {
+            "name": "Acme Pvt Ltd"
+          },
+          "purpose": "Indemnity Bond"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "id": "estord_9c1f2a3b",
+      "orderId": "6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55",
+      "reference": "order-2026-0917",
+      "state": "MH",
+      "status": "PENDING_REVIEW",
+      "isTest": false,
+      "stampCount": 2,
+      "stamps": [
+        {
+          "id": "eststamp_4f21ab",
+          "clientReference": "line-001"
+        },
+        {
+          "id": "eststamp_4f21ac",
+          "clientReference": "line-002"
+        }
+      ],
+      "counts": {
+        "total": 2,
+        "e_stamp": 2,
+        "traditional_stamp": 0
+      },
+      "documents": {
+        "panCard": "MISSING"
+      },
+      "advisories": [
+        {
+          "code": "PAN_CARD_RECOMMENDED",
+          "field": "panCardImage",
+          "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is not held back without it."
+        }
+      ],
+      "errors": [],
+      "warnings": [],
+      "warningsAcknowledged": false,
+      "createdAt": "2026-10-29T09:12:03.000Z",
+      "updatedAt": "2026-10-29T09:12:03.000Z"
+    }
+  }
+}

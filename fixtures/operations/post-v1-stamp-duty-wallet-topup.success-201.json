@@ -1,0 +1,39 @@
+{
+  "name": "POST /v1/stamp-duty-wallet/topup - success-201",
+  "operation": {
+    "method": "POST",
+    "path": "/v1/stamp-duty-wallet/topup"
+  },
+  "scenario": "success-201",
+  "source": "spec-example",
+  "description": "Success, same body as 200. The backend documents 200 but NestJS defaults POST handlers to 201, so clients must accept any 2xx.",
+  "request": {
+    "method": "POST",
+    "path": "/v1/stamp-duty-wallet/topup",
+    "headers": {
+      "Authorization": "Bearer sk_test_EXAMPLEKEY00000000",
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "baseAmount": 1000
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "baseAmount": 1000,
+      "gstAmount": 10.8,
+      "totalCharged": 1070.8,
+      "topupId": "cmwtopup1234567890",
+      "processingFeePercent": "6.00",
+      "processingFeeAmount": "60.00",
+      "creditAmount": "1000.00",
+      "razorpayOrderId": "order_Lm3n4o5p6q7r8s",
+      "razorpayKeyId": "rzp_live_1234567890abcd"
+    }
+  }
+}
