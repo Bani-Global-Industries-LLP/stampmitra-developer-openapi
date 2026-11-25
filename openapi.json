@@ -2629,7 +2629,7 @@
       "post": {
         "operationId": "calculateEstampDuty",
         "summary": "Calculate authoritative e-Stamp duty + service charges",
-        "description": "Runs the one authoritative pricing calculation; the response amount is never recalculated or overridden client-side. Requires the `estamp.duty.calculate` scope. Metered against your Service wallet.",
+        "description": "Runs the one authoritative pricing calculation; the response amount is never recalculated or overridden client-side. A sandbox key is priced with the same rates and arithmetic as a live key. Requires the `estamp.duty.calculate` scope. Metered against your Service wallet.",
         "tags": [
           "e-Stamp"
         ],
@@ -10994,7 +10994,7 @@
           "gstOnFee",
           "serviceWalletDebitTotal"
         ],
-        "description": "Priced totals in rupees. Never recalculate or override them. What the customer pays for the order is faceValueTotal + serviceFeeTotal + gstOnFee."
+        "description": "Priced totals in rupees. Never recalculate or override them. A sandbox key gets the same figures a live key would for the same lines. What the customer pays for the order is faceValueTotal + serviceFeeTotal + gstOnFee."
       },
       "EstampValidationIssue": {
         "type": "object",

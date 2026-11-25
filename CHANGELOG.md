@@ -15,6 +15,10 @@ This changelog tracks the **StampMitra Developer API contract** (`openapi.json`)
 
 ## [Unreleased]
 
+### Changed (documentation only)
+
+- `POST /v1/estamp/duty/calculate` and the `EstampOrderQuote` schema: sandbox quotes use the same rates as live (per paper: Rs 99 procurement, Rs 5 API charge, convenience fee 5% of a paper's duty above Rs 1,000). A client's own agreed rates are not applied in sandbox.
+
 ### Changed (documentation and examples only)
 
 - Contract version `1.2.1` (documentation only, no new fields, no shape changes). Customers keep one **Service wallet**: the balance that pays for verification calls and for the e-Stamp service charges (99 procurement + 5 API charge per paper, plus 18% GST). `GET /v1/estamp/wallet` still returns `stampDuty` and nested `serviceFee`; the value of `serviceFee` is the Service wallet balance. The `/v1/service-fee-wallet*` operations are documented as "Kept for compatibility: this is your Service wallet." `PAYMENT_REQUIRED` on order creation keeps `error.details.wallet` `STAMP_DUTY` or `SERVICE_FEE`; `SERVICE_FEE` means the Service wallet could not cover the order.

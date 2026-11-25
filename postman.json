@@ -3898,7 +3898,7 @@
                 }
               }
             },
-            "description": "Runs the one authoritative pricing calculation; the response amount is never recalculated or overridden client-side. Requires the `estamp.duty.calculate` scope. Metered against your Service wallet."
+            "description": "Runs the one authoritative pricing calculation; the response amount is never recalculated or overridden client-side. A sandbox key is priced with the same rates and arithmetic as a live key. Requires the `estamp.duty.calculate` scope. Metered against your Service wallet."
           },
           "response": [
             {
