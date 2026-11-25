@@ -56,7 +56,7 @@
             {
               "code": "PAN_CARD_RECOMMENDED",
               "field": "panCardImage",
-              "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is not held back without it."
+              "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
             }
           ],
           "errors": [],
@@ -98,7 +98,7 @@
             {
               "code": "PAN_CARD_RECOMMENDED",
               "field": "panCardImage",
-              "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is not held back without it."
+              "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
             }
           ],
           "errors": [],

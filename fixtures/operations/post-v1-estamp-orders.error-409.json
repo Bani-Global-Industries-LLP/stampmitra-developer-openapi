@@ -36,7 +36,8 @@
           "secondParty": {
             "name": "John Smith"
           },
-          "purpose": "Rental Agreement"
+          "purpose": "Rental Agreement",
+          "panCardImage": "https://cdn.example.com/kyc/pan-4417.jpg"
         },
         {
           "clientReference": "line-002",
@@ -50,7 +51,8 @@
           "secondParty": {
             "name": "Acme Pvt Ltd"
           },
-          "purpose": "Indemnity Bond"
+          "purpose": "Indemnity Bond",
+          "panCardImage": "https://cdn.example.com/kyc/pan-4418.jpg"
         }
       ]
     }

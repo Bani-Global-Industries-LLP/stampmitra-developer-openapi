@@ -2827,7 +2827,7 @@
       "post": {
         "operationId": "createOrder",
         "summary": "Create an order (generic - works for any entitled serviceCode, including e-Stamp)",
-        "description": "Generic order-creation endpoint. For e-Stamp, pass an e-Stamp `serviceCode` (from GET /v1/services) and put instrument/party/value details in the free-form `details` object. There is no e-Stamp-specific request/response contract yet (no first-class `state`, `article`, `parties[]` fields) - the shape of `details` for e-Stamp is not finalized upstream.",
+        "description": "LEGACY generic order endpoint, kept for existing integrations. To order e-Stamps use `POST /v1/estamp/orders` (and `POST /v1/estamp/orders/validate` first): it takes typed `stamps[]` lines with `state`, `articleCode`, `denomination`, `firstParty`, `secondParty`, `propertyArea` and the payer's `panCardImage`, and is checked field by field. This generic route takes a free-form `details` object that is not validated against any e-Stamp contract, so an order placed here cannot be relied on to carry the fields the issuing side needs, including the PAN card link.",
         "tags": [
           "e-Stamp"
         ],
@@ -2856,9 +2856,9 @@
                 "externalCustomerId": "cust_ext_456",
                 "serviceCode": "estamp.instrument.rent_agreement",
                 "details": {
-                  "state": "MH",
-                  "stampValue": 500,
-                  "note": "Shape not finalized - illustrative only"
+                  "state": null,
+                  "stampValue": null,
+                  "note": "Free-form and not validated. Use POST /v1/estamp/orders for e-Stamp."
                 }
               }
             }
@@ -3070,7 +3070,8 @@
                     "secondParty": {
                       "name": "John Smith"
                     },
-                    "purpose": "Rental Agreement"
+                    "purpose": "Rental Agreement",
+                    "panCardImage": "https://cdn.example.com/kyc/pan-4417.jpg"
                   },
                   {
                     "clientReference": "line-002",
@@ -3084,7 +3085,8 @@
                     "secondParty": {
                       "name": "Acme Pvt Ltd"
                     },
-                    "purpose": "Indemnity Bond"
+                    "purpose": "Indemnity Bond",
+                    "panCardImage": "https://cdn.example.com/kyc/pan-4418.jpg"
                   }
                 ]
               }
@@ -3251,7 +3253,8 @@
                     "secondParty": {
                       "name": "John Smith"
                     },
-                    "purpose": "Rental Agreement"
+                    "purpose": "Rental Agreement",
+                    "panCardImage": "https://cdn.example.com/kyc/pan-4417.jpg"
                   },
                   {
                     "clientReference": "line-002",
@@ -3265,7 +3268,8 @@
                     "secondParty": {
                       "name": "Acme Pvt Ltd"
                     },
-                    "purpose": "Indemnity Bond"
+                    "purpose": "Indemnity Bond",
+                    "panCardImage": "https://cdn.example.com/kyc/pan-4418.jpg"
                   }
                 ]
               }
@@ -3310,7 +3314,7 @@
                     {
                       "code": "PAN_CARD_RECOMMENDED",
                       "field": "panCardImage",
-                      "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is not held back without it."
+                      "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
                     }
                   ],
                   "errors": [],
@@ -3500,7 +3504,7 @@
                         {
                           "code": "PAN_CARD_RECOMMENDED",
                           "field": "panCardImage",
-                          "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is not held back without it."
+                          "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
                         }
                       ],
                       "errors": [],
@@ -3542,7 +3546,7 @@
                         {
                           "code": "PAN_CARD_RECOMMENDED",
                           "field": "panCardImage",
-                          "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is not held back without it."
+                          "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
                         }
                       ],
                       "errors": [],
@@ -3672,7 +3676,7 @@
                     {
                       "code": "PAN_CARD_RECOMMENDED",
                       "field": "panCardImage",
-                      "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is not held back without it."
+                      "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
                     }
                   ],
                   "errors": [],
@@ -3774,7 +3778,7 @@
                     {
                       "code": "PAN_CARD_RECOMMENDED",
                       "field": "panCardImage",
-                      "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is not held back without it."
+                      "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
                     }
                   ],
                   "errors": [],
@@ -5269,7 +5273,7 @@
       "post": {
         "operationId": "uploadEstampOrderDocument",
         "summary": "Upload the payer's PAN card for an order",
-        "description": "Attaches the stamp-duty payer's PAN card (PDF, JPEG or PNG, at most 10 MB) to an order as multipart/form-data: a `file` part and an optional `type` part (only `pan_card`). Optional and advisory: an order is never held back for want of it. The file's first bytes are checked against its declared type. Send an `Idempotency-Key` header to make a retry replay the first answer. File content and file names are never logged. In sandbox the file is checked and accepted but nothing is stored. Requires the `estamp.documents.write` scope. Rate limit: 30 requests per 60 seconds.",
+        "description": "Attaches the stamp-duty payer's PAN card (PDF, JPEG or PNG, at most 10 MB) to an order as multipart/form-data: a `file` part and an optional `type` part (only `pan_card`). Optional to place the order, mandatory to complete it: the order is accepted without it, but the stamp cannot be completed until a PAN card is on file. The file's first bytes are checked against its declared type. Send an `Idempotency-Key` header to make a retry replay the first answer. File content and file names are never logged. In sandbox the file is checked and accepted but nothing is stored. Requires the `estamp.documents.write` scope. Rate limit: 30 requests per 60 seconds.",
         "tags": [
           "e-Stamp"
         ],
@@ -5678,7 +5682,7 @@
       "post": {
         "operationId": "setEstampStampPanCard",
         "summary": "Send or replace the payer's PAN card link",
-        "description": "Use it after `panCard.status` becomes FAILED or REJECTED, or to add a PAN to a stamp ordered without one. Processing is asynchronous: this answers 202 with PROCESSING and the result appears in `panCard` on the stamp. A new link replaces any earlier one. Advisory: a stamp ordered without a PAN is not held back. A link that is not an https link is a 400 (HTTPS_URL_REQUIRED, or INVALID_PAN_CARD_LINK when the issuing side refuses it); a stamp that has progressed too far, is fulfilled or cancelled is a 409. Requires the `estamp.orders.create` scope. Rate limit: 30 requests per 60 seconds.",
+        "description": "Use it after `panCard.status` becomes FAILED or REJECTED, or to add a PAN to a stamp ordered without one. Processing is asynchronous: this answers 202 with PROCESSING and the result appears in `panCard` on the stamp. A new link replaces any earlier one. A stamp can be ordered without a PAN, but it cannot be completed until one is on file. A link that is not an https link is a 400 (HTTPS_URL_REQUIRED, or INVALID_PAN_CARD_LINK when the issuing side refuses it); a stamp that has progressed too far, is fulfilled or cancelled is a 409. Requires the `estamp.orders.create` scope. Rate limit: 30 requests per 60 seconds.",
         "tags": [
           "e-Stamp"
         ],
@@ -10428,7 +10432,7 @@
           },
           "panCardImage": {
             "type": "string",
-            "description": "https link to the stamp-duty payer's PAN card (JPG, PNG, WebP, GIF, HEIC or PDF) on the default port, with no credentials, downloadable without a login. Optional and advisory: it never blocks an order. You can also send or replace it later with POST /v1/estamp/stamps/{stampId}/pan-card, or upload the file with POST /v1/estamp/orders/{orderId}/documents.",
+            "description": "https link to the stamp-duty payer's PAN card (JPG, PNG, WebP, GIF, HEIC or PDF) on the default port, with no credentials, downloadable without a login. You can place an order without it, but the PAN card is mandatory to complete the stamp: until one is on file the stamp waits. You can also send or replace it later with POST /v1/estamp/stamps/{stampId}/pan-card, or upload the file with POST /v1/estamp/orders/{orderId}/documents.",
             "format": "uri",
             "pattern": "^https://",
             "maxLength": 2048,
@@ -10715,7 +10719,7 @@
               "boolean",
               "null"
             ],
-            "description": "Whether the state asks for the payer's PAN card. Recommended, never blocking. null means not known."
+            "description": "Whether the state asks for the payer's PAN card. Whether the state asks for it; the order is accepted without it but the stamp cannot be completed until a PAN card is on file. null means not known."
           },
           "instrumentCount": {
             "type": "integer",
@@ -11032,7 +11036,7 @@
           "required": {
             "type": "boolean",
             "const": false,
-            "description": "Always false: the payer's PAN card is advisory and an order is never held back for want of it."
+            "description": "Always false: an order is accepted without the payer's PAN card, but the stamp cannot be completed until one is on file."
           },
           "recommended": {
             "type": "boolean",
@@ -11472,7 +11476,7 @@
           "code",
           "message"
         ],
-        "description": "State of the payer's PAN card for one stamp. Advisory: a stamp without one is not held back. After FAILED or REJECTED, send a new link with POST /v1/estamp/stamps/{stampId}/pan-card."
+        "description": "State of the payer's PAN card for one stamp. A stamp without one is accepted but cannot be completed until a PAN card is on file. After FAILED or REJECTED, send a new link with POST /v1/estamp/stamps/{stampId}/pan-card."
       },
       "EstampStamp": {
         "type": "object",

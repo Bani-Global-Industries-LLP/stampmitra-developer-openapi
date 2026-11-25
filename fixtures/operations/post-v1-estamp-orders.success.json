@@ -36,7 +36,8 @@
           "secondParty": {
             "name": "John Smith"
           },
-          "purpose": "Rental Agreement"
+          "purpose": "Rental Agreement",
+          "panCardImage": "https://cdn.example.com/kyc/pan-4417.jpg"
         },
         {
           "clientReference": "line-002",
@@ -50,7 +51,8 @@
           "secondParty": {
             "name": "Acme Pvt Ltd"
           },
-          "purpose": "Indemnity Bond"
+          "purpose": "Indemnity Bond",
+          "panCardImage": "https://cdn.example.com/kyc/pan-4418.jpg"
         }
       ]
     }
@@ -90,7 +92,7 @@
         {
           "code": "PAN_CARD_RECOMMENDED",
           "field": "panCardImage",
-          "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is not held back without it."
+          "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
         }
       ],
       "errors": [],
