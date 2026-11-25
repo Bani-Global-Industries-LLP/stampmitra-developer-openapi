@@ -1,0 +1,1300 @@
+{
+  "schemaVersion": 1,
+  "description": "ONE pricing truth for e-Stamp partner/API orders. Core computes it (quote-components.ts, stamp-quote.service.ts, partner-estamp.service.ts); the gateway sandbox and the developer docs must reproduce it. Money is in rupees. Per e-stamp PAPER: Rs 99 procurement + Rs 5 API charge + convenience fee (default 5% of that paper's FULL duty, only when the duty is strictly above Rs 1,000); quantity multiplies the duty and every per-paper charge. GST 18% is on the fees only and is collected at Service wallet top-up. An order debits the Service wallet with the fees BEFORE GST and the Stamp duty wallet with duty x quantity. Never edit a copy: change Core's file, then copy it byte-for-byte (see README note, scripts/check-golden-pricing-sync.mjs).",
+  "currency": "INR",
+  "priceBook": {
+    "procurementFee": 99,
+    "apiPaperFee": 5,
+    "convenienceFee": {
+      "type": "PERCENT_ABOVE_THRESHOLD",
+      "value": 5,
+      "threshold": 1000
+    },
+    "gstPercent": 18
+  },
+  "fields": {
+    "pricing": "Optional overrides, resolved organisation > state > default: org {convenienceFee, procurementFee, perPaperFee}, state {code, convenienceFee, procurementFee, quantityTiers}, defaults {convenienceFee}. Absent = the price book above. A convenience fee of value 0 is an explicit switch-off.",
+    "lines": "Input: duty is the government duty of ONE paper; quantity (default 1) is identical papers on the line.",
+    "expected": "lines[i]: unit = per-paper amounts; procurement/apiCharge/convenience = line totals; fees = line fees before GST; gst = GST on the line fees (once per line); duty = duty x quantity; total = duty + fees + gst. order = sums. wallets = what the two wallets are debited. quote = the totals POST /v1/estamp/orders/validate returns."
+  },
+  "cases": [
+    {
+      "id": "one-paper-1000",
+      "title": "1 paper, duty Rs 1,000: 99 + 5, no convenience fee (not above Rs 1,000)",
+      "lines": [
+        {
+          "duty": 1000
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 0,
+            "fees": 104,
+            "gst": 18.72,
+            "duty": 1000,
+            "total": 1122.72
+          }
+        ],
+        "order": {
+          "fees": 104,
+          "gst": 18.72,
+          "duty": 1000,
+          "total": 1122.72
+        },
+        "wallets": {
+          "serviceWalletDebit": 104,
+          "stampDutyWalletDebit": 1000
+        },
+        "quote": {
+          "faceValueTotal": 1000,
+          "serviceFeeTotal": 104,
+          "gstOnFee": 18.72,
+          "serviceWalletDebitTotal": 104
+        }
+      }
+    },
+    {
+      "id": "three-papers-1000",
+      "title": "3 papers, duty Rs 1,000 each: 3 x 104",
+      "lines": [
+        {
+          "duty": 1000,
+          "quantity": 3
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 297,
+            "apiCharge": 15,
+            "convenience": 0,
+            "fees": 312,
+            "gst": 56.16,
+            "duty": 3000,
+            "total": 3368.16
+          }
+        ],
+        "order": {
+          "fees": 312,
+          "gst": 56.16,
+          "duty": 3000,
+          "total": 3368.16
+        },
+        "wallets": {
+          "serviceWalletDebit": 312,
+          "stampDutyWalletDebit": 3000
+        },
+        "quote": {
+          "faceValueTotal": 3000,
+          "serviceFeeTotal": 312,
+          "gstOnFee": 56.16,
+          "serviceWalletDebitTotal": 312
+        }
+      }
+    },
+    {
+      "id": "two-papers-5000",
+      "title": "2 papers, duty Rs 5,000 each: 2 x (99 + 5 + 250)",
+      "lines": [
+        {
+          "duty": 5000,
+          "quantity": 2
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 250
+            },
+            "procurement": 198,
+            "apiCharge": 10,
+            "convenience": 500,
+            "fees": 708,
+            "gst": 127.44,
+            "duty": 10000,
+            "total": 10835.44
+          }
+        ],
+        "order": {
+          "fees": 708,
+          "gst": 127.44,
+          "duty": 10000,
+          "total": 10835.44
+        },
+        "wallets": {
+          "serviceWalletDebit": 708,
+          "stampDutyWalletDebit": 10000
+        },
+        "quote": {
+          "faceValueTotal": 10000,
+          "serviceFeeTotal": 708,
+          "gstOnFee": 127.44,
+          "serviceWalletDebitTotal": 708
+        }
+      }
+    },
+    {
+      "id": "ten-papers-5000",
+      "title": "10 papers, duty Rs 5,000 each: 990 + 50 + 2,500",
+      "lines": [
+        {
+          "duty": 5000,
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 250
+            },
+            "procurement": 990,
+            "apiCharge": 50,
+            "convenience": 2500,
+            "fees": 3540,
+            "gst": 637.2,
+            "duty": 50000,
+            "total": 54177.2
+          }
+        ],
+        "order": {
+          "fees": 3540,
+          "gst": 637.2,
+          "duty": 50000,
+          "total": 54177.2
+        },
+        "wallets": {
+          "serviceWalletDebit": 3540,
+          "stampDutyWalletDebit": 50000
+        },
+        "quote": {
+          "faceValueTotal": 50000,
+          "serviceFeeTotal": 3540,
+          "gstOnFee": 637.2,
+          "serviceWalletDebitTotal": 3540
+        }
+      }
+    },
+    {
+      "id": "mixed-10x5000-3x1000",
+      "title": "Mixed order: 10 x Rs 5,000 and 3 x Rs 1,000 (the Rs 1,000 papers pay no convenience fee)",
+      "lines": [
+        {
+          "duty": 5000,
+          "quantity": 10
+        },
+        {
+          "duty": 1000,
+          "quantity": 3
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 250
+            },
+            "procurement": 990,
+            "apiCharge": 50,
+            "convenience": 2500,
+            "fees": 3540,
+            "gst": 637.2,
+            "duty": 50000,
+            "total": 54177.2
+          },
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 297,
+            "apiCharge": 15,
+            "convenience": 0,
+            "fees": 312,
+            "gst": 56.16,
+            "duty": 3000,
+            "total": 3368.16
+          }
+        ],
+        "order": {
+          "fees": 3852,
+          "gst": 693.36,
+          "duty": 53000,
+          "total": 57545.36
+        },
+        "wallets": {
+          "serviceWalletDebit": 3852,
+          "stampDutyWalletDebit": 53000
+        },
+        "quote": {
+          "faceValueTotal": 53000,
+          "serviceFeeTotal": 3852,
+          "gstOnFee": 693.36,
+          "serviceWalletDebitTotal": 3852
+        }
+      }
+    },
+    {
+      "id": "duty-exactly-1000",
+      "title": "Duty exactly Rs 1,000: the threshold is strict, no convenience fee",
+      "lines": [
+        {
+          "duty": 1000
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 0,
+            "fees": 104,
+            "gst": 18.72,
+            "duty": 1000,
+            "total": 1122.72
+          }
+        ],
+        "order": {
+          "fees": 104,
+          "gst": 18.72,
+          "duty": 1000,
+          "total": 1122.72
+        },
+        "wallets": {
+          "serviceWalletDebit": 104,
+          "stampDutyWalletDebit": 1000
+        },
+        "quote": {
+          "faceValueTotal": 1000,
+          "serviceFeeTotal": 104,
+          "gstOnFee": 18.72,
+          "serviceWalletDebitTotal": 104
+        }
+      }
+    },
+    {
+      "id": "duty-1001",
+      "title": "Duty Rs 1,001: convenience fee 5% of 1,001 = 50.05, GST round2(27.729) = 27.73",
+      "lines": [
+        {
+          "duty": 1001
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 50.05
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 50.05,
+            "fees": 154.05,
+            "gst": 27.73,
+            "duty": 1001,
+            "total": 1182.78
+          }
+        ],
+        "order": {
+          "fees": 154.05,
+          "gst": 27.73,
+          "duty": 1001,
+          "total": 1182.78
+        },
+        "wallets": {
+          "serviceWalletDebit": 154.05,
+          "stampDutyWalletDebit": 1001
+        },
+        "quote": {
+          "faceValueTotal": 1001,
+          "serviceFeeTotal": 154.05,
+          "gstOnFee": 27.73,
+          "serviceWalletDebitTotal": 154.05
+        }
+      }
+    },
+    {
+      "id": "ten-papers-1001",
+      "title": "10 papers, duty Rs 1,001: GST once on the line (277.29), not 10 x the one-paper GST",
+      "lines": [
+        {
+          "duty": 1001,
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 50.05
+            },
+            "procurement": 990,
+            "apiCharge": 50,
+            "convenience": 500.5,
+            "fees": 1540.5,
+            "gst": 277.29,
+            "duty": 10010,
+            "total": 11827.79
+          }
+        ],
+        "order": {
+          "fees": 1540.5,
+          "gst": 277.29,
+          "duty": 10010,
+          "total": 11827.79
+        },
+        "wallets": {
+          "serviceWalletDebit": 1540.5,
+          "stampDutyWalletDebit": 10010
+        },
+        "quote": {
+          "faceValueTotal": 10010,
+          "serviceFeeTotal": 1540.5,
+          "gstOnFee": 277.29,
+          "serviceWalletDebitTotal": 1540.5
+        }
+      }
+    },
+    {
+      "id": "one-paper-500",
+      "title": "1 paper, duty Rs 500",
+      "lines": [
+        {
+          "duty": 500
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 0,
+            "fees": 104,
+            "gst": 18.72,
+            "duty": 500,
+            "total": 622.72
+          }
+        ],
+        "order": {
+          "fees": 104,
+          "gst": 18.72,
+          "duty": 500,
+          "total": 622.72
+        },
+        "wallets": {
+          "serviceWalletDebit": 104,
+          "stampDutyWalletDebit": 500
+        },
+        "quote": {
+          "faceValueTotal": 500,
+          "serviceFeeTotal": 104,
+          "gstOnFee": 18.72,
+          "serviceWalletDebitTotal": 104
+        }
+      }
+    },
+    {
+      "id": "two-papers-250",
+      "title": "2 papers, duty Rs 250 each (duty 500 in all)",
+      "lines": [
+        {
+          "duty": 250,
+          "quantity": 2
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 198,
+            "apiCharge": 10,
+            "convenience": 0,
+            "fees": 208,
+            "gst": 37.44,
+            "duty": 500,
+            "total": 745.44
+          }
+        ],
+        "order": {
+          "fees": 208,
+          "gst": 37.44,
+          "duty": 500,
+          "total": 745.44
+        },
+        "wallets": {
+          "serviceWalletDebit": 208,
+          "stampDutyWalletDebit": 500
+        },
+        "quote": {
+          "faceValueTotal": 500,
+          "serviceFeeTotal": 208,
+          "gstOnFee": 37.44,
+          "serviceWalletDebitTotal": 208
+        }
+      }
+    },
+    {
+      "id": "two-lines-1000-and-500",
+      "title": "Two papers on two lines, duty Rs 1,000 and Rs 500 (duty 1,500 in all)",
+      "lines": [
+        {
+          "duty": 1000
+        },
+        {
+          "duty": 500
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 0,
+            "fees": 104,
+            "gst": 18.72,
+            "duty": 1000,
+            "total": 1122.72
+          },
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 0,
+            "fees": 104,
+            "gst": 18.72,
+            "duty": 500,
+            "total": 622.72
+          }
+        ],
+        "order": {
+          "fees": 208,
+          "gst": 37.44,
+          "duty": 1500,
+          "total": 1745.44
+        },
+        "wallets": {
+          "serviceWalletDebit": 208,
+          "stampDutyWalletDebit": 1500
+        },
+        "quote": {
+          "faceValueTotal": 1500,
+          "serviceFeeTotal": 208,
+          "gstOnFee": 37.44,
+          "serviceWalletDebitTotal": 208
+        }
+      }
+    },
+    {
+      "id": "ten-papers-1000",
+      "title": "10 papers, duty Rs 1,000 each: 990 + 50, no convenience fee",
+      "lines": [
+        {
+          "duty": 1000,
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 990,
+            "apiCharge": 50,
+            "convenience": 0,
+            "fees": 1040,
+            "gst": 187.2,
+            "duty": 10000,
+            "total": 11227.2
+          }
+        ],
+        "order": {
+          "fees": 1040,
+          "gst": 187.2,
+          "duty": 10000,
+          "total": 11227.2
+        },
+        "wallets": {
+          "serviceWalletDebit": 1040,
+          "stampDutyWalletDebit": 10000
+        },
+        "quote": {
+          "faceValueTotal": 10000,
+          "serviceFeeTotal": 1040,
+          "gstOnFee": 187.2,
+          "serviceWalletDebitTotal": 1040
+        }
+      }
+    },
+    {
+      "id": "each-paper-own-duty-2000-and-5000",
+      "title": "Each paper pays 5% of ITS OWN duty: 4 x Rs 2,000 and 2 x Rs 5,000",
+      "lines": [
+        {
+          "duty": 2000,
+          "quantity": 4
+        },
+        {
+          "duty": 5000,
+          "quantity": 2
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 100
+            },
+            "procurement": 396,
+            "apiCharge": 20,
+            "convenience": 400,
+            "fees": 816,
+            "gst": 146.88,
+            "duty": 8000,
+            "total": 8962.88
+          },
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 250
+            },
+            "procurement": 198,
+            "apiCharge": 10,
+            "convenience": 500,
+            "fees": 708,
+            "gst": 127.44,
+            "duty": 10000,
+            "total": 10835.44
+          }
+        ],
+        "order": {
+          "fees": 1524,
+          "gst": 274.32,
+          "duty": 18000,
+          "total": 19798.32
+        },
+        "wallets": {
+          "serviceWalletDebit": 1524,
+          "stampDutyWalletDebit": 18000
+        },
+        "quote": {
+          "faceValueTotal": 18000,
+          "serviceFeeTotal": 1524,
+          "gstOnFee": 274.32,
+          "serviceWalletDebitTotal": 1524
+        }
+      }
+    },
+    {
+      "id": "state-convenience-fixed-12",
+      "title": "State override: convenience fee FIXED 12 per paper beats the 5% default (1 paper, duty Rs 5,000)",
+      "pricing": {
+        "state": {
+          "code": "MH",
+          "convenienceFee": {
+            "type": "FIXED",
+            "value": 12
+          }
+        }
+      },
+      "lines": [
+        {
+          "duty": 5000
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 12
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 12,
+            "fees": 116,
+            "gst": 20.88,
+            "duty": 5000,
+            "total": 5136.88
+          }
+        ],
+        "order": {
+          "fees": 116,
+          "gst": 20.88,
+          "duty": 5000,
+          "total": 5136.88
+        },
+        "wallets": {
+          "serviceWalletDebit": 116,
+          "stampDutyWalletDebit": 5000
+        },
+        "quote": {
+          "faceValueTotal": 5000,
+          "serviceFeeTotal": 116,
+          "gstOnFee": 20.88,
+          "serviceWalletDebitTotal": 116
+        }
+      }
+    },
+    {
+      "id": "state-convenience-3pct-x10",
+      "title": "State override: 3% above Rs 1,000 beats the 5% default, per paper (10 papers, duty Rs 5,000)",
+      "pricing": {
+        "state": {
+          "code": "MH",
+          "convenienceFee": {
+            "type": "PERCENT_ABOVE_THRESHOLD",
+            "value": 3,
+            "threshold": 1000
+          }
+        }
+      },
+      "lines": [
+        {
+          "duty": 5000,
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 150
+            },
+            "procurement": 990,
+            "apiCharge": 50,
+            "convenience": 1500,
+            "fees": 2540,
+            "gst": 457.2,
+            "duty": 50000,
+            "total": 52997.2
+          }
+        ],
+        "order": {
+          "fees": 2540,
+          "gst": 457.2,
+          "duty": 50000,
+          "total": 52997.2
+        },
+        "wallets": {
+          "serviceWalletDebit": 2540,
+          "stampDutyWalletDebit": 50000
+        },
+        "quote": {
+          "faceValueTotal": 50000,
+          "serviceFeeTotal": 2540,
+          "gstOnFee": 457.2,
+          "serviceWalletDebitTotal": 2540
+        }
+      }
+    },
+    {
+      "id": "org-convenience-beats-state",
+      "title": "Organisation override (3% above Rs 2,000) beats the state override (FIXED 12) and the default (1 paper, duty Rs 5,000)",
+      "pricing": {
+        "state": {
+          "code": "MH",
+          "convenienceFee": {
+            "type": "FIXED",
+            "value": 12
+          }
+        },
+        "org": {
+          "convenienceFee": {
+            "type": "PERCENT_ABOVE_THRESHOLD",
+            "value": 3,
+            "threshold": 2000
+          }
+        }
+      },
+      "lines": [
+        {
+          "duty": 5000
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 150
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 150,
+            "fees": 254,
+            "gst": 45.72,
+            "duty": 5000,
+            "total": 5299.72
+          }
+        ],
+        "order": {
+          "fees": 254,
+          "gst": 45.72,
+          "duty": 5000,
+          "total": 5299.72
+        },
+        "wallets": {
+          "serviceWalletDebit": 254,
+          "stampDutyWalletDebit": 5000
+        },
+        "quote": {
+          "faceValueTotal": 5000,
+          "serviceFeeTotal": 254,
+          "gstOnFee": 45.72,
+          "serviceWalletDebitTotal": 254
+        }
+      }
+    },
+    {
+      "id": "org-convenience-fixed-20-x10",
+      "title": "Organisation override FIXED 20 beats the state 3% override and the default, per paper (10 papers, duty Rs 5,000)",
+      "pricing": {
+        "state": {
+          "code": "MH",
+          "convenienceFee": {
+            "type": "PERCENT_ABOVE_THRESHOLD",
+            "value": 3,
+            "threshold": 1000
+          }
+        },
+        "org": {
+          "convenienceFee": {
+            "type": "FIXED",
+            "value": 20
+          }
+        }
+      },
+      "lines": [
+        {
+          "duty": 5000,
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 20
+            },
+            "procurement": 990,
+            "apiCharge": 50,
+            "convenience": 200,
+            "fees": 1240,
+            "gst": 223.2,
+            "duty": 50000,
+            "total": 51463.2
+          }
+        ],
+        "order": {
+          "fees": 1240,
+          "gst": 223.2,
+          "duty": 50000,
+          "total": 51463.2
+        },
+        "wallets": {
+          "serviceWalletDebit": 1240,
+          "stampDutyWalletDebit": 50000
+        },
+        "quote": {
+          "faceValueTotal": 50000,
+          "serviceFeeTotal": 1240,
+          "gstOnFee": 223.2,
+          "serviceWalletDebitTotal": 1240
+        }
+      }
+    },
+    {
+      "id": "org-convenience-beats-default",
+      "title": "Organisation override FIXED 20 beats the default alone (1 paper, duty Rs 5,000)",
+      "pricing": {
+        "org": {
+          "convenienceFee": {
+            "type": "FIXED",
+            "value": 20
+          }
+        }
+      },
+      "lines": [
+        {
+          "duty": 5000
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 20
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 20,
+            "fees": 124,
+            "gst": 22.32,
+            "duty": 5000,
+            "total": 5146.32
+          }
+        ],
+        "order": {
+          "fees": 124,
+          "gst": 22.32,
+          "duty": 5000,
+          "total": 5146.32
+        },
+        "wallets": {
+          "serviceWalletDebit": 124,
+          "stampDutyWalletDebit": 5000
+        },
+        "quote": {
+          "faceValueTotal": 5000,
+          "serviceFeeTotal": 124,
+          "gstOnFee": 22.32,
+          "serviceWalletDebitTotal": 124
+        }
+      }
+    },
+    {
+      "id": "explicit-zero-default",
+      "title": "Explicit FIXED 0 as the default switches the convenience fee off (10 papers, duty Rs 5,000)",
+      "pricing": {
+        "defaults": {
+          "convenienceFee": {
+            "type": "FIXED",
+            "value": 0
+          }
+        }
+      },
+      "lines": [
+        {
+          "duty": 5000,
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 990,
+            "apiCharge": 50,
+            "convenience": 0,
+            "fees": 1040,
+            "gst": 187.2,
+            "duty": 50000,
+            "total": 51227.2
+          }
+        ],
+        "order": {
+          "fees": 1040,
+          "gst": 187.2,
+          "duty": 50000,
+          "total": 51227.2
+        },
+        "wallets": {
+          "serviceWalletDebit": 1040,
+          "stampDutyWalletDebit": 50000
+        },
+        "quote": {
+          "faceValueTotal": 50000,
+          "serviceFeeTotal": 1040,
+          "gstOnFee": 187.2,
+          "serviceWalletDebitTotal": 1040
+        }
+      }
+    },
+    {
+      "id": "explicit-zero-state",
+      "title": "Explicit 0 on the state switches the convenience fee off (10 papers, duty Rs 5,000)",
+      "pricing": {
+        "state": {
+          "code": "MH",
+          "convenienceFee": {
+            "type": "FIXED",
+            "value": 0
+          }
+        }
+      },
+      "lines": [
+        {
+          "duty": 5000,
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 990,
+            "apiCharge": 50,
+            "convenience": 0,
+            "fees": 1040,
+            "gst": 187.2,
+            "duty": 50000,
+            "total": 51227.2
+          }
+        ],
+        "order": {
+          "fees": 1040,
+          "gst": 187.2,
+          "duty": 50000,
+          "total": 51227.2
+        },
+        "wallets": {
+          "serviceWalletDebit": 1040,
+          "stampDutyWalletDebit": 50000
+        },
+        "quote": {
+          "faceValueTotal": 50000,
+          "serviceFeeTotal": 1040,
+          "gstOnFee": 187.2,
+          "serviceWalletDebitTotal": 1040
+        }
+      }
+    },
+    {
+      "id": "explicit-zero-org",
+      "title": "Explicit FIXED 0 on the organisation beats the 5% default (10 papers, duty Rs 5,000)",
+      "pricing": {
+        "org": {
+          "convenienceFee": {
+            "type": "FIXED",
+            "value": 0
+          }
+        }
+      },
+      "lines": [
+        {
+          "duty": 5000,
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 990,
+            "apiCharge": 50,
+            "convenience": 0,
+            "fees": 1040,
+            "gst": 187.2,
+            "duty": 50000,
+            "total": 51227.2
+          }
+        ],
+        "order": {
+          "fees": 1040,
+          "gst": 187.2,
+          "duty": 50000,
+          "total": 51227.2
+        },
+        "wallets": {
+          "serviceWalletDebit": 1040,
+          "stampDutyWalletDebit": 50000
+        },
+        "quote": {
+          "faceValueTotal": 50000,
+          "serviceFeeTotal": 1040,
+          "gstOnFee": 187.2,
+          "serviceWalletDebitTotal": 1040
+        }
+      }
+    },
+    {
+      "id": "org-value-beats-state-zero",
+      "title": "An organisation value (FIXED 7) beats a state zero (1 paper, duty Rs 5,000)",
+      "pricing": {
+        "state": {
+          "code": "MH",
+          "convenienceFee": {
+            "type": "FIXED",
+            "value": 0
+          }
+        },
+        "org": {
+          "convenienceFee": {
+            "type": "FIXED",
+            "value": 7
+          }
+        }
+      },
+      "lines": [
+        {
+          "duty": 5000
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 99,
+              "apiCharge": 5,
+              "convenience": 7
+            },
+            "procurement": 99,
+            "apiCharge": 5,
+            "convenience": 7,
+            "fees": 111,
+            "gst": 19.98,
+            "duty": 5000,
+            "total": 5130.98
+          }
+        ],
+        "order": {
+          "fees": 111,
+          "gst": 19.98,
+          "duty": 5000,
+          "total": 5130.98
+        },
+        "wallets": {
+          "serviceWalletDebit": 111,
+          "stampDutyWalletDebit": 5000
+        },
+        "quote": {
+          "faceValueTotal": 5000,
+          "serviceFeeTotal": 111,
+          "gstOnFee": 19.98,
+          "serviceWalletDebitTotal": 111
+        }
+      }
+    },
+    {
+      "id": "org-procurement-and-paper-fee",
+      "title": "Organisation override of the procurement (79) and API (3) charges (1 paper, duty Rs 1,000)",
+      "pricing": {
+        "org": {
+          "procurementFee": 79,
+          "perPaperFee": 3
+        }
+      },
+      "lines": [
+        {
+          "duty": 1000
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 79,
+              "apiCharge": 3,
+              "convenience": 0
+            },
+            "procurement": 79,
+            "apiCharge": 3,
+            "convenience": 0,
+            "fees": 82,
+            "gst": 14.76,
+            "duty": 1000,
+            "total": 1096.76
+          }
+        ],
+        "order": {
+          "fees": 82,
+          "gst": 14.76,
+          "duty": 1000,
+          "total": 1096.76
+        },
+        "wallets": {
+          "serviceWalletDebit": 82,
+          "stampDutyWalletDebit": 1000
+        },
+        "quote": {
+          "faceValueTotal": 1000,
+          "serviceFeeTotal": 82,
+          "gstOnFee": 14.76,
+          "serviceWalletDebitTotal": 82
+        }
+      }
+    },
+    {
+      "id": "state-procurement-tier-below",
+      "title": "State procurement 60 with a tier of 50 from 10 papers: 9 papers stay at 60 (duty Rs 1,000)",
+      "pricing": {
+        "state": {
+          "code": "MH",
+          "procurementFee": {
+            "type": "FIXED",
+            "value": 60
+          },
+          "quantityTiers": [
+            {
+              "minPapers": 10,
+              "fee": 50
+            }
+          ]
+        }
+      },
+      "lines": [
+        {
+          "duty": 1000,
+          "quantity": 9
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 60,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 540,
+            "apiCharge": 45,
+            "convenience": 0,
+            "fees": 585,
+            "gst": 105.3,
+            "duty": 9000,
+            "total": 9690.3
+          }
+        ],
+        "order": {
+          "fees": 585,
+          "gst": 105.3,
+          "duty": 9000,
+          "total": 9690.3
+        },
+        "wallets": {
+          "serviceWalletDebit": 585,
+          "stampDutyWalletDebit": 9000
+        },
+        "quote": {
+          "faceValueTotal": 9000,
+          "serviceFeeTotal": 585,
+          "gstOnFee": 105.3,
+          "serviceWalletDebitTotal": 585
+        }
+      }
+    },
+    {
+      "id": "state-procurement-tier-reached",
+      "title": "State procurement 60 with a tier of 50 from 10 papers: 10 papers get 50 (duty Rs 1,000)",
+      "pricing": {
+        "state": {
+          "code": "MH",
+          "procurementFee": {
+            "type": "FIXED",
+            "value": 60
+          },
+          "quantityTiers": [
+            {
+              "minPapers": 10,
+              "fee": 50
+            }
+          ]
+        }
+      },
+      "lines": [
+        {
+          "duty": 1000,
+          "quantity": 10
+        }
+      ],
+      "expected": {
+        "lines": [
+          {
+            "unit": {
+              "procurement": 50,
+              "apiCharge": 5,
+              "convenience": 0
+            },
+            "procurement": 500,
+            "apiCharge": 50,
+            "convenience": 0,
+            "fees": 550,
+            "gst": 99,
+            "duty": 10000,
+            "total": 10649
+          }
+        ],
+        "order": {
+          "fees": 550,
+          "gst": 99,
+          "duty": 10000,
+          "total": 10649
+        },
+        "wallets": {
+          "serviceWalletDebit": 550,
+          "stampDutyWalletDebit": 10000
+        },
+        "quote": {
+          "faceValueTotal": 10000,
+          "serviceFeeTotal": 550,
+          "gstOnFee": 99,
+          "serviceWalletDebitTotal": 550
+        }
+      }
+    }
+  ]
+}
