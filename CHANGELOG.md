@@ -4,7 +4,7 @@ This changelog tracks the **StampMitra Developer API contract** (`openapi.json`)
 
 ## Versioning policy
 
-- **Contract SemVer.** The contract version is `MAJOR.MINOR.PATCH`; the URL prefix carries only the major (`/v1`). The `info.version` field in the spec carries the full contract SemVer (currently `1.2.0`).
+- **Contract SemVer.** The contract version is `MAJOR.MINOR.PATCH`; the URL prefix carries only the major (`/v1`). The `info.version` field in the spec carries the full contract SemVer (currently `1.2.1`).
 - **`/v1` is stable.** Within `/v1` we do not remove or rename operations, fields or enum values, tighten validation on existing inputs, or change the meaning of a field.
 - **Additive = minor.** New operations, optional request fields, new response fields, new enum values in responses, new error codes. Clients must ignore unknown response fields and tolerate unknown enum values (all official SDKs do).
 - **Fixes = patch.** Description/example corrections, documentation, schema fixes that bring the spec in line with real behaviour.
@@ -17,6 +17,7 @@ This changelog tracks the **StampMitra Developer API contract** (`openapi.json`)
 
 ### Changed (documentation and examples only)
 
+- Contract version `1.2.1` (documentation only, no new fields, no shape changes). Customers keep one **Service wallet**: the balance that pays for verification calls and for the e-Stamp service charges (99 procurement + 5 API charge per paper, plus 18% GST). `GET /v1/estamp/wallet` still returns `stampDuty` and nested `serviceFee`; the value of `serviceFee` is the Service wallet balance. The `/v1/service-fee-wallet*` operations are documented as "Kept for compatibility: this is your Service wallet." `PAYMENT_REQUIRED` on order creation keeps `error.details.wallet` `STAMP_DUTY` or `SERVICE_FEE`; `SERVICE_FEE` means the Service wallet could not cover the order.
 - The request examples of `POST /v1/estamp/orders` and `POST /v1/estamp/orders/validate` now send `panCardImage` on every stamp, and the `panCardImage` description says to send it with the order.
 - `POST /v1/orders` (generic, legacy) says to use `POST /v1/estamp/orders` for e-Stamp; its example no longer shows an e-Stamp `details` shape.
 
