@@ -67,7 +67,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a PAN. Requires the `verification.pan.read` scope on the API key. Metered as `pan.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan`, including its `referenceId` field."
+            "description": "Validates and verifies a PAN. Requires the `verification.pan.read` scope on the API key. Metered as `pan.verify` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan`, including its `referenceId` field."
           },
           "response": [
             {
@@ -279,7 +279,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a GSTIN. Requires the `verification.gstin.read` scope on the API key. Metered as `gstin.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/gstin`, including its `referenceId` field."
+            "description": "Validates and verifies a GSTIN. Requires the `verification.gstin.read` scope on the API key. Metered as `gstin.verify` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/gstin`, including its `referenceId` field."
           },
           "response": [
             {
@@ -491,7 +491,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a Vehicle RC. Requires the `verification.rc.read` scope on the API key. Metered as `rc.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/rc`, including its `referenceId` field."
+            "description": "Validates and verifies a Vehicle RC. Requires the `verification.rc.read` scope on the API key. Metered as `rc.verify` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/rc`, including its `referenceId` field."
           },
           "response": [
             {
@@ -703,7 +703,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a Voter ID. Requires the `verification.voter.read` scope on the API key. Metered as `voter.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/voter-id`, including its `referenceId` field."
+            "description": "Validates and verifies a Voter ID. Requires the `verification.voter.read` scope on the API key. Metered as `voter.verify` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/voter-id`, including its `referenceId` field."
           },
           "response": [
             {
@@ -915,7 +915,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a Driving Licence. Requires the `verification.dl.read` scope on the API key. Metered as `dl.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/driving-license`, including its `referenceId` field."
+            "description": "Validates and verifies a Driving Licence. Requires the `verification.dl.read` scope on the API key. Metered as `dl.verify` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/driving-license`, including its `referenceId` field."
           },
           "response": [
             {
@@ -1127,7 +1127,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a Passport. Requires the `verification.passport.read` scope on the API key. Metered as `passport.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/passport`, including its `referenceId` field."
+            "description": "Validates and verifies a Passport. Requires the `verification.passport.read` scope on the API key. Metered as `passport.verify` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/passport`, including its `referenceId` field."
           },
           "response": [
             {
@@ -1339,7 +1339,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a Company CIN. Requires the `verification.cin.read` scope on the API key. Metered as `cin.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/cin`, including its `referenceId` field."
+            "description": "Validates and verifies a Company CIN. Requires the `verification.cin.read` scope on the API key. Metered as `cin.verify` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/cin`, including its `referenceId` field."
           },
           "response": [
             {
@@ -1551,7 +1551,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a Udyam Registration. Requires the `verification.udyam.read` scope on the API key. Metered as `udyam.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/udyam`, including its `referenceId` field."
+            "description": "Validates and verifies a Udyam Registration. Requires the `verification.udyam.read` scope on the API key. Metered as `udyam.verify` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/udyam`, including its `referenceId` field."
           },
           "response": [
             {
@@ -1763,7 +1763,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a PAN to GSTIN. Requires the `verification.pan_to_gstin.read` scope on the API key. Metered as `pan.to_gstin` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan-to-gstin`, including its `referenceId` field."
+            "description": "Validates and verifies a PAN to GSTIN. Requires the `verification.pan_to_gstin.read` scope on the API key. Metered as `pan.to_gstin` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan-to-gstin`, including its `referenceId` field."
           },
           "response": [
             {
@@ -1975,7 +1975,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a PAN to Udyam. Requires the `verification.pan_to_udyam.read` scope on the API key. Metered as `pan.to_udyam` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan-to-udyam`, including its `referenceId` field."
+            "description": "Validates and verifies a PAN to Udyam. Requires the `verification.pan_to_udyam.read` scope on the API key. Metered as `pan.to_udyam` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/pan-to-udyam`, including its `referenceId` field."
           },
           "response": [
             {
@@ -2187,7 +2187,7 @@
                 }
               }
             },
-            "description": "Validates and verifies a Bank Account. Requires the `verification.bank-account.read` scope on the API key. Metered as `bank-account.verify` after a successful response - usage is only recorded (and the fulfilment wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/bank-account`, including its `referenceId` field."
+            "description": "Validates and verifies a Bank Account. Requires the `verification.bank-account.read` scope on the API key. Metered as `bank-account.verify` after a successful response - usage is only recorded (and the Service wallet debited, for priced services) once verification completes successfully. The response below is the exact real shape returned by `/v1/verify/bank-account`, including its `referenceId` field."
           },
           "response": [
             {
@@ -3898,7 +3898,7 @@
                 }
               }
             },
-            "description": "Runs the one authoritative pricing calculation; the response amount is never recalculated or overridden client-side. Requires the `estamp.duty.calculate` scope. Metered against your fulfilment wallet."
+            "description": "Runs the one authoritative pricing calculation; the response amount is never recalculated or overridden client-side. Requires the `estamp.duty.calculate` scope. Metered against your Service wallet."
           },
           "response": [
             {
@@ -4138,7 +4138,7 @@
                 }
               }
             },
-            "description": "Attaches or corrects the customer/party details on an existing e-Stamp order. Requires the `estamp.parties.write` scope. Metered against your fulfilment wallet."
+            "description": "Attaches or corrects the customer/party details on an existing e-Stamp order. Requires the `estamp.parties.write` scope. Metered against your Service wallet."
           },
           "response": [
             {
@@ -5170,7 +5170,7 @@
                 }
               }
             },
-            "description": "Creates an e-Stamp order. This reaches StampMitra's validation stage and debits the duty from your Stamp Duty Wallet and the service fee from your Service Fee Wallet; it does NOT place the order with the issuing vendor, because a person confirms placement separately. The returned `status` is therefore a pre-placement status (PENDING_REVIEW on a live key), never a completed order. Requires an `Idempotency-Key` header: the same key and the same body replays the original response, with no second order and no second debit. A short wallet is a 402 PAYMENT_REQUIRED naming the wallet, and nothing is created. Requires the `estamp.orders.create` scope. Rate limit: 30 requests per 60 seconds. Where the per-order API fee is enabled for your account, one charge applies per created order."
+            "description": "Creates an e-Stamp order. This reaches StampMitra's validation stage and debits the duty from your Stamp Duty Wallet and the service charges (99 procurement + 5 API charge per paper, plus 18% GST collected at top-up) from your Service wallet, the same balance that pays for verification calls; it does NOT place the order with the issuing vendor, because a person confirms placement separately. The returned `status` is therefore a pre-placement status (PENDING_REVIEW on a live key), never a completed order. Requires an `Idempotency-Key` header: the same key and the same body replays the original response, with no second order and no second debit. A short wallet is a 402 PAYMENT_REQUIRED naming the wallet (`error.details.wallet` is STAMP_DUTY or SERVICE_FEE), and nothing is created. Requires the `estamp.orders.create` scope. Rate limit: 30 requests per 60 seconds. Where the per-order API fee is enabled for your account, one charge applies per created order."
           },
           "response": [
             {
@@ -5238,7 +5238,7 @@
                   "raw": "{{baseUrl}}/v1/estamp/orders"
                 }
               },
-              "status": "PAYMENT_REQUIRED: the Stamp Duty Wallet or the Service Fee Wallet cannot cover the order (error.details.wallet is STAMP_DUTY or SERVICE_FEE; where the per-order API fee is enabled the API credit wallet can be the short one). Nothing was created and nothing was charged. Top up that wallet and retry with the same Idempotency-Key.",
+              "status": "PAYMENT_REQUIRED: the Stamp Duty Wallet or the Service wallet cannot cover the order (error.details.wallet is STAMP_DUTY or SERVICE_FEE, and SERVICE_FEE means the Service wallet; where the per-order API fee is enabled it is charged to the same Service wallet). Nothing was created and nothing was charged. Top up that wallet and retry with the same Idempotency-Key.",
               "code": 402,
               "_postman_previewlanguage": "json",
               "header": [
@@ -7767,7 +7767,7 @@
                 "wallet"
               ]
             },
-            "description": "The Stamp Duty Wallet and, nested under `serviceFee`, the Service Fee Wallet, in one answer. Needs both wallet read scopes, `stamp-duty-wallet.read` and `service-fee-wallet.read`. `held` and `available` are null when they are not reported; sandbox money is simulated (`mode` test, `simulated` true). Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
+            "description": "The Stamp Duty Wallet and, nested under `serviceFee`, the Service wallet, in one answer. The `serviceFee` field name is kept for compatibility: its value is your Service wallet balance, the same one verification calls and the dashboard header show. Needs both wallet read scopes, `stamp-duty-wallet.read` and `service-fee-wallet.read`. `held` and `available` are null when they are not reported; sandbox money is simulated (`mode` test, `simulated` true). Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
           },
           "response": [
             {
@@ -8554,7 +8554,7 @@
           ]
         },
         {
-          "name": "Get the Service Fee Wallet balance",
+          "name": "Get the Service wallet balance",
           "request": {
             "method": "GET",
             "header": [],
@@ -8568,7 +8568,7 @@
                 "service-fee-wallet"
               ]
             },
-            "description": "The Service Fee Wallet pays the procurement and API charges of an order, net of GST. The balance is a decimal string: parse it before comparing. Requires the `service-fee-wallet.read` scope. Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
+            "description": "The Service wallet is one balance: it pays for verification calls and, on an e-Stamp order, the procurement charge (99 per paper) and the API charge (5 per paper), net of the GST collected at top-up. Kept for compatibility: this is your Service wallet. The balance is a decimal string: parse it before comparing. Requires the `service-fee-wallet.read` scope. Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
           },
           "response": [
             {
@@ -8669,7 +8669,7 @@
           ]
         },
         {
-          "name": "Create a Razorpay order to top up the Service Fee Wallet",
+          "name": "Create a Razorpay order to top up the Service wallet",
           "request": {
             "method": "POST",
             "header": [
@@ -8698,7 +8698,7 @@
                 }
               }
             },
-            "description": "Returns the Razorpay order to complete in Checkout. GST is added on top of `baseAmount`, so `totalCharged` is the base plus GST; the wallet is credited with `baseAmount` and a GST invoice is issued for the top-up (see the invoices routes). Requires the `service-fee-wallet.topup` scope. Rate limit: 20 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
+            "description": "Returns the Razorpay order to complete in Checkout. GST is added on top of `baseAmount`, so `totalCharged` is the base plus GST (the minimum top-up is 1,000 before GST); the Service wallet is credited with `baseAmount` and a GST invoice is issued for the top-up (see the invoices routes). Kept for compatibility: this is your Service wallet. Requires the `service-fee-wallet.topup` scope. Rate limit: 20 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
           },
           "response": [
             {
@@ -8837,7 +8837,7 @@
           ]
         },
         {
-          "name": "Paginated Service Fee Wallet ledger",
+          "name": "Paginated Service wallet ledger",
           "request": {
             "method": "GET",
             "header": [],
@@ -8866,7 +8866,7 @@
                 }
               ]
             },
-            "description": "The wallet's ledger, newest first. Page with `nextCursor`. Requires the `service-fee-wallet.read` scope. Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
+            "description": "The Service wallet's ledger, newest first. Page with `nextCursor`. Kept for compatibility: this is your Service wallet. Requires the `service-fee-wallet.read` scope. Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
           },
           "response": [
             {
@@ -8967,7 +8967,7 @@
           ]
         },
         {
-          "name": "List Service Fee Wallet top-up invoices",
+          "name": "List Service wallet top-up invoices",
           "request": {
             "method": "GET",
             "header": [],
@@ -8996,7 +8996,7 @@
                 }
               ]
             },
-            "description": "The GST tax invoices issued for Service Fee Wallet top-ups, newest first. Page with `nextCursor`. A sandbox top-up is fake credit and produces no invoice, so a sandbox key always gets an empty page. Requires the `service-fee-wallet.invoices.read` scope. Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
+            "description": "The GST tax invoices issued for Service wallet top-ups, newest first. Page with `nextCursor`. Kept for compatibility: this is your Service wallet. A sandbox top-up is fake credit and produces no invoice, so a sandbox key always gets an empty page. Requires the `service-fee-wallet.invoices.read` scope. Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
           },
           "response": [
             {
@@ -9097,7 +9097,7 @@
           ]
         },
         {
-          "name": "Get one Service Fee Wallet top-up invoice",
+          "name": "Get one Service wallet top-up invoice",
           "request": {
             "method": "GET",
             "header": [],
@@ -9120,7 +9120,7 @@
                 }
               ]
             },
-            "description": "One GST tax invoice of your organization. A 404 means no such invoice exists for your organization (always the case for a sandbox key). Requires the `service-fee-wallet.invoices.read` scope. Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
+            "description": "One GST tax invoice of your organization for a Service wallet top-up. Kept for compatibility: this is your Service wallet. A 404 means no such invoice exists for your organization (always the case for a sandbox key). Requires the `service-fee-wallet.invoices.read` scope. Rate limit: 60 requests per 60 seconds. Access depends on the key: if you get 401 or 403, ask support to enable the wallet scopes. Sandbox keys have them."
           },
           "response": [
             {
@@ -9338,7 +9338,7 @@
                 "balance"
               ]
             },
-            "description": "Your wallet balance in rupees and paise, the low-balance threshold (Rs 500 by default), the state (OK, LOW_BALANCE, FINISHED), how many calls it covers at the cheapest approved price and at your 7-day average price, the last top-up and the signup credit still left. Any key with a verification scope can read its own organization's balance. A sandbox key gets a sandbox notice and zero amounts, never a real balance. Rate limit: 60 per minute per key. Amounts exclude GST."
+            "description": "Your Service wallet balance in rupees and paise, the low-balance threshold (Rs 500 by default), the state (OK, LOW_BALANCE, FINISHED), how many calls it covers at the cheapest approved price and at your 7-day average price, the last top-up and the signup credit still left. Any key with a verification scope can read its own organization's balance. A sandbox key gets a sandbox notice and zero amounts, never a real balance. Rate limit: 60 per minute per key. Amounts exclude GST."
           },
           "response": [
             {

@@ -6,7 +6,7 @@
   },
   "scenario": "error-402",
   "source": "spec-example",
-  "description": "PAYMENT_REQUIRED: the Stamp Duty Wallet or the Service Fee Wallet cannot cover the order (error.details.wallet is STAMP_DUTY or SERVICE_FEE; where the per-order API fee is enabled the API credit wallet can be the short one). Nothing was created and nothing was charged. Top up that wallet and retry with the same Idempotency-Key.",
+  "description": "PAYMENT_REQUIRED: the Stamp Duty Wallet or the Service wallet cannot cover the order (error.details.wallet is STAMP_DUTY or SERVICE_FEE, and SERVICE_FEE means the Service wallet; where the per-order API fee is enabled it is charged to the same Service wallet). Nothing was created and nothing was charged. Top up that wallet and retry with the same Idempotency-Key.",
   "request": {
     "method": "POST",
     "path": "/v1/estamp/orders",
