@@ -123,7 +123,25 @@
           "limit": null,
           "source": "NONE"
         }
-      }
+      },
+      "dailyLimits": [
+        {
+          "serviceCode": "pan.verify",
+          "name": "PAN verification",
+          "limit": 100,
+          "usedToday": 1,
+          "resetsAt": "2026-10-30T00:00:00+05:30",
+          "raisedFrom": null
+        },
+        {
+          "serviceCode": "gstin.verify",
+          "name": "GSTIN verification",
+          "limit": 100,
+          "usedToday": 0,
+          "resetsAt": "2026-10-30T00:00:00+05:30",
+          "raisedFrom": null
+        }
+      ]
     }
   }
 }

@@ -65,8 +65,8 @@
       },
       "signupCredit": {
         "granted": {
-          "paise": 10000,
-          "rupees": 100
+          "paise": 0,
+          "rupees": 0
         },
         "left": {
           "paise": 0,

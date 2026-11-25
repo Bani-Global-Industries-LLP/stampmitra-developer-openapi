@@ -204,14 +204,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/pan"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -416,14 +416,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/gstin"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -628,14 +628,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/rc"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -840,14 +840,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/voter-id"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1052,14 +1052,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/driving-license"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1264,14 +1264,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/passport"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1476,14 +1476,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/cin"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1688,14 +1688,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/udyam"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -1900,14 +1900,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/pan-to-gstin"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2112,14 +2112,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/pan-to-udyam"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2324,14 +2324,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/verify/bank-account"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2672,14 +2672,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/schema/{serviceCode}"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2788,14 +2788,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/states"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -2913,14 +2913,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/states/availability"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3056,14 +3056,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/states/{stateCode}"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3239,14 +3239,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/states/{stateCode}/requirements"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3383,14 +3383,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/states/{stateCode}/districts"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3534,14 +3534,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/states/{stateCode}/districts/{districtCode}/sros"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3678,14 +3678,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/states/{stateCode}/instruments"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -3822,14 +3822,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/instruments/{instrumentCode}/articles"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -4054,14 +4054,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/duty/calculate"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -4313,14 +4313,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders/{orderId}/parties"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -4380,7 +4380,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"externalOrderId\": \"ord_ext_123\",\n  \"externalCustomerId\": \"cust_ext_456\",\n  \"serviceCode\": \"estamp.instrument.rent_agreement\",\n  \"details\": {\n    \"state\": null,\n    \"stampValue\": null,\n    \"note\": \"Free-form and not validated. Use POST /v1/estamp/orders for e-Stamp.\"\n  }\n}",
+              "raw": "{\n  \"externalOrderId\": \"ord_ext_123\",\n  \"externalCustomerId\": \"cust_ext_456\",\n  \"serviceCode\": \"estamp.instrument.rent_agreement\",\n  \"details\": {\n    \"note\": \"Free-form and not validated. Use POST /v1/estamp/orders for e-Stamp.\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -4505,14 +4505,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/orders"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -4940,14 +4940,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"SERVICE_UNAVAILABLE\",\n    \"message\": \"E-Stamp ordering is temporarily paused. Please try again shortly.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders/validate"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -5035,7 +5035,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"items\": [\n    {\n      \"id\": \"estord_9c1f2a3b\",\n      \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n      \"reference\": \"order-2026-0917\",\n      \"state\": \"MH\",\n      \"status\": \"PENDING_REVIEW\",\n      \"isTest\": false,\n      \"stampCount\": 2,\n      \"stamps\": [\n        {\n          \"id\": \"eststamp_4f21ab\",\n          \"clientReference\": \"line-001\"\n        },\n        {\n          \"id\": \"eststamp_4f21ac\",\n          \"clientReference\": \"line-002\"\n        }\n      ],\n      \"counts\": {\n        \"total\": 2,\n        \"e_stamp\": 2,\n        \"traditional_stamp\": 0\n      },\n      \"documents\": {\n        \"panCard\": \"MISSING\"\n      },\n      \"advisories\": [\n        {\n          \"code\": \"PAN_CARD_RECOMMENDED\",\n          \"field\": \"panCardImage\",\n          \"message\": \"Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file.\"\n        }\n      ],\n      \"errors\": [],\n      \"warnings\": [],\n      \"warningsAcknowledged\": false,\n      \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n      \"updatedAt\": \"2026-10-29T09:12:03.000Z\"\n    }\n  ],\n  \"nextCursor\": \"estord_7d3e1c20\",\n  \"data\": [\n    {\n      \"id\": \"estord_9c1f2a3b\",\n      \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n      \"reference\": \"order-2026-0917\",\n      \"state\": \"MH\",\n      \"status\": \"PENDING_REVIEW\",\n      \"isTest\": false,\n      \"stampCount\": 2,\n      \"stamps\": [\n        {\n          \"id\": \"eststamp_4f21ab\",\n          \"clientReference\": \"line-001\"\n        },\n        {\n          \"id\": \"eststamp_4f21ac\",\n          \"clientReference\": \"line-002\"\n        }\n      ],\n      \"counts\": {\n        \"total\": 2,\n        \"e_stamp\": 2,\n        \"traditional_stamp\": 0\n      },\n      \"documents\": {\n        \"panCard\": \"MISSING\"\n      },\n      \"advisories\": [\n        {\n          \"code\": \"PAN_CARD_RECOMMENDED\",\n          \"field\": \"panCardImage\",\n          \"message\": \"Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file.\"\n        }\n      ],\n      \"errors\": [],\n      \"warnings\": [],\n      \"warningsAcknowledged\": false,\n      \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n      \"updatedAt\": \"2026-10-29T09:12:03.000Z\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": null\n  }\n}"
+              "body": "{\n  \"items\": [\n    {\n      \"id\": \"estord_9c1f2a3b\",\n      \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n      \"reference\": \"order-2026-0917\",\n      \"state\": \"MH\",\n      \"status\": \"PENDING_REVIEW\",\n      \"isTest\": false,\n      \"stampCount\": 2,\n      \"stamps\": [\n        {\n          \"id\": \"eststamp_4f21ab\",\n          \"clientReference\": \"line-001\"\n        },\n        {\n          \"id\": \"eststamp_4f21ac\",\n          \"clientReference\": \"line-002\"\n        }\n      ],\n      \"counts\": {\n        \"total\": 2,\n        \"e_stamp\": 2,\n        \"traditional_stamp\": 0\n      },\n      \"documents\": {\n        \"panCard\": \"RECEIVED\"\n      },\n      \"advisories\": [],\n      \"errors\": [],\n      \"warnings\": [],\n      \"warningsAcknowledged\": false,\n      \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n      \"updatedAt\": \"2026-10-29T09:12:03.000Z\"\n    }\n  ],\n  \"nextCursor\": \"estord_7d3e1c20\",\n  \"data\": [\n    {\n      \"id\": \"estord_9c1f2a3b\",\n      \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n      \"reference\": \"order-2026-0917\",\n      \"state\": \"MH\",\n      \"status\": \"PENDING_REVIEW\",\n      \"isTest\": false,\n      \"stampCount\": 2,\n      \"stamps\": [\n        {\n          \"id\": \"eststamp_4f21ab\",\n          \"clientReference\": \"line-001\"\n        },\n        {\n          \"id\": \"eststamp_4f21ac\",\n          \"clientReference\": \"line-002\"\n        }\n      ],\n      \"counts\": {\n        \"total\": 2,\n        \"e_stamp\": 2,\n        \"traditional_stamp\": 0\n      },\n      \"documents\": {\n        \"panCard\": \"RECEIVED\"\n      },\n      \"advisories\": [],\n      \"errors\": [],\n      \"warnings\": [],\n      \"warningsAcknowledged\": false,\n      \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n      \"updatedAt\": \"2026-10-29T09:12:03.000Z\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": null\n  }\n}"
             },
             {
               "name": "400 A query parameter is invalid",
@@ -5095,14 +5095,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -5190,7 +5190,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"id\": \"estord_9c1f2a3b\",\n  \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n  \"reference\": \"order-2026-0917\",\n  \"state\": \"MH\",\n  \"status\": \"PENDING_REVIEW\",\n  \"isTest\": false,\n  \"stampCount\": 2,\n  \"stamps\": [\n    {\n      \"id\": \"eststamp_4f21ab\",\n      \"clientReference\": \"line-001\"\n    },\n    {\n      \"id\": \"eststamp_4f21ac\",\n      \"clientReference\": \"line-002\"\n    }\n  ],\n  \"counts\": {\n    \"total\": 2,\n    \"e_stamp\": 2,\n    \"traditional_stamp\": 0\n  },\n  \"documents\": {\n    \"panCard\": \"MISSING\"\n  },\n  \"advisories\": [\n    {\n      \"code\": \"PAN_CARD_RECOMMENDED\",\n      \"field\": \"panCardImage\",\n      \"message\": \"Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file.\"\n    }\n  ],\n  \"errors\": [],\n  \"warnings\": [],\n  \"warningsAcknowledged\": false,\n  \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n  \"updatedAt\": \"2026-10-29T09:12:03.000Z\"\n}"
+              "body": "{\n  \"id\": \"estord_9c1f2a3b\",\n  \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n  \"reference\": \"order-2026-0917\",\n  \"state\": \"MH\",\n  \"status\": \"PENDING_REVIEW\",\n  \"isTest\": false,\n  \"stampCount\": 2,\n  \"stamps\": [\n    {\n      \"id\": \"eststamp_4f21ab\",\n      \"clientReference\": \"line-001\"\n    },\n    {\n      \"id\": \"eststamp_4f21ac\",\n      \"clientReference\": \"line-002\"\n    }\n  ],\n  \"counts\": {\n    \"total\": 2,\n    \"e_stamp\": 2,\n    \"traditional_stamp\": 0\n  },\n  \"documents\": {\n    \"panCard\": \"RECEIVED\"\n  },\n  \"advisories\": [],\n  \"errors\": [],\n  \"warnings\": [],\n  \"warningsAcknowledged\": false,\n  \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n  \"updatedAt\": \"2026-10-29T09:12:03.000Z\"\n}"
             },
             {
               "name": "400 VALIDATION_FAILED",
@@ -5307,14 +5307,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -5390,7 +5390,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"id\": \"estord_9c1f2a3b\",\n  \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n  \"reference\": \"order-2026-0917\",\n  \"state\": \"MH\",\n  \"status\": \"PENDING_REVIEW\",\n  \"isTest\": false,\n  \"stampCount\": 2,\n  \"stamps\": [\n    {\n      \"id\": \"eststamp_4f21ab\",\n      \"clientReference\": \"line-001\"\n    },\n    {\n      \"id\": \"eststamp_4f21ac\",\n      \"clientReference\": \"line-002\"\n    }\n  ],\n  \"counts\": {\n    \"total\": 2,\n    \"e_stamp\": 2,\n    \"traditional_stamp\": 0\n  },\n  \"documents\": {\n    \"panCard\": \"MISSING\"\n  },\n  \"advisories\": [\n    {\n      \"code\": \"PAN_CARD_RECOMMENDED\",\n      \"field\": \"panCardImage\",\n      \"message\": \"Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file.\"\n    }\n  ],\n  \"errors\": [],\n  \"warnings\": [],\n  \"warningsAcknowledged\": false,\n  \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n  \"updatedAt\": \"2026-10-29T09:12:03.000Z\"\n}"
+              "body": "{\n  \"id\": \"estord_9c1f2a3b\",\n  \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n  \"reference\": \"order-2026-0917\",\n  \"state\": \"MH\",\n  \"status\": \"PENDING_REVIEW\",\n  \"isTest\": false,\n  \"stampCount\": 2,\n  \"stamps\": [\n    {\n      \"id\": \"eststamp_4f21ab\",\n      \"clientReference\": \"line-001\"\n    },\n    {\n      \"id\": \"eststamp_4f21ac\",\n      \"clientReference\": \"line-002\"\n    }\n  ],\n  \"counts\": {\n    \"total\": 2,\n    \"e_stamp\": 2,\n    \"traditional_stamp\": 0\n  },\n  \"documents\": {\n    \"panCard\": \"RECEIVED\"\n  },\n  \"advisories\": [],\n  \"errors\": [],\n  \"warnings\": [],\n  \"warningsAcknowledged\": false,\n  \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n  \"updatedAt\": \"2026-10-29T09:12:03.000Z\"\n}"
             },
             {
               "name": "401 Missing or invalid API key",
@@ -5450,14 +5450,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders/{id}"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -5534,7 +5534,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"id\": \"estord_9c1f2a3b\",\n  \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n  \"reference\": \"order-2026-0917\",\n  \"state\": \"MH\",\n  \"status\": \"CANCELLED\",\n  \"isTest\": false,\n  \"stampCount\": 2,\n  \"stamps\": [\n    {\n      \"id\": \"eststamp_4f21ab\",\n      \"clientReference\": \"line-001\"\n    },\n    {\n      \"id\": \"eststamp_4f21ac\",\n      \"clientReference\": \"line-002\"\n    }\n  ],\n  \"counts\": {\n    \"total\": 2,\n    \"e_stamp\": 2,\n    \"traditional_stamp\": 0\n  },\n  \"documents\": {\n    \"panCard\": \"MISSING\"\n  },\n  \"advisories\": [\n    {\n      \"code\": \"PAN_CARD_RECOMMENDED\",\n      \"field\": \"panCardImage\",\n      \"message\": \"Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file.\"\n    }\n  ],\n  \"errors\": [],\n  \"warnings\": [],\n  \"warningsAcknowledged\": false,\n  \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n  \"updatedAt\": \"2026-10-29T10:02:41.000Z\"\n}"
+              "body": "{\n  \"id\": \"estord_9c1f2a3b\",\n  \"orderId\": \"6a0e2b9a-5f1d-4c63-9c2e-0d4e7b1f3a55\",\n  \"reference\": \"order-2026-0917\",\n  \"state\": \"MH\",\n  \"status\": \"CANCELLED\",\n  \"isTest\": false,\n  \"stampCount\": 2,\n  \"stamps\": [\n    {\n      \"id\": \"eststamp_4f21ab\",\n      \"clientReference\": \"line-001\"\n    },\n    {\n      \"id\": \"eststamp_4f21ac\",\n      \"clientReference\": \"line-002\"\n    }\n  ],\n  \"counts\": {\n    \"total\": 2,\n    \"e_stamp\": 2,\n    \"traditional_stamp\": 0\n  },\n  \"documents\": {\n    \"panCard\": \"RECEIVED\"\n  },\n  \"advisories\": [],\n  \"errors\": [],\n  \"warnings\": [],\n  \"warningsAcknowledged\": false,\n  \"createdAt\": \"2026-10-29T09:12:03.000Z\",\n  \"updatedAt\": \"2026-10-29T10:02:41.000Z\"\n}"
             },
             {
               "name": "201 Success",
@@ -5632,14 +5632,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"Cannot cancel a stamp procurement request already in status ISSUED\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders/{id}/cancel"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -5776,14 +5776,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders/{id}/export"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -5920,14 +5920,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders/{id}/stamps"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -6132,14 +6132,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/payments/intents"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -6616,14 +6616,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/orders/{id}/documents/{documentId}/download"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -6860,14 +6860,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"IDEMPOTENCY_KEY_REUSED\",\n    \"message\": \"This Idempotency-Key was already used with a different request\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/orders/{orderId}/documents"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -7003,14 +7003,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/stamps/{stampId}"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -7185,14 +7185,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"Cannot cancel a stamp already in status VERIFIED\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/stamps/{stampId}/cancel"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -7367,14 +7367,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"Cannot replace a stamp in status CANCELLED\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/stamps/{stampId}/replace"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -7563,14 +7563,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"CONFLICT\",\n    \"message\": \"Cannot change the PAN card of a stamp already in status VERIFIED\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/stamps/{stampId}/pan-card"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -7707,14 +7707,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/stamps/{stampId}/certificate"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -7828,14 +7828,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/estamp/wallet"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -7943,14 +7943,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/stamp-duty-wallet"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -8111,14 +8111,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/stamp-duty-wallet/topup"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -8241,14 +8241,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/stamp-duty-wallet/transactions"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -8371,14 +8371,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/stamp-duty-wallet/invoices"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -8514,14 +8514,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/stamp-duty-wallet/invoices/{id}"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -8629,14 +8629,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/service-fee-wallet"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -8797,14 +8797,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/service-fee-wallet/topup"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -8927,14 +8927,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/service-fee-wallet/transactions"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -9057,14 +9057,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/service-fee-wallet/invoices"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -9200,14 +9200,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/service-fee-wallet/invoices/{id}"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -9338,7 +9338,7 @@
                 "balance"
               ]
             },
-            "description": "Your Service wallet balance in rupees and paise, the low-balance threshold (Rs 500 by default), the state (OK, LOW_BALANCE, FINISHED), how many calls it covers at the cheapest approved price and at your 7-day average price, the last top-up and the signup credit still left. Any key with a verification scope can read its own organization's balance. A sandbox key gets a sandbox notice and zero amounts, never a real balance. Rate limit: 60 per minute per key. Amounts exclude GST."
+            "description": "Your Service wallet balance in rupees and paise, the low-balance threshold (Rs 500 by default), the state (OK, LOW_BALANCE, FINISHED), how many calls it covers at the cheapest approved price and at your 7-day average price, the last top-up and any locked signup credit still left on an older account. Any key with a verification scope can read its own organization's balance. A sandbox key gets a sandbox notice and zero amounts, never a real balance. Rate limit: 60 per minute per key. Amounts exclude GST."
           },
           "response": [
             {
@@ -9358,7 +9358,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"generatedAt\": \"2026-10-29T10:15:00.000Z\",\n  \"environment\": \"LIVE\",\n  \"sandbox\": false,\n  \"notice\": null,\n  \"currency\": \"INR\",\n  \"balance\": {\n    \"paise\": 125050,\n    \"rupees\": 1250.5\n  },\n  \"available\": {\n    \"paise\": 125050,\n    \"rupees\": 1250.5\n  },\n  \"state\": \"OK\",\n  \"lowBalance\": false,\n  \"lowBalanceThreshold\": {\n    \"paise\": 50000,\n    \"rupees\": 500\n  },\n  \"estimatedCallsRemaining\": {\n    \"atCheapestPrice\": 312,\n    \"cheapestProduct\": {\n      \"serviceCode\": \"bank-account.verify\",\n      \"name\": \"Bank account verification\",\n      \"price\": {\n        \"paise\": 400,\n        \"rupees\": 4\n      }\n    },\n    \"atSevenDayAverage\": 142,\n    \"sevenDayAverageCost\": {\n      \"paise\": 880,\n      \"rupees\": 8.8\n    }\n  },\n  \"lastTopUp\": {\n    \"amount\": {\n      \"paise\": 100000,\n      \"rupees\": 1000\n    },\n    \"at\": \"2026-10-21T08:00:00.000Z\"\n  },\n  \"signupCredit\": {\n    \"granted\": {\n      \"paise\": 10000,\n      \"rupees\": 100\n    },\n    \"left\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    }\n  }\n}"
+              "body": "{\n  \"generatedAt\": \"2026-10-29T10:15:00.000Z\",\n  \"environment\": \"LIVE\",\n  \"sandbox\": false,\n  \"notice\": null,\n  \"currency\": \"INR\",\n  \"balance\": {\n    \"paise\": 125050,\n    \"rupees\": 1250.5\n  },\n  \"available\": {\n    \"paise\": 125050,\n    \"rupees\": 1250.5\n  },\n  \"state\": \"OK\",\n  \"lowBalance\": false,\n  \"lowBalanceThreshold\": {\n    \"paise\": 50000,\n    \"rupees\": 500\n  },\n  \"estimatedCallsRemaining\": {\n    \"atCheapestPrice\": 312,\n    \"cheapestProduct\": {\n      \"serviceCode\": \"bank-account.verify\",\n      \"name\": \"Bank account verification\",\n      \"price\": {\n        \"paise\": 400,\n        \"rupees\": 4\n      }\n    },\n    \"atSevenDayAverage\": 142,\n    \"sevenDayAverageCost\": {\n      \"paise\": 880,\n      \"rupees\": 8.8\n    }\n  },\n  \"lastTopUp\": {\n    \"amount\": {\n      \"paise\": 100000,\n      \"rupees\": 1000\n    },\n    \"at\": \"2026-10-21T08:00:00.000Z\"\n  },\n  \"signupCredit\": {\n    \"granted\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    },\n    \"left\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    }\n  }\n}"
             },
             {
               "name": "401 Missing or invalid API key",
@@ -9399,14 +9399,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/account/balance"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -9454,7 +9454,7 @@
                 "usage"
               ]
             },
-            "description": "Current and previous calendar month in IST: requests, billed requests, failed-not-billed, spend before GST, a per-product breakdown and a per-day series, plus today against your limits (requests per minute and per day). A sandbox key sees its own sandbox usage with zero spend. Rate limit: 60 per minute per key."
+            "description": "Current and previous calendar month in IST: requests, billed requests, failed-not-billed, spend before GST, a per-product breakdown and a per-day series, plus today against your limits (requests per minute and per day) and, in dailyLimits, the daily limit and today's use of each API (calls per API per day, reset at 00:00 IST). A sandbox key sees its own sandbox usage with zero spend. Rate limit: 60 per minute per key."
           },
           "response": [
             {
@@ -9474,7 +9474,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"generatedAt\": \"2026-10-29T10:15:00.000Z\",\n  \"environment\": \"LIVE\",\n  \"sandbox\": false,\n  \"notice\": null,\n  \"timezone\": \"Asia/Kolkata\",\n  \"currentMonth\": {\n    \"month\": \"2026-10\",\n    \"from\": \"2026-09-30T18:30:00.000Z\",\n    \"to\": \"2026-10-29T10:15:00.000Z\",\n    \"gstIncluded\": false,\n    \"requests\": 2,\n    \"billedRequests\": 1,\n    \"failedNotBilled\": 1,\n    \"successNotBilled\": 0,\n    \"pendingBilling\": 0,\n    \"spend\": {\n      \"paise\": 500,\n      \"rupees\": 5\n    },\n    \"byProduct\": [\n      {\n        \"serviceCode\": \"pan.verify\",\n        \"name\": \"PAN verification\",\n        \"requests\": 2,\n        \"billedRequests\": 1,\n        \"failedNotBilled\": 1,\n        \"successNotBilled\": 0,\n        \"pendingBilling\": 0,\n        \"spend\": {\n          \"paise\": 500,\n          \"rupees\": 5\n        }\n      }\n    ],\n    \"daily\": [\n      {\n        \"date\": \"2026-10-28\",\n        \"requests\": 1,\n        \"billedRequests\": 1,\n        \"failedNotBilled\": 0,\n        \"successNotBilled\": 0,\n        \"pendingBilling\": 0,\n        \"spend\": {\n          \"paise\": 500,\n          \"rupees\": 5\n        }\n      },\n      {\n        \"date\": \"2026-10-29\",\n        \"requests\": 1,\n        \"billedRequests\": 0,\n        \"failedNotBilled\": 1,\n        \"successNotBilled\": 0,\n        \"pendingBilling\": 0,\n        \"spend\": {\n          \"paise\": 0,\n          \"rupees\": 0\n        }\n      }\n    ]\n  },\n  \"previousMonth\": {\n    \"month\": \"2026-09\",\n    \"from\": \"2026-08-31T18:30:00.000Z\",\n    \"to\": \"2026-09-30T18:29:59.999Z\",\n    \"gstIncluded\": false,\n    \"requests\": 0,\n    \"billedRequests\": 0,\n    \"failedNotBilled\": 0,\n    \"successNotBilled\": 0,\n    \"pendingBilling\": 0,\n    \"spend\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    },\n    \"byProduct\": [],\n    \"daily\": []\n  },\n  \"today\": {\n    \"date\": \"2026-10-29\",\n    \"requests\": 1,\n    \"billedRequests\": 0,\n    \"failedNotBilled\": 1,\n    \"spend\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    },\n    \"requestsPerDay\": {\n      \"limit\": null,\n      \"used\": 1,\n      \"remaining\": null\n    }\n  },\n  \"limits\": {\n    \"requestsPerMinute\": {\n      \"limit\": 60,\n      \"source\": \"PLAN\"\n    },\n    \"requestsPerDay\": {\n      \"limit\": null,\n      \"source\": \"NONE\"\n    }\n  }\n}"
+              "body": "{\n  \"generatedAt\": \"2026-10-29T10:15:00.000Z\",\n  \"environment\": \"LIVE\",\n  \"sandbox\": false,\n  \"notice\": null,\n  \"timezone\": \"Asia/Kolkata\",\n  \"currentMonth\": {\n    \"month\": \"2026-10\",\n    \"from\": \"2026-09-30T18:30:00.000Z\",\n    \"to\": \"2026-10-29T10:15:00.000Z\",\n    \"gstIncluded\": false,\n    \"requests\": 2,\n    \"billedRequests\": 1,\n    \"failedNotBilled\": 1,\n    \"successNotBilled\": 0,\n    \"pendingBilling\": 0,\n    \"spend\": {\n      \"paise\": 500,\n      \"rupees\": 5\n    },\n    \"byProduct\": [\n      {\n        \"serviceCode\": \"pan.verify\",\n        \"name\": \"PAN verification\",\n        \"requests\": 2,\n        \"billedRequests\": 1,\n        \"failedNotBilled\": 1,\n        \"successNotBilled\": 0,\n        \"pendingBilling\": 0,\n        \"spend\": {\n          \"paise\": 500,\n          \"rupees\": 5\n        }\n      }\n    ],\n    \"daily\": [\n      {\n        \"date\": \"2026-10-28\",\n        \"requests\": 1,\n        \"billedRequests\": 1,\n        \"failedNotBilled\": 0,\n        \"successNotBilled\": 0,\n        \"pendingBilling\": 0,\n        \"spend\": {\n          \"paise\": 500,\n          \"rupees\": 5\n        }\n      },\n      {\n        \"date\": \"2026-10-29\",\n        \"requests\": 1,\n        \"billedRequests\": 0,\n        \"failedNotBilled\": 1,\n        \"successNotBilled\": 0,\n        \"pendingBilling\": 0,\n        \"spend\": {\n          \"paise\": 0,\n          \"rupees\": 0\n        }\n      }\n    ]\n  },\n  \"previousMonth\": {\n    \"month\": \"2026-09\",\n    \"from\": \"2026-08-31T18:30:00.000Z\",\n    \"to\": \"2026-09-30T18:29:59.999Z\",\n    \"gstIncluded\": false,\n    \"requests\": 0,\n    \"billedRequests\": 0,\n    \"failedNotBilled\": 0,\n    \"successNotBilled\": 0,\n    \"pendingBilling\": 0,\n    \"spend\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    },\n    \"byProduct\": [],\n    \"daily\": []\n  },\n  \"today\": {\n    \"date\": \"2026-10-29\",\n    \"requests\": 1,\n    \"billedRequests\": 0,\n    \"failedNotBilled\": 1,\n    \"spend\": {\n      \"paise\": 0,\n      \"rupees\": 0\n    },\n    \"requestsPerDay\": {\n      \"limit\": null,\n      \"used\": 1,\n      \"remaining\": null\n    }\n  },\n  \"limits\": {\n    \"requestsPerMinute\": {\n      \"limit\": 60,\n      \"source\": \"PLAN\"\n    },\n    \"requestsPerDay\": {\n      \"limit\": null,\n      \"source\": \"NONE\"\n    }\n  },\n  \"dailyLimits\": [\n    {\n      \"serviceCode\": \"pan.verify\",\n      \"name\": \"PAN verification\",\n      \"limit\": 100,\n      \"usedToday\": 1,\n      \"resetsAt\": \"2026-10-30T00:00:00+05:30\",\n      \"raisedFrom\": null\n    },\n    {\n      \"serviceCode\": \"gstin.verify\",\n      \"name\": \"GSTIN verification\",\n      \"limit\": 100,\n      \"usedToday\": 0,\n      \"resetsAt\": \"2026-10-30T00:00:00+05:30\",\n      \"raisedFrom\": null\n    }\n  ]\n}"
             },
             {
               "name": "401 Missing or invalid API key",
@@ -9515,14 +9515,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/account/usage"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -9784,14 +9784,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"FORBIDDEN\",\n    \"message\": \"IP not authorized for this API key\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/v1/webhooks/events"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [
@@ -9928,14 +9928,14 @@
               "body": "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"The requested resource was not found.\",\n    \"requestId\": \"a1b2c3d4-e5f6-4a1b-8c2d-9f0e1a2b3c4d\"\n  }\n}"
             },
             {
-              "name": "429 Rate limit exceeded for this endpoint",
+              "name": "429 Rate limit exceeded",
               "originalRequest": {
                 "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/v1/webhooks/events/{id}/replay"
                 }
               },
-              "status": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+              "status": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
               "code": 429,
               "_postman_previewlanguage": "json",
               "header": [

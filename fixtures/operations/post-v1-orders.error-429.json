@@ -6,7 +6,7 @@
   },
   "scenario": "error-429",
   "source": "spec-example",
-  "description": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+  "description": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
   "request": {
     "method": "POST",
     "path": "/v1/orders",
@@ -21,8 +21,6 @@
       "externalCustomerId": "cust_ext_456",
       "serviceCode": "estamp.instrument.rent_agreement",
       "details": {
-        "state": null,
-        "stampValue": null,
         "note": "Free-form and not validated. Use POST /v1/estamp/orders for e-Stamp."
       }
     }
@@ -30,8 +28,7 @@
   "response": {
     "status": 429,
     "headers": {
-      "Content-Type": "application/json",
-      "Retry-After": "1"
+      "Content-Type": "application/json"
     },
     "body": {
       "error": {

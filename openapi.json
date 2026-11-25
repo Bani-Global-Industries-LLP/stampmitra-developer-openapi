@@ -85,7 +85,7 @@
     {
       "code": "TOO_MANY_REQUESTS",
       "httpStatus": 429,
-      "description": "Rate limit exceeded.",
+      "description": "Rate limit exceeded, or error.code DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment; the day resets at 00:00 IST) is used up. Carries Retry-After (seconds to the next 00:00 IST) and X-RateLimit-Daily-Reset. The call is not charged. Business can request a higher limit.",
       "location": "error.code"
     },
     {
@@ -330,6 +330,17 @@
                   "message": "PAN is Valid"
                 }
               }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
+              }
             }
           },
           "400": {
@@ -372,7 +383,7 @@
           }
         },
         "x-required-scope": "verification.pan.read",
-        "x-price-inr-per-successful-call": 5,
+        "x-price-inr-per-successful-call": 4,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -502,6 +513,17 @@
                   "principalPlaceOfBusiness": "First Floor 3512-DISPUR Prithivi Mansion opp. KFC building G.S. Road, Lachit Nagar Assam 781007"
                 }
               }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
+              }
             }
           },
           "400": {
@@ -544,7 +566,7 @@
           }
         },
         "x-required-scope": "verification.gstin.read",
-        "x-price-inr-per-successful-call": 5,
+        "x-price-inr-per-successful-call": 3,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -614,6 +636,17 @@
                   "insuranceUpto": "2025-05-13",
                   "isCommercial": false
                 }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
               }
             }
           },
@@ -755,6 +788,17 @@
                   "serialNumber": "713",
                   "pollingStation": "GOVT JUNIOR COLLEGE SIRWAR"
                 }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
               }
             }
           },
@@ -963,6 +1007,17 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
+              }
             }
           },
           "400": {
@@ -1070,6 +1125,17 @@
                   "applicationType": "NORMAL",
                   "applicationReceivedDate": "2003-12-31"
                 }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
               }
             }
           },
@@ -1207,6 +1273,17 @@
                     }
                   ]
                 }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
               }
             }
           },
@@ -1398,6 +1475,17 @@
                   "msmeDi": "KANPUR"
                 }
               }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
+              }
             }
           },
           "400": {
@@ -1440,7 +1528,7 @@
           }
         },
         "x-required-scope": "verification.udyam.read",
-        "x-price-inr-per-successful-call": 5,
+        "x-price-inr-per-successful-call": 8.5,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -1503,6 +1591,17 @@
                     }
                   ]
                 }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
               }
             }
           },
@@ -1608,6 +1707,17 @@
                   "udyamNumber": "UDYAM-MH-26-1234567"
                 }
               }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
+              }
             }
           },
           "400": {
@@ -1650,7 +1760,7 @@
           }
         },
         "x-required-scope": "verification.pan_to_udyam.read",
-        "x-price-inr-per-successful-call": 5,
+        "x-price-inr-per-successful-call": 20,
         "x-metered": true,
         "x-idempotent": true,
         "x-retry-safe": true,
@@ -1727,6 +1837,17 @@
                     "branch": "Andheri West"
                   }
                 }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
               }
             }
           },
@@ -2670,6 +2791,17 @@
                   "$ref": "#/components/schemas/EstampDutyCalculation"
                 }
               }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
+              }
             }
           },
           "201": {
@@ -2679,6 +2811,17 @@
                 "schema": {
                   "$ref": "#/components/schemas/EstampDutyCalculation"
                 }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
               }
             }
           },
@@ -2772,6 +2915,17 @@
                   "$ref": "#/components/schemas/EstampPartiesResponse"
                 }
               }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
+              }
             }
           },
           "201": {
@@ -2781,6 +2935,17 @@
                 "schema": {
                   "$ref": "#/components/schemas/EstampPartiesResponse"
                 }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Daily-Limit": {
+                "$ref": "#/components/headers/RateLimitDailyLimit"
+              },
+              "X-RateLimit-Daily-Remaining": {
+                "$ref": "#/components/headers/RateLimitDailyRemaining"
+              },
+              "X-RateLimit-Daily-Reset": {
+                "$ref": "#/components/headers/RateLimitDailyReset"
               }
             }
           },
@@ -2856,8 +3021,6 @@
                 "externalCustomerId": "cust_ext_456",
                 "serviceCode": "estamp.instrument.rent_agreement",
                 "details": {
-                  "state": null,
-                  "stampValue": null,
                   "note": "Free-form and not validated. Use POST /v1/estamp/orders for e-Stamp."
                 }
               }
@@ -3308,15 +3471,9 @@
                     "traditional_stamp": 0
                   },
                   "documents": {
-                    "panCard": "MISSING"
+                    "panCard": "RECEIVED"
                   },
-                  "advisories": [
-                    {
-                      "code": "PAN_CARD_RECOMMENDED",
-                      "field": "panCardImage",
-                      "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
-                    }
-                  ],
+                  "advisories": [],
                   "errors": [],
                   "warnings": [],
                   "warningsAcknowledged": false,
@@ -3498,15 +3655,9 @@
                         "traditional_stamp": 0
                       },
                       "documents": {
-                        "panCard": "MISSING"
+                        "panCard": "RECEIVED"
                       },
-                      "advisories": [
-                        {
-                          "code": "PAN_CARD_RECOMMENDED",
-                          "field": "panCardImage",
-                          "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
-                        }
-                      ],
+                      "advisories": [],
                       "errors": [],
                       "warnings": [],
                       "warningsAcknowledged": false,
@@ -3540,15 +3691,9 @@
                         "traditional_stamp": 0
                       },
                       "documents": {
-                        "panCard": "MISSING"
+                        "panCard": "RECEIVED"
                       },
-                      "advisories": [
-                        {
-                          "code": "PAN_CARD_RECOMMENDED",
-                          "field": "panCardImage",
-                          "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
-                        }
-                      ],
+                      "advisories": [],
                       "errors": [],
                       "warnings": [],
                       "warningsAcknowledged": false,
@@ -3670,15 +3815,9 @@
                     "traditional_stamp": 0
                   },
                   "documents": {
-                    "panCard": "MISSING"
+                    "panCard": "RECEIVED"
                   },
-                  "advisories": [
-                    {
-                      "code": "PAN_CARD_RECOMMENDED",
-                      "field": "panCardImage",
-                      "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
-                    }
-                  ],
+                  "advisories": [],
                   "errors": [],
                   "warnings": [],
                   "warningsAcknowledged": false,
@@ -3772,15 +3911,9 @@
                     "traditional_stamp": 0
                   },
                   "documents": {
-                    "panCard": "MISSING"
+                    "panCard": "RECEIVED"
                   },
-                  "advisories": [
-                    {
-                      "code": "PAN_CARD_RECOMMENDED",
-                      "field": "panCardImage",
-                      "message": "Maharashtra asks for the payer's PAN card. Send panCardImage on each stamp, POST /stamps/{id}/pan-card, or upload it to the order. The order is accepted without it, but the stamp cannot be completed until a PAN card is on file."
-                    }
-                  ],
+                  "advisories": [],
                   "errors": [],
                   "warnings": [],
                   "warningsAcknowledged": false,
@@ -5940,7 +6073,7 @@
       "get": {
         "operationId": "getAccountBalance",
         "summary": "Wallet balance and low-balance state",
-        "description": "Your Service wallet balance in rupees and paise, the low-balance threshold (Rs 500 by default), the state (OK, LOW_BALANCE, FINISHED), how many calls it covers at the cheapest approved price and at your 7-day average price, the last top-up and the signup credit still left. Any key with a verification scope can read its own organization's balance. A sandbox key gets a sandbox notice and zero amounts, never a real balance. Rate limit: 60 per minute per key. Amounts exclude GST.",
+        "description": "Your Service wallet balance in rupees and paise, the low-balance threshold (Rs 500 by default), the state (OK, LOW_BALANCE, FINISHED), how many calls it covers at the cheapest approved price and at your 7-day average price, the last top-up and any locked signup credit still left on an older account. Any key with a verification scope can read its own organization's balance. A sandbox key gets a sandbox notice and zero amounts, never a real balance. Rate limit: 60 per minute per key. Amounts exclude GST.",
         "tags": [
           "Usage & Logs"
         ],
@@ -6005,8 +6138,8 @@
                   },
                   "signupCredit": {
                     "granted": {
-                      "paise": 10000,
-                      "rupees": 100
+                      "paise": 0,
+                      "rupees": 0
                     },
                     "left": {
                       "paise": 0,
@@ -6055,7 +6188,7 @@
       "get": {
         "operationId": "getAccountUsage",
         "summary": "Usage this month and last month, with limits",
-        "description": "Current and previous calendar month in IST: requests, billed requests, failed-not-billed, spend before GST, a per-product breakdown and a per-day series, plus today against your limits (requests per minute and per day). A sandbox key sees its own sandbox usage with zero spend. Rate limit: 60 per minute per key.",
+        "description": "Current and previous calendar month in IST: requests, billed requests, failed-not-billed, spend before GST, a per-product breakdown and a per-day series, plus today against your limits (requests per minute and per day) and, in dailyLimits, the daily limit and today's use of each API (calls per API per day, reset at 00:00 IST). A sandbox key sees its own sandbox usage with zero spend. Rate limit: 60 per minute per key.",
         "tags": [
           "Usage & Logs"
         ],
@@ -6178,7 +6311,25 @@
                       "limit": null,
                       "source": "NONE"
                     }
-                  }
+                  },
+                  "dailyLimits": [
+                    {
+                      "serviceCode": "pan.verify",
+                      "name": "PAN verification",
+                      "limit": 100,
+                      "usedToday": 1,
+                      "resetsAt": "2026-10-30T00:00:00+05:30",
+                      "raisedFrom": null
+                    },
+                    {
+                      "serviceCode": "gstin.verify",
+                      "name": "GSTIN verification",
+                      "limit": 100,
+                      "usedToday": 0,
+                      "resetsAt": "2026-10-30T00:00:00+05:30",
+                      "raisedFrom": null
+                    }
+                  ]
                 }
               }
             },
@@ -9400,7 +9551,7 @@
               "paise",
               "rupees"
             ],
-            "description": "Wallet cash balance (includes any leftover signup credit). Zero for a sandbox key."
+            "description": "Wallet cash balance (includes any leftover locked signup credit, which live calls cannot spend). Zero for a sandbox key."
           },
           "available": {
             "type": "object",
@@ -9592,7 +9743,7 @@
                   "paise",
                   "rupees"
                 ],
-                "description": "Signup credit granted (zero when never)."
+                "description": "Signup credit already held by an older account (zero for new accounts). It is locked and not spendable on live calls."
               },
               "left": {
                 "type": "object",
@@ -9665,7 +9816,7 @@
           },
           "timezone": {
             "type": "string",
-            "description": "Day and month boundaries use this zone.",
+            "description": "Day and month boundaries use this zone. The daily limit per API resets at 00:00 in this zone (IST).",
             "enum": [
               "Asia/Kolkata"
             ]
@@ -10208,6 +10359,54 @@
               "requestsPerMinute",
               "requestsPerDay"
             ]
+          },
+          "dailyLimits": {
+            "type": "array",
+            "description": "The daily limit of each API (verification product) for your organisation and the environment of the key: calls per API per day, counted on the IST day and reset at 00:00 IST. A call that exceeds it gets 429 DAILY_API_LIMIT_REACHED. Optional: absent on a deployment without per-API daily limits.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "serviceCode": {
+                  "type": "string",
+                  "description": "The API, as a service code such as pan.verify, gstin.verify, udyam.verify or pan.to_udyam."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Display name of the API."
+                },
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Calls per day in force now, including a raise granted to your organisation; null = no daily cap (agreed per deal)."
+                },
+                "usedToday": {
+                  "type": "integer",
+                  "description": "Calls counted today (IST day) for this API."
+                },
+                "resetsAt": {
+                  "type": "string",
+                  "description": "The next reset: 00:00 IST, as an ISO 8601 timestamp with the +05:30 offset.",
+                  "format": "date-time"
+                },
+                "raisedFrom": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "null unless the limit was raised for your organisation; then the plan limit it was raised from."
+                }
+              },
+              "required": [
+                "serviceCode",
+                "name",
+                "limit",
+                "usedToday",
+                "resetsAt",
+                "raisedFrom"
+              ]
+            }
           }
         },
         "required": [
@@ -10909,7 +11108,7 @@
                 },
                 "recommended": {
                   "type": "boolean",
-                  "description": "true for an advisory field that is never blocking (panCardImage)."
+                  "description": "true for a field that does not block placing the order but is needed to complete the stamp (panCardImage)."
                 },
                 "enforcedByBulkApi": {
                   "type": "boolean",
@@ -12408,6 +12607,27 @@
           "minimum": 1
         }
       },
+      "RateLimitDailyLimit": {
+        "description": "Calls per day allowed for the API that was called (service code), for your organisation and environment, including any raise granted. Resets at 00:00 IST.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "RateLimitDailyRemaining": {
+        "description": "Calls left today for the API that was called, after this one.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "RateLimitDailyReset": {
+        "description": "When the daily count resets: the next 00:00 IST, as an ISO 8601 timestamp with the +05:30 offset.",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
       "WalletState": {
         "description": "Live keys only: OK, LOW_BALANCE or FINISHED. Optional: clients must tolerate its absence. Never carries the amount.",
         "schema": {
@@ -12550,7 +12770,7 @@
         }
       },
       "TooManyRequests": {
-        "description": "Rate limit exceeded for this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). The response carries a Retry-After header (seconds): wait that long before retrying.",
+        "description": "Rate limit exceeded, with one of two codes. TOO_MANY_REQUESTS: the per-minute limit of this endpoint (fixed window, per API key; sandbox keys get 20% of the production limit, minimum 1). DAILY_API_LIMIT_REACHED: the daily limit of this API (calls per API per day for your organisation and environment, reset at 00:00 IST) is used up; the call is not charged and your other APIs are unaffected. Both carry a Retry-After header (seconds): wait that long before retrying. For DAILY_API_LIMIT_REACHED that is the time to the next 00:00 IST, and X-RateLimit-Daily-Reset carries the same moment as an ISO 8601 timestamp with +05:30. In sandbox the codes SANDBOX_RATE_LIMIT, SANDBOX_DAILY_LIMIT (the organisation-wide daily cap across all APIs) and SANDBOX_IP_LIMIT (per IP address per day) also apply next to the per-API daily limit. Branch on error.code.",
         "content": {
           "application/json": {
             "schema": {
