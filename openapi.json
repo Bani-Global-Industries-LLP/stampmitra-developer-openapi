@@ -2827,7 +2827,7 @@
       "post": {
         "operationId": "createOrder",
         "summary": "Create an order (generic - works for any entitled serviceCode, including e-Stamp)",
-        "description": "Generic order-creation endpoint. For e-Stamp, pass an e-Stamp `serviceCode` (from GET /v1/services) and put instrument/party/value details in the free-form `details` object. There is no e-Stamp-specific request/response contract yet (no first-class `state`, `article`, `parties[]` fields) - the shape of `details` for e-Stamp is not finalized upstream.",
+        "description": "LEGACY generic order endpoint, kept for existing integrations. To order e-Stamps use `POST /v1/estamp/orders` (and `POST /v1/estamp/orders/validate` first): it takes typed `stamps[]` lines with `state`, `articleCode`, `denomination`, `firstParty`, `secondParty`, `propertyArea` and the payer's `panCardImage`, and is checked field by field. This generic route takes a free-form `details` object that is not validated against any e-Stamp contract, so an order placed here cannot be relied on to carry the fields the issuing side needs, including the PAN card link.",
         "tags": [
           "e-Stamp"
         ],
@@ -2856,9 +2856,9 @@
                 "externalCustomerId": "cust_ext_456",
                 "serviceCode": "estamp.instrument.rent_agreement",
                 "details": {
-                  "state": "MH",
-                  "stampValue": 500,
-                  "note": "Shape not finalized - illustrative only"
+                  "state": null,
+                  "stampValue": null,
+                  "note": "Free-form and not validated. Use POST /v1/estamp/orders for e-Stamp."
                 }
               }
             }
@@ -3070,7 +3070,8 @@
                     "secondParty": {
                       "name": "John Smith"
                     },
-                    "purpose": "Rental Agreement"
+                    "purpose": "Rental Agreement",
+                    "panCardImage": "https://cdn.example.com/kyc/pan-4417.jpg"
                   },
                   {
                     "clientReference": "line-002",
@@ -3084,7 +3085,8 @@
                     "secondParty": {
                       "name": "Acme Pvt Ltd"
                     },
-                    "purpose": "Indemnity Bond"
+                    "purpose": "Indemnity Bond",
+                    "panCardImage": "https://cdn.example.com/kyc/pan-4418.jpg"
                   }
                 ]
               }
@@ -3251,7 +3253,8 @@
                     "secondParty": {
                       "name": "John Smith"
                     },
-                    "purpose": "Rental Agreement"
+                    "purpose": "Rental Agreement",
+                    "panCardImage": "https://cdn.example.com/kyc/pan-4417.jpg"
                   },
                   {
                     "clientReference": "line-002",
@@ -3265,7 +3268,8 @@
                     "secondParty": {
                       "name": "Acme Pvt Ltd"
                     },
-                    "purpose": "Indemnity Bond"
+                    "purpose": "Indemnity Bond",
+                    "panCardImage": "https://cdn.example.com/kyc/pan-4418.jpg"
                   }
                 ]
               }
@@ -10428,7 +10432,7 @@
           },
           "panCardImage": {
             "type": "string",
-            "description": "https link to the stamp-duty payer's PAN card (JPG, PNG, WebP, GIF, HEIC or PDF) on the default port, with no credentials, downloadable without a login. Optional and advisory: it never blocks an order. You can also send or replace it later with POST /v1/estamp/stamps/{stampId}/pan-card, or upload the file with POST /v1/estamp/orders/{orderId}/documents.",
+            "description": "https link to the stamp-duty payer's PAN card (JPG, PNG, WebP, GIF, HEIC or PDF) on the default port, with no credentials, downloadable without a login. Send it on every stamp, in the order itself: validation does not reject an order that lacks it, but the issuing side needs the PAN card on file to process the stamp. You can also send or replace it later with POST /v1/estamp/stamps/{stampId}/pan-card, or upload the file with POST /v1/estamp/orders/{orderId}/documents.",
             "format": "uri",
             "pattern": "^https://",
             "maxLength": 2048,

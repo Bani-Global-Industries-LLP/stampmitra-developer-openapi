@@ -4380,14 +4380,14 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"externalOrderId\": \"ord_ext_123\",\n  \"externalCustomerId\": \"cust_ext_456\",\n  \"serviceCode\": \"estamp.instrument.rent_agreement\",\n  \"details\": {\n    \"state\": \"MH\",\n    \"stampValue\": 500,\n    \"note\": \"Shape not finalized - illustrative only\"\n  }\n}",
+              "raw": "{\n  \"externalOrderId\": \"ord_ext_123\",\n  \"externalCustomerId\": \"cust_ext_456\",\n  \"serviceCode\": \"estamp.instrument.rent_agreement\",\n  \"details\": {\n    \"state\": null,\n    \"stampValue\": null,\n    \"note\": \"Free-form and not validated. Use POST /v1/estamp/orders for e-Stamp.\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
             },
-            "description": "Generic order-creation endpoint. For e-Stamp, pass an e-Stamp `serviceCode` (from GET /v1/services) and put instrument/party/value details in the free-form `details` object. There is no e-Stamp-specific request/response contract yet (no first-class `state`, `article`, `parties[]` fields) - the shape of `details` for e-Stamp is not finalized upstream."
+            "description": "LEGACY generic order endpoint, kept for existing integrations. To order e-Stamps use `POST /v1/estamp/orders` (and `POST /v1/estamp/orders/validate` first): it takes typed `stamps[]` lines with `state`, `articleCode`, `denomination`, `firstParty`, `secondParty`, `propertyArea` and the payer's `panCardImage`, and is checked field by field. This generic route takes a free-form `details` object that is not validated against any e-Stamp contract, so an order placed here cannot be relied on to carry the fields the issuing side needs, including the PAN card link."
           },
           "response": [
             {
@@ -4815,7 +4815,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reference\": \"order-2026-0917\",\n  \"stamps\": [\n    {\n      \"clientReference\": \"line-001\",\n      \"state\": \"MH\",\n      \"category\": \"e_stamp\",\n      \"articleCode\": \"ART1\",\n      \"denomination\": 1000,\n      \"firstParty\": {\n        \"name\": \"Jane Doe\",\n        \"address\": \"12 MG Road, Pune\"\n      },\n      \"secondParty\": {\n        \"name\": \"John Smith\"\n      },\n      \"purpose\": \"Rental Agreement\"\n    },\n    {\n      \"clientReference\": \"line-002\",\n      \"state\": \"MH\",\n      \"category\": \"e_stamp\",\n      \"articleCode\": \"ART1\",\n      \"denomination\": 500,\n      \"firstParty\": {\n        \"name\": \"Jane Doe\"\n      },\n      \"secondParty\": {\n        \"name\": \"Acme Pvt Ltd\"\n      },\n      \"purpose\": \"Indemnity Bond\"\n    }\n  ]\n}",
+              "raw": "{\n  \"reference\": \"order-2026-0917\",\n  \"stamps\": [\n    {\n      \"clientReference\": \"line-001\",\n      \"state\": \"MH\",\n      \"category\": \"e_stamp\",\n      \"articleCode\": \"ART1\",\n      \"denomination\": 1000,\n      \"firstParty\": {\n        \"name\": \"Jane Doe\",\n        \"address\": \"12 MG Road, Pune\"\n      },\n      \"secondParty\": {\n        \"name\": \"John Smith\"\n      },\n      \"purpose\": \"Rental Agreement\",\n      \"panCardImage\": \"https://cdn.example.com/kyc/pan-4417.jpg\"\n    },\n    {\n      \"clientReference\": \"line-002\",\n      \"state\": \"MH\",\n      \"category\": \"e_stamp\",\n      \"articleCode\": \"ART1\",\n      \"denomination\": 500,\n      \"firstParty\": {\n        \"name\": \"Jane Doe\"\n      },\n      \"secondParty\": {\n        \"name\": \"Acme Pvt Ltd\"\n      },\n      \"purpose\": \"Indemnity Bond\",\n      \"panCardImage\": \"https://cdn.example.com/kyc/pan-4418.jpg\"\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -5163,7 +5163,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reference\": \"order-2026-0917\",\n  \"stamps\": [\n    {\n      \"clientReference\": \"line-001\",\n      \"state\": \"MH\",\n      \"category\": \"e_stamp\",\n      \"articleCode\": \"ART1\",\n      \"denomination\": 1000,\n      \"firstParty\": {\n        \"name\": \"Jane Doe\",\n        \"address\": \"12 MG Road, Pune\"\n      },\n      \"secondParty\": {\n        \"name\": \"John Smith\"\n      },\n      \"purpose\": \"Rental Agreement\"\n    },\n    {\n      \"clientReference\": \"line-002\",\n      \"state\": \"MH\",\n      \"category\": \"e_stamp\",\n      \"articleCode\": \"ART1\",\n      \"denomination\": 500,\n      \"firstParty\": {\n        \"name\": \"Jane Doe\"\n      },\n      \"secondParty\": {\n        \"name\": \"Acme Pvt Ltd\"\n      },\n      \"purpose\": \"Indemnity Bond\"\n    }\n  ]\n}",
+              "raw": "{\n  \"reference\": \"order-2026-0917\",\n  \"stamps\": [\n    {\n      \"clientReference\": \"line-001\",\n      \"state\": \"MH\",\n      \"category\": \"e_stamp\",\n      \"articleCode\": \"ART1\",\n      \"denomination\": 1000,\n      \"firstParty\": {\n        \"name\": \"Jane Doe\",\n        \"address\": \"12 MG Road, Pune\"\n      },\n      \"secondParty\": {\n        \"name\": \"John Smith\"\n      },\n      \"purpose\": \"Rental Agreement\",\n      \"panCardImage\": \"https://cdn.example.com/kyc/pan-4417.jpg\"\n    },\n    {\n      \"clientReference\": \"line-002\",\n      \"state\": \"MH\",\n      \"category\": \"e_stamp\",\n      \"articleCode\": \"ART1\",\n      \"denomination\": 500,\n      \"firstParty\": {\n        \"name\": \"Jane Doe\"\n      },\n      \"secondParty\": {\n        \"name\": \"Acme Pvt Ltd\"\n      },\n      \"purpose\": \"Indemnity Bond\",\n      \"panCardImage\": \"https://cdn.example.com/kyc/pan-4418.jpg\"\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"

@@ -21,9 +21,9 @@
       "externalCustomerId": "cust_ext_456",
       "serviceCode": "estamp.instrument.rent_agreement",
       "details": {
-        "state": "MH",
-        "stampValue": 500,
-        "note": "Shape not finalized - illustrative only"
+        "state": null,
+        "stampValue": null,
+        "note": "Free-form and not validated. Use POST /v1/estamp/orders for e-Stamp."
       }
     }
   },

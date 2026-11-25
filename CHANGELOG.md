@@ -15,6 +15,11 @@ This changelog tracks the **StampMitra Developer API contract** (`openapi.json`)
 
 ## [Unreleased]
 
+### Changed (documentation and examples only)
+
+- The request examples of `POST /v1/estamp/orders` and `POST /v1/estamp/orders/validate` now send `panCardImage` on every stamp, and the `panCardImage` description says to send it with the order.
+- `POST /v1/orders` (generic, legacy) says to use `POST /v1/estamp/orders` for e-Stamp; its example no longer shows an e-Stamp `details` shape.
+
 ## [1.2.0] - 2026-11-24
 
 Mirror of the portal contract `info.version` 1.2.0: **62 operations on 61 paths** (was 31), **110 component schemas** (was 51), 8 webhook events (unchanged). Additive within `/v1`, except the documentation notes under "Changed".
