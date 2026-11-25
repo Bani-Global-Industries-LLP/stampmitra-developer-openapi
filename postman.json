@@ -7445,7 +7445,7 @@
                 }
               }
             },
-            "description": "Use it after `panCard.status` becomes FAILED or REJECTED, or to add a PAN to a stamp ordered without one. Processing is asynchronous: this answers 202 with PROCESSING and the result appears in `panCard` on the stamp. A new link replaces any earlier one. Advisory: a stamp ordered without a PAN is not held back. A link that is not an https link is a 400 (HTTPS_URL_REQUIRED, or INVALID_PAN_CARD_LINK when the issuing side refuses it); a stamp that has progressed too far, is fulfilled or cancelled is a 409. Requires the `estamp.orders.create` scope. Rate limit: 30 requests per 60 seconds."
+            "description": "Use it after `panCard.status` becomes FAILED or REJECTED, or to add a PAN to a stamp ordered without one. Processing is asynchronous: this answers 202 with PROCESSING and the result appears in `panCard` on the stamp. A new link replaces any earlier one. A stamp can be ordered without a PAN, but it cannot be completed until one is on file. A link that is not an https link is a 400 (HTTPS_URL_REQUIRED, or INVALID_PAN_CARD_LINK when the issuing side refuses it); a stamp that has progressed too far, is fulfilled or cancelled is a 409. Requires the `estamp.orders.create` scope. Rate limit: 30 requests per 60 seconds."
           },
           "response": [
             {
